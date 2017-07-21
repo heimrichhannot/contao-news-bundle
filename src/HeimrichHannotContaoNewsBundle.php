@@ -10,8 +10,16 @@
 
 namespace HeimrichHannot\NewsBundle;
 
+use HeimrichHannot\NewsBundle\DependencyInjection\ContaoNewsExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoNewsBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getContainerExtension()
+    {
+        return new ContaoNewsExtension();
+    }
 }

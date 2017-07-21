@@ -2,6 +2,7 @@ services:
     app.news_tags_manager:
         class: Codefog\TagsBundle\Manager\DefaultManager
         arguments:
+            - "@contao.framework"
             - "tl_news"
             - "tags"
         tags:
