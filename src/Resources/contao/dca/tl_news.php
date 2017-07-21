@@ -2,26 +2,23 @@
 
 $dc = &$GLOBALS['TL_DCA']['tl_news'];
 
-/**
- * Selectors
- */
+$dc['palettes']['default'] = str_replace('{date_legend}', '{tags_legend},tags;{date_legend}', $dc['palettes']['default']);
 
-
-/**
- * Palettes
- */
 $dc['palettes']['n_expert'] =
-    '{title_legend},name,headline,type;{template_legend:hide},jumpTo,customTpl;{config_legend},n_expert;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-
-/**
- * Subpalettes
- */
+'{title_legend},name,headline,type;{template_legend:hide},jumpTo,customTpl;{config_legend},n_expert;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 
-/**
- * Fields
- */
-$arrFields = [
+$fields = [
+    'tags' => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['tags'],
+        'exclude'   => true,
+        'inputType' => 'cfgTags',
+        'eval'      => [
+            'tagsManager' => 'app.news', // Manager, required
+            'tagsCreate'  => false, // Allow to create tags, optional (true by default)
+            'tl_class'    => 'clr',
+        ],
+    ],
     'n_expert' => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['n_expert'],
         'inputType' => 'tagsinput',
@@ -35,4 +32,4 @@ $arrFields = [
     ],
 ];
 
-$dc['fields'] = array_merge($dc['fields'], $arrFields);
+$dc['fields'] = array_merge($dc['fields'], $fields);
