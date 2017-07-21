@@ -1,0 +1,8 @@
+services:
+    app.news_tags_manager:
+        class: Codefog\TagsBundle\Manager\DefaultManager
+        arguments:
+            - "tl_news"
+            - "tags"
+        tags:
+            - { name: codefog_tags.manager, alias: app.news }

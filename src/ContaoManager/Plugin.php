@@ -2,7 +2,11 @@
 
 namespace HeimrichHannot\NewsBundle\ContaoManager;
 
-use HeimrichHannot\NewsBundle\ContaoNewsBundle;
+use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
+use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
+use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
+use Contao\NewsBundle\ContaoNewsBundle;
+use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
 
 class Plugin implements BundlePluginInterface
 {
@@ -12,8 +16,8 @@ class Plugin implements BundlePluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(ContaoNewsBundle::class)
-                ->setLoadAfter([\Contao\NewsBundle\ContaoNewsBundle::class])
+            BundleConfig::create(HeimrichHannotContaoNewsBundle::class)
+                ->setLoadAfter([ContaoNewsBundle::class])
         ];
     }
 }
