@@ -1,0 +1,5 @@
+services:
+    heimrichhannot_news.listener.tag_manager:
+        class: HeimrichHannot\NewsBundle\EventListener\TagManagerListener
+        arguments:
+            - "@codefog_tags.manager_registry"
