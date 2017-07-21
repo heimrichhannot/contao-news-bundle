@@ -6,42 +6,42 @@
  * Time: 13:42
  */
 
-namespace Dav\LawyerSearchBundle\Backend;
+namespace HeimrichHannot\NewsBundle\Backend;
 
 
-use Dav\LawyerSearchBundle\Choices\DistanceChoice;
 use Dav\LawyerSearchBundle\Component\RestClient;
 
 class Module extends \Backend
 {
-    public function getListExtendedModules(\DataContainer $dc)
+    public function getLawyers()
     {
-        return static::getModuleOptions('ls_list_extended');
-    }
+        $searchString = $_POST['query'];
+        if (empty($searchString) || $searchString == '')
+        {
+            return [];
+        }
+        if (count(explode(' ', $searchString)) > 1 && explode(' ', $searchString)[1] !== '')
+        {
+            $string       = explode(' ', $searchString);
+            $searchString = '"first_name":{"l":"' . $string[0] . '""last_name":{"l":"' . $string[1] . '"}';
+        }
+        else
+        {
+            $searchString = '"first_name":{"l":"' . $searchString . '"}';
 
-    public function getDistanceChoices(\DataContainer $dc)
-    {
-        return array_flip(DistanceChoice::create()->getChoices());
-    }
+        }
+        $restClient = new RestClient();
+        $result     = $restClient->query(
+            'https://rest.anwaltauskunft.dav.hhdev/lawyers',
+            '?where={"profile_disabled":{"e":0},' . $searchString . '}&fields=first_name,last_name,uuid&limit=5'
+        );
+        $lawyers    = [];
+        foreach ($result->lawyers as $lawyer)
+        {
+            $lawyers[$lawyer->uuid] = $lawyer->first_name . ' ' . $lawyer->last_name;
+        }
 
-    public function getSearchModules(\DataContainer $dc)
-    {
-        return static::getModuleOptions('ls_search');
-    }
-
-    public function getWatchlistModules(\DataContainer $dc)
-    {
-        return static::getModuleOptions('ls_watchlist');
-    }
-
-    public function getReaderModules(\DataContainer $dc)
-    {
-        return static::getModuleOptions('ls_reader');
-    }
-
-    public function getListModules(\DataContainer $dc)
-    {
-        return static::getModuleOptions('ls_list');
+        return $lawyers;
     }
 
     protected static function getModuleOptions($strType)
