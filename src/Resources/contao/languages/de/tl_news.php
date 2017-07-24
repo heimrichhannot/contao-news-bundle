@@ -5,5 +5,10 @@ $arrLang = &$GLOBALS['TL_LANG']['tl_news'];
 /**
  * Fields
  */
-$arrLang['n_expert']                 = 'Anwältin/Anwalt auswählen';
-$arrLang['placeholders']['n_expert'] = 'Namen eingeben';
+$arrLang['tags']        = ['Schlagwörter', 'Vergeben Sie ein oder mehrere Schlagwörter.'];
+
+
+/**
+ * Legends
+ */
+$arrLang['tags_legend']        = 'Schlagwörter';

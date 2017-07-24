@@ -10,7 +10,7 @@
 
 namespace HeimrichHannot\NewsBundle;
 
-use HeimrichHannot\NewsBundle\DependencyInjection\ContaoNewsExtension;
+use HeimrichHannot\NewsBundle\DependencyInjection\HeimrichHannotContaoNewsExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoNewsBundle extends Bundle
@@ -20,6 +20,6 @@ class HeimrichHannotContaoNewsBundle extends Bundle
      */
     public function getContainerExtension()
     {
-        return new ContaoNewsExtension();
+        return new HeimrichHannotContaoNewsExtension();
     }
 }

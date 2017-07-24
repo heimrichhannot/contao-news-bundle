@@ -7,13 +7,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-/**
- * Adds the bundle services to the container.
- *
- * @author Leo Feyer <https://github.com/leofeyer>
- * @author Yanick Witschi <https://github.com/toflar>
- */
-class ContaoNewsExtension extends Extension
+class HeimrichHannotContaoNewsExtension extends Extension
 {
     /**
      * {@inheritdoc}

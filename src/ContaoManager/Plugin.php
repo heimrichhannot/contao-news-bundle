@@ -2,6 +2,7 @@
 
 namespace HeimrichHannot\NewsBundle\ContaoManager;
 
+use Codefog\TagsBundle\CodefogTagsBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
@@ -17,7 +18,7 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create(HeimrichHannotContaoNewsBundle::class)
-                ->setLoadAfter([ContaoNewsBundle::class])
+                ->setLoadAfter([CodefogTagsBundle::class, ContaoNewsBundle::class])
         ];
     }
 }

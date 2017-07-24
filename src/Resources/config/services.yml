@@ -1,6 +1,15 @@
 services:
+    _instanceof:
+        Contao\CoreBundle\Framework\FrameworkAwareInterface:
+            calls:
+                - ["setFramework", ["@contao.framework"]]
+
+        Symfony\Component\DependencyInjection\ContainerAwareInterface:
+            calls:
+                - ["setContainer", ["@service_container"]]
+
     app.news_tags_manager:
-        class: Codefog\TagsBundle\Manager\DefaultManager
+        class: HeimrichHannot\NewsBundle\Manager\NewsTagManager
         arguments:
             - "@contao.framework"
             - "tl_news"
