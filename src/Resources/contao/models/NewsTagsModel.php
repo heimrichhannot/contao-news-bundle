@@ -12,6 +12,7 @@
 namespace HeimrichHannot\NewsBundle;
 
 
+use Codefog\TagsBundle\Model\TagModel;
 use \Haste\Model\Model;
 use Model\Collection;
 use HeimrichHannot\NewsBundle\NewsModel;
@@ -43,10 +44,10 @@ class NewsTagsModel extends Model
      */
     public static function findNewsByTagId($id, $opt = [])
     {
-        if (!is_int($id))
-        {
-            return null;
-        }
+//        if (!is_int($id))
+//        {
+//            return null;
+//        }
         $objNewsTags = static::findBy('cfg_tag_id', $id, $opt);
 
         if ($objNewsTags === null)
@@ -61,6 +62,23 @@ class NewsTagsModel extends Model
         }
         $objNews = NewsModel::findMultipleByIds($arrNewsIds);
         return $objNews;
+    }
+
+    /**
+     * @param array $opt
+     *
+     * @return \Contao\Model\Collection|TagModel[]|TagModel|null
+     */
+    public static function findAllTags($opt = [])
+    {
+        $objNewsTags = static::findAll($opt);
+        $arrTagIds = [];
+        foreach ($objNewsTags as $entry)
+        {
+            $arrTagIds[] = $entry->cfg_tag_id;
+        }
+        $objTags = TagModel::findMultipleByIds($arrTagIds);
+        return $objTags;
     }
 
 }
