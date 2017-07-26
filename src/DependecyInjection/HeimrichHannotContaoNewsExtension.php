@@ -21,4 +21,6 @@ class HeimrichHannotContaoNewsExtension extends Extension
         $loader->load('listener.yml');
         $loader->load('services.yml');
     }
+
+
 }
