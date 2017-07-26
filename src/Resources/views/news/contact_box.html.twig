@@ -1,0 +1,59 @@
+{% if contactMembers is not null %}
+    <div id="accordion" role="tablist" aria-multiselectable="true" class="contact-box">
+        <div class="card">
+            <div class="contact-box-card-header" role="tab" id="headingOne">
+                <button class="contact-box-header" data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne" aria-controls="collapseOne">
+                    {{ contactBox.header }}
+                </button>
+            </div>
+            <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="contact-box-card-block">
+                    <div class="contact-box-contact">
+                        <div class="h6 contact-column-header">{{ 'news.contact.box.contact.header'| trans }}</div>
+                        {% if contactBox.topic is not null %}
+                            <div class="contact-topic">{{ contactBox.topic }}</div>
+                        {% endif %}
+                        {% for member in contactMembers %}
+                            <div class="h6 contact-name">{{ member.first_name }} {{ member.last_name }}</div>
+                            {% if contactBox.title is not null %}
+                                <div class="contact-title">{{ contactBox.title }}</div>
+                            {% endif %}
+                            {% if (member.phone is not null) or (member.fax is not null) %}
+                                <div class="contact-contact-mobile">
+                                    {% if member.phone is not null %}
+                                        <div class="contact-phone">{{ 'news.contact.box.phone'|trans }}: {{ member.phone }}</div>
+                                    {% endif %}
+                                    {% if member.fax is not null %}
+                                        <div class="contact-fax">{{ 'news.contact.box.fax'|trans }}: {{ member.fax }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            {% if (member.email is not null) or (member.website is not null) %}
+                                <div class="contact-contact-internet">
+                                    {% if member.email is not null %}
+                                        <div class="contact-email">{{ member.email }}</div>
+                                    {% endif %}
+                                    {% if member.website is not null %}
+                                        <div class="contact-website">{{ member.website }}</div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="contact-box-links">
+                        {% if contactLinks is not null %}
+                            <div class="h6 contact-column-header">{{ 'news.contact.box.links.header'|trans }}</div>
+                            {% for link in contactLinks %}
+                                <div class="contact-link-row">
+                                    <a href="http://{{ link.contact_box_link }}" target="_blank">
+                                        <button class="contact_link_button">{{ link.contact_box_link_text }}</button>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
