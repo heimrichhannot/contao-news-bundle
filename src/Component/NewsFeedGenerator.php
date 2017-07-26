@@ -42,24 +42,9 @@ class NewsFeedGenerator
         $options = [];
         foreach ($this->feedSource as $source)
         {
-            $options[] = $source->getType();
+            $options[$source->getType()] = $source->getLabel();
         }
         return $options;
-    }
-
-    public function generateDcaFields ()
-    {
-        $fields = [];
-        foreach ($this->feedSource as $source)
-        {
-            $fields[urlencode($source->getType())] = [
-                'label'                   => $source->getType(),
-                'exclude'                 => true,
-                'inputType'               => 'checkbox',
-                'sql'                     => "char(1) NOT NULL default ''",
-            ];
-        }
-        return $fields;
     }
 
     public function generateFeeds ()

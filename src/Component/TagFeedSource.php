@@ -20,6 +20,17 @@ use HeimrichHannot\NewsBundle\NewsTagsModel;
 class TagFeedSource implements FeedSourceInterface
 {
     /**
+     * Return the label for the feed source
+     *
+     * @return array
+     */
+    public function getLabel()
+    {
+        return $GLOBALS['TL_LANG']['tl_news_feed']['source_tag'];
+    }
+
+
+    /**
      * Returns the type of the feed source, e.g. category, tag, collection,...
      * Will be used to create a subfolder in web/rss, to get paths like web/rss/category/my-category.xml
      *
