@@ -21,7 +21,9 @@ use HeimrichHannot\NewsBundle\Component\FeedSourceInterface;
 
 class NewsFeedGenerator
 {
-
+    /**
+     * @var FeedSourceInterface[] $feedSource
+     */
     protected $feedSource = [];
     protected $maxItems = 0;
 
@@ -33,6 +35,31 @@ class NewsFeedGenerator
     public function addFeedSource(FeedSourceInterface $source)
     {
         $this->feedSource[] = $source;
+    }
+
+    public function getDcaSourceOptions ()
+    {
+        $options = [];
+        foreach ($this->feedSource as $source)
+        {
+            $options[] = $source->getType();
+        }
+        return $options;
+    }
+
+    public function generateDcaFields ()
+    {
+        $fields = [];
+        foreach ($this->feedSource as $source)
+        {
+            $fields[urlencode($source->getType())] = [
+                'label'                   => $source->getType(),
+                'exclude'                 => true,
+                'inputType'               => 'checkbox',
+                'sql'                     => "char(1) NOT NULL default ''",
+            ];
+        }
+        return $fields;
     }
 
     public function generateFeeds ()
