@@ -21,6 +21,10 @@ use HeimrichHannot\NewsBundle\Component\FeedSourceInterface;
 
 class NewsFeedGenerator
 {
+    const FEEDGENERATION_DYNAMIC = 'dynamic';
+    const FEEDGENERATION_XML = 'xml';
+
+
     /**
      * @var FeedSourceInterface[] $feedSource
      */

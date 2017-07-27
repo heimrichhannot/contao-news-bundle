@@ -29,16 +29,16 @@ $fields = [
     ],
     'feedGeneration' => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration'],
-        'default'   => 'xml',
+        'default'   => \HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_XML,
         'exclude'   => true,
         'filter'    => true,
         'inputType' => 'select',
         'options'   => [
-            'xml'     => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_xml'],
-            'dynamic' => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_dynamic'],
+            \HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_XML => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_xml'],
+            \HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_DYNAMIC => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_dynamic'],
         ],
         'eval'      => ['tl_class' => 'w50'],
-        'sql'       => "varchar(32) NOT NULL default ''"
+        'sql'       => "varchar(32) NOT NULL default '".\HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_XML."'"
     ]
 ];
 
