@@ -9,8 +9,6 @@
 namespace HeimrichHannot\NewsBundle\Backend;
 
 
-use Dav\LawyerSearchBundle\Component\RestClient;
-
 class Module extends \Backend
 {
     protected static function getModuleOptions($strType)

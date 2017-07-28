@@ -16,6 +16,9 @@ $dc['palettes']['ls_suggest'] =
 $dc['palettes']['news_contact_box'] =
     '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
+$dc['palettes']['news_readers_survey'] =
+    '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+
 /**
  * Subpalettes
  */

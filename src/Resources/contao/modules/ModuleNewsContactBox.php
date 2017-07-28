@@ -6,7 +6,7 @@
  * Time: 17:06
  */
 
-namespace Dav\NewsBundle\Module;
+namespace HeimrichHannot\NewsBundle\Module;
 
 
 use Patchwork\Utf8;

@@ -156,7 +156,6 @@ use \Haste\Model\Model;
  */
 class NewsModel extends Model
 {
-
     /**
      * Table name
      *
@@ -164,6 +163,297 @@ class NewsModel extends Model
      */
     protected static $strTable = 'tl_news';
 
+    /**
+     * type
+     *
+     * @var \string
+     */
+    protected $type;
+
+    /**
+     * facebookCounter
+     *
+     * @var \integer
+     */
+    protected $facebookCounter;
+
+    /**
+     * facebookUpdatedAt
+     *
+     * @var \DateTime
+     */
+    protected $facebookUpdatedAt;
+
+    /**
+     * twitterCounter
+     *
+     * @var \integer
+     */
+    protected $twitterCounter;
+
+    /**
+     * twitterUpdatedAt
+     *
+     * @var \DateTime
+     */
+    protected $twitterUpdatedAt;
+
+    /**
+     * googlePlusCounter
+     *
+     * @var \integer
+     */
+    protected $googlePlusCounter;
+
+    /**
+     * googlePlusUpdatedAt
+     *
+     * @var \string
+     */
+    protected $googlePlusUpdatedAt;
+
+    /**
+     * disqusCounter
+     *
+     * @var \integer
+     */
+    protected $disqusCounter;
+
+    /**
+     * disqusUpdatedAt
+     *
+     * @var \DateTime
+     */
+    protected $disqusUpdatedAt;
+
+    /**
+     * googleAnalyticCounter
+     *
+     * @var \integer
+     */
+    protected $googleAnalyticCounter;
+
+    /**
+     * googleAnalyticUpdatedAt
+     *
+     * @var \DateTime
+     */
+    protected $googleAnalyticUpdatedAt;
+
+    /**
+     * @return int
+     */
+    public function getFacebookCounter(): int
+    {
+        return $this->facebookCounter;
+    }
+
+    /**
+     * @param int $facebookCounter
+     */
+    public function setFacebookCounter(int $facebookCounter)
+    {
+        $this->facebookCounter = $facebookCounter;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getFacebookUpdatedAt(): \DateTime
+    {
+        return $this->facebookUpdatedAt;
+    }
+
+    /**
+     * @param \DateTime $facebookUpdatedAt
+     */
+    public function setFacebookUpdatedAt(\DateTime $facebookUpdatedAt)
+    {
+        $this->facebookUpdatedAt = $facebookUpdatedAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGooglePlusCounter(): int
+    {
+        return $this->googlePlusCounter;
+    }
+
+    /**
+     * @param int $googlePlusCounter
+     */
+    public function setGooglePlusCounter(int $googlePlusCounter)
+    {
+        $this->googlePlusCounter = $googlePlusCounter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGooglePlusUpdatedAt(): string
+    {
+        return $this->googlePlusUpdatedAt;
+    }
+
+    /**
+     * @param string $googlePlusUpdatedAt
+     */
+    public function setGooglePlusUpdatedAt(string $googlePlusUpdatedAt)
+    {
+        $this->googlePlusUpdatedAt = $googlePlusUpdatedAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDisqusCounter(): int
+    {
+        return $this->disqusCounter;
+    }
+
+    /**
+     * @param int $disqusCounter
+     */
+    public function setDisqusCounter(int $disqusCounter)
+    {
+        $this->disqusCounter = $disqusCounter;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDisqusUpdatedAt(): \DateTime
+    {
+        return $this->disqusUpdatedAt;
+    }
+
+    /**
+     * @param \DateTime $disqusUpdatedAt
+     */
+    public function setDisqusUpdatedAt(\DateTime $disqusUpdatedAt)
+    {
+        $this->disqusUpdatedAt = $disqusUpdatedAt;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getStrTable(): string
+    {
+        return self::$strTable;
+    }
+
+    /**
+     * @param string $strTable
+     */
+    public static function setStrTable(string $strTable)
+    {
+        self::$strTable = $strTable;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType(string $type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTwitterCounter(): int
+    {
+        return $this->twitterCounter;
+    }
+
+    /**
+     * @param int $twitterCounter
+     */
+    public function setTwitterCounter(int $twitterCounter)
+    {
+        $this->twitterCounter = $twitterCounter;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getTwitterUpdatedAt(): \DateTime
+    {
+        return $this->twitterUpdatedAt;
+    }
+
+    /**
+     * @param \DateTime $twitterUpdatedAt
+     */
+    public function setTwitterUpdatedAt(\DateTime $twitterUpdatedAt)
+    {
+        $this->twitterUpdatedAt = $twitterUpdatedAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGoogleAnalyticCounter(): int
+    {
+        return $this->googleAnalyticCounter;
+    }
+
+    /**
+     * @param int $googleAnalyticCounter
+     */
+    public function setGoogleAnalyticCounter(int $googleAnalyticCounter)
+    {
+        $this->googleAnalyticCounter = $googleAnalyticCounter;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getGoogleAnalyticUpdatedAt(): \DateTime
+    {
+        return $this->googleAnalyticUpdatedAt;
+    }
+
+    /**
+     * @param \DateTime $googleAnalyticUpdatedAt
+     */
+    public function setGoogleAnalyticUpdatedAt(\DateTime $googleAnalyticUpdatedAt)
+    {
+        $this->googleAnalyticUpdatedAt = $googleAnalyticUpdatedAt;
+    }
+
+    /**
+     * finds news item by its ids and an additional condition
+     *
+     * @param string $column     the column of the additional field
+     * @param string $val        the value of the additional field
+     * @param array  $arrIds     an array of ids
+     * @param array  $arrOptions options
+     *
+     * @return \Contao\Model\Collection|\Contao\NewsModel|\Contao\NewsModel[]|null
+     */
+    public static function findByAndInIds($column, $val, $arrIds, array $arrOptions = [])
+    {
+        if (!is_array($arrIds) || empty($arrIds))
+        {
+            return null;
+        }
+        $t            = static::$strTable;
+        $arrColumns[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ")";
+        $arrColumns[] = "AND $t.$column = $val";
+
+        return static::findBy($arrColumns, null, $arrOptions);
+    }
 
     /**
      * Find a published news item from one or more news archives by its ID or alias

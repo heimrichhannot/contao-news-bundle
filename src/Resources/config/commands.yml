@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    _instanceof:
+        Contao\CoreBundle\Framework\FrameworkAwareInterface:
+            calls:
+                - ["setFramework", ["@contao.framework"]]
+
+    heimrichhannot.command.socialstatssync:
+        class: HeimrichHannot\NewsBundle\Command\SocialstatssyncCommand
