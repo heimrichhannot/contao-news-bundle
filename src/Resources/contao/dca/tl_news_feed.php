@@ -9,24 +9,25 @@
  */
 
 
+//$dc = &$GLOBALS['TL_DCA']['tl_news_feed'];
+
+//$dc['palettes']['default'] = str_replace('archives', 'archives,sources', $dc['palettes']['default']);
+
+//\Haste\Dca\PaletteManipulator::create()->
+
+\Contao\CoreBundle\DataContainer\PaletteManipulator::create()
+        ->addLegend('dynamic_feed_legend', 'archives_legend', \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER)
+        ->addField('feedGeneration','dynamic_feed_legend',\Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+        ->addField('news_source','dynamic_feed_legend',\Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+    ->applyToPalette('default','tl_news_feed');
+
 $dc = &$GLOBALS['TL_DCA']['tl_news_feed'];
 
-$dc['palettes']['default'] = str_replace('archives', 'archives,sources', $dc['palettes']['default']);
-
-
-$dc['palettes']['default'] = str_replace('format', 'format,feedGeneration', $dc['palettes']['default']);
-
+//$dc['__selector__'][] = 'feedGeneration';
+//$dc['subpalettes']['feedGeneration'] = 'sources';
+////$dc['subpalettes']['feedGeneration_xml'] = '';
 
 $fields = [
-    'sources'        => [
-        'label'            => &$GLOBALS['TL_LANG']['tl_news_feed']['sources'],
-        'exclude'          => true,
-        'inputType'        => 'checkbox',
-        'filter'           => true,
-        'options_callback' => ['app.news_feed_generator', 'getDcaSourceOptions'],
-        'eval'             => ['multiple' => true],
-        'sql'              => "blob NULL"
-    ],
     'feedGeneration' => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration'],
         'default'   => \HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_XML,
@@ -34,12 +35,25 @@ $fields = [
         'filter'    => true,
         'inputType' => 'select',
         'options'   => [
-            \HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_XML => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_xml'],
-            \HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_DYNAMIC => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_dynamic'],
+            'xml' => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_xml'],
+            'dynamic' => $GLOBALS['TL_LANG']['tl_news_feed']['feedGeneration_dynamic'],
         ],
-        'eval'      => ['tl_class' => 'w50'],
+        'eval'      => [
+            'tl_class' => 'w50',
+//            'submitOnChange' => true
+        ],
         'sql'       => "varchar(32) NOT NULL default '".\HeimrichHannot\NewsBundle\Component\NewsFeedGenerator::FEEDGENERATION_XML."'"
+    ],
+    'news_source'        => [
+        'label'            => &$GLOBALS['TL_LANG']['tl_news_feed']['news_source'],
+        'exclude'          => true,
+        'inputType'        => 'select',
+        'filter'           => true,
+        'eval'      => ['tl_class' => 'w50'],
+        'options_callback' => ['app.news_feed_generator', 'getDcaSourceOptions'],
+        'sql'              => "varchar(32) default NULL"
     ]
 ];
+
 
 $dc['fields'] = array_merge($dc['fields'], $fields);

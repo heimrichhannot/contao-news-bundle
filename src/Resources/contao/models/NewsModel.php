@@ -11,6 +11,8 @@
 namespace HeimrichHannot\NewsBundle;
 
 use \Haste\Model\Model;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Reads and writes news
@@ -432,6 +434,23 @@ class NewsModel extends Model
         $this->googleAnalyticUpdatedAt = $googleAnalyticUpdatedAt;
     }
 
+    protected static function filterBySources ($arrColumns, $news_source)
+    {
+        $t = static::$strTable;
+
+        $objTags = NewsTagsModel::findAll();
+        if ($objTags !== null)
+        {
+            $arrNewsIds = [];
+            foreach ($objTags as $entry)
+            {
+                $arrNewsIds[] = $entry->news_id;
+            }
+            $arrColumns[] = "$t.id IN (".implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))).")";
+        }
+        return $arrColumns;
+    }
+
     /**
      * finds news item by its ids and an additional condition
      *
@@ -515,6 +534,47 @@ class NewsModel extends Model
             $arrColumns[] = "$t.featured=''";
         }
 
+        $arrColumns = static::filterBySources($arrColumns, $arrOptions['news_source']);
+    }
+
+    public static function findPublishedByNewsSource($strSource, $intId = 0, $intLimit = 0, $intOffset = 0, $arrOptions)
+    {
+
+
+        if (!is_string($strSource) && empty($strSource))
+        {
+            return null;
+        }
+        if (!is_int($intId))
+        {
+            return null;
+        }
+        $t = static::$strTable;
+        $objSource = \System::getContainer()->get('app.news_feed_generator')->getFeedSource($strSource);
+        if ($intId > 0)
+        {
+            //TODO
+        }
+        else
+        {
+            $objSourceChannels = $objSource->getChannels();
+            $arrNewsIds = [];
+            foreach ($objSourceChannels as $channel)
+            {
+                $objNews = $objSource->getItemsByChannel($channel);
+                foreach ($objNews as $entry)
+                {
+                    $arrNewsIds[] = $entry->id;
+                }
+            }
+            $arrColumns[] = "$t.id IN (".implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))).")";
+        }
+        return static::findPublished($arrColumns,$intLimit,$intOffset,$arrOptions);
+    }
+
+    private static function findPublished ($arrColumns, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
+    {
+        $t = static::$strTable;
         // Never return unpublished elements in the back end, so they don't end up in the RSS feed
         if (!BE_USER_LOGGED_IN || TL_MODE == 'BE')
         {
