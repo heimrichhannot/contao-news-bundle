@@ -10,11 +10,11 @@ namespace HeimrichHannot\NewsBundle\Component;
 
 
 use HeimrichHannot\Haste\Model\Model;
+use HeimrichHannot\NewsBundle\NewsModel;
 use Model\Collection;
 
 interface FeedSourceInterface
 {
-
     /**
      * Return the label for the feed source
      *
@@ -27,6 +27,7 @@ interface FeedSourceInterface
     /**
      * Returns the type of the feed source, e.g. category, tag, collection,...
      * Will be used to create a subfolder in web/rss, to get paths like web/rss/category/my-category.xml
+     * Should be the database column in tl_news.
      *
      * @return string
      */
@@ -49,7 +50,7 @@ interface FeedSourceInterface
      * @param Collection|Model $channel
      * @param integer $maxItems Max items to return. 0 = all items
      *
-     * @return Collection|Model|null
+     * @return Collection|Model|NewsModel[]|NewsModel|null
      */
     public static function getItemsByChannel($channel, $maxItems = 0);
 

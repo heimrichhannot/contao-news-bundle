@@ -19,6 +19,8 @@ use HeimrichHannot\NewsBundle\NewsTagsModel;
 
 class TagFeedSource implements FeedSourceInterface
 {
+    private static $strCol = 'tags';
+
     /**
      * Return the label for the feed source
      *
@@ -38,7 +40,7 @@ class TagFeedSource implements FeedSourceInterface
      */
     public static function getType()
     {
-        return 'tag';
+        return static::$strCol;
     }
 
     /**
