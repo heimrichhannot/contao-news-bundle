@@ -21,7 +21,13 @@ use HeimrichHannot\NewsBundle\Component\FeedSourceInterface;
 
 class NewsFeedGenerator
 {
+    const FEEDGENERATION_DYNAMIC = 'dynamic';
+    const FEEDGENERATION_XML = 'xml';
 
+
+    /**
+     * @var FeedSourceInterface[] $feedSource
+     */
     protected $feedSource = [];
     protected $maxItems = 0;
 
@@ -33,6 +39,16 @@ class NewsFeedGenerator
     public function addFeedSource(FeedSourceInterface $source)
     {
         $this->feedSource[] = $source;
+    }
+
+    public function getDcaSourceOptions ()
+    {
+        $options = [];
+        foreach ($this->feedSource as $source)
+        {
+            $options[$source->getType()] = $source->getLabel();
+        }
+        return $options;
     }
 
     public function generateFeeds ()

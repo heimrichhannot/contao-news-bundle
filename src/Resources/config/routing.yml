@@ -1,0 +1,3 @@
+heimrichhannot_contao-newsbundle:
+    resource: "@HeimrichHannotContaoNewsBundle/Controller/"
+    type:     annotation

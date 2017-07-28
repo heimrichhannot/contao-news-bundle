@@ -14,8 +14,6 @@ namespace HeimrichHannot\NewsBundle;
 
 use Codefog\TagsBundle\Model\TagModel;
 use \Haste\Model\Model;
-use Model\Collection;
-use HeimrichHannot\NewsBundle\NewsModel;
 
 /**
  * Class NewsTagsModel
