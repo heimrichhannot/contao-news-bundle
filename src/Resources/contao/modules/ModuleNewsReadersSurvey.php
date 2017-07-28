@@ -9,7 +9,10 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
+use HeimrichHannot\Form\ReadersSurveyForm;
+use HeimrichHannot\NewsBundle\NewsModel;
 use Patchwork\Utf8;
+use Symfony\Component\Form\Forms;
 
 class ModuleNewsReadersSurvey extends \ModuleNews
 {
@@ -68,21 +71,46 @@ class ModuleNewsReadersSurvey extends \ModuleNews
     {
         // Get the news item
         $objArticle = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
-
+        $factory    = Forms::createFormFactoryBuilder()->addExtensions([])->getFormFactory();
         if ($objArticle === null || !$objArticle->add_readers_survey)
         {
             return '';
         }
+        $arrOptions    = [];
+        $readersSurvey = $this->getReadersSurvey($objArticle);
+        $form          = $factory->create(ReadersSurveyForm::class, $readersSurvey, $arrOptions);
+        $form->handleRequest();
+
+        if ($form->isSubmitted())
+        {
+            if ($form->isValid())
+            {
+                $data                  = $form->getData();
+                $newsModel             = NewsModel::findByPk($objArticle->id);
+                $readersSurveyAnswers  = unserialize($newsModel->readers_survey_answers);
+                $readersSurveyAnswered = [];
+                foreach ($readersSurveyAnswers as $answer)
+                {
+                    if ($data['answers'] == $answer['readers_survey_answer'])
+                    {
+                        $answer['readers_survey_answer_vote'] = intval($answer['readers_survey_answer_vote']) + 1;
+                    }
+                    $readersSurveyAnswered[] = $answer;
+                }
+                $newsModel->readers_survey_answers = serialize($readersSurveyAnswered);
+                $newsModel->save();
+            }
+        }
+
         /**
          * @var \Twig_Environment $twig
          */
-        $twig          = \System::getContainer()->get('twig');
-        $readersSurvey = $this->getReadersSurvey($objArticle);
+        $twig = \System::getContainer()->get('twig');
         if ($readersSurvey !== null)
         {
-            $this->Template->item = $twig->render(
+            $this->Template->readers_survey = $twig->render(
                 '@HeimrichHannotContaoNews/news/readers_survey.html.twig',
-                ['readersSurvey' => $readersSurvey]
+                ['form' => $form->createView()]
             );
         }
     }
@@ -91,10 +119,10 @@ class ModuleNewsReadersSurvey extends \ModuleNews
     {
         $readersSurvey             = null;
         $readersSurvey['question'] = $objArticle->readers_survey_question;
-        $answers                   = unserialize($objArticle->readers_survey_question);
+        $answers                   = unserialize($objArticle->readers_survey_answers);
         foreach ($answers as $answer)
         {
-            $readersSurvey['answers'][] = $answer;
+            $readersSurvey['answers'][] = $answer['readers_survey_answer'];
         }
 
         return $readersSurvey;

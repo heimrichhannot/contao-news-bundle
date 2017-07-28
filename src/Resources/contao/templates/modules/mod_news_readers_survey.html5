@@ -2,6 +2,6 @@
 
 <?php $this->block('content'); ?>
 
-<?= $this->item ?>
+<?= $this->readers_survey ?>
 
 <?php $this->endblock(); ?>
