@@ -26,6 +26,11 @@ class Module extends \Backend
         return static::getModuleOptions('news_readers_survey');
     }
 
+    public function getNewsInfoBoxModules(\DataContainer $dc)
+    {
+        return static::getModuleOptions('news_info_box');
+    }
+
     /**
      * Get all articles and return them as array
      *

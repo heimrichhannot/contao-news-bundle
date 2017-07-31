@@ -1,8 +1,11 @@
 <?php
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
-use TYPO3\CMS\Core\Utility\PathUtility;
-
+/**
+ * Class GoogleAnalyticsCrawler
+ *
+ * @package HeimrichHannot\NewsBundle\Command\Crawler
+ */
 class GoogleAnalyticsCrawler extends AbstractCrawler
 {
     private $service                = null;
@@ -38,7 +41,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
     {
         $this->client->setApplicationName('test-dav-aa'); // name of your app
 
-        $keyFile = PATH_site . ltrim($this->keyfile, '/');
+        $keyFile = '/home/kwagner/Kunden/dav/anwaltauskunft/produkte/contao/files/e1bc8698bc015b6bd01001951103eed7a1bad8b3-privatekey.p12';
 
         if (!file_exists($keyFile))
         {
@@ -47,17 +50,11 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
 
         $key = file_get_contents($keyFile);
 
-        // set assertion credentials
-        $this->client->setAssertionCredentials(
-            new \Google_Auth_AssertionCredentials(
-                $this->serviceAccountEmail, // email you added to GA
-                ['https://www.googleapis.com/auth/analytics.readonly'], $key // keyfile you downloaded
-            )
-        );
+        $this->client->setAuthConfig($key);
+        $this->client->setScopes(['https://www.googleapis.com/auth/analytics.readonly']);
 
         // other settings
-        $this->client->setClientId($this->serviceAccountClientId); // from API console
-        $this->client->setAccessType('offline_access'); // this may be unnecessary?
+//        $this->client->setClientId($this->serviceAccountClientId); // from API console
 
         // create service and get data
         $this->service = new \Google_Service_Analytics($this->client);

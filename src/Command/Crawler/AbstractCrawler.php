@@ -11,6 +11,9 @@ namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 abstract class AbstractCrawler implements CrawlerInterface
 {
+    /**
+     * @var \Google_Client
+     */
     protected $client;
     protected $url;
 

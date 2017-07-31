@@ -10,6 +10,7 @@ array_insert(
         'news' => [
             'news_contact_box'    => 'HeimrichHannot\NewsBundle\Module\ModuleNewsContactBox',
             'news_readers_survey' => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurvey',
+            'news_info_box'       => 'HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox',
         ],
     ]
 );

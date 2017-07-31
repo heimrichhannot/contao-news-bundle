@@ -63,12 +63,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     {
         $this->framework->initialize();
 
-//        $this->logger = System::getContainer()->get('monolog.logger.conato');
-//        $this->logger->info('START updating social stats...', ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
+        $this->logger = System::getContainer()->get('monolog.logger.contao');
+        $this->logger->info('START updating social stats...', ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
         $config       = ['ssl.certificate_authority' => false];
         $this->config = [
             'chunksize'                        => 20,
-            'google_sa_keyfile'                => '',
+            'google_sa_keyfile'                => '../../../../../files/e1bc8698bc015b6bd01001951103eed7a1bad8b3-privatekey.p12',
             'google_sa_email'                  => '1072658179942@developer.gserviceaccount.com',
             'google_sa_clientid'               => '1072658179942.apps.googleusercontent.com',
             'google_analytics_profile_id'      => '77925620',
@@ -185,7 +185,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         // all existing entries for update
 //        $socialUpdateItems = $socialstatisticRepository->getAllItemsforUpdate('google_analytic', $type, $uids);
         $socialUpdateItems = $socialstatisticRepository::findAll();
-        $updateIds = [];
+        $updateIds         = [];
         foreach ($socialUpdateItems as $updateItem)
         {
             $updateIds[] = $updateItem->id;
@@ -202,16 +202,17 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         // update existing items
         foreach ($socialUpdateItems as $socialUpdateItem)
         {
-            $updatetableItem = $itemRepository->findByid($socialUpdateItem->Id);
-            $this->logger->debug('Updating google analytics stats for url: ' . $this->config['urlprefixFixed'] . $updatetableItem->getUrl());
-            $url     = $updatetableItem->getUrl();
-            $gaCount = $ga->getCount($this->config['urlprefixFixed'] . $url);
+            $updatetableItem = $itemRepository::findById($socialUpdateItem->id);
+            $url             = $updatetableItem->url;
+            $this->logger->debug('Updating google analytics stats for url: ' . $this->config['urlprefixFixed'] . $url);
+//            $gaCount = $ga->getCount($this->config['urlprefixFixed'] . $url);
+            $gaCount = $ga->getCount('https://anwaltauskunft.de/magazin/leben/freizeit-alltag/1106/wie-sicher-ist-ein-wohnungstausch-im-urlaub/');
             $this->logger->debug('Received google analytics count for url: ' . $this->config['urlprefixFixed'] . $url . ':' . intval($gaCount));
             if ($gaCount > 0)
             {
                 $socialUpdateItem->setGoogleAnalyticCounter($gaCount);
                 $socialUpdateItem->setGoogleAnalyticUpdatedAt(time());
-                $socialstatisticRepository->save($socialUpdateItem);
+                $socialUpdateItem->save();
             }
         }
 
@@ -219,7 +220,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $insertIds = array_diff($uids, $updateIds);
         foreach ($insertIds as $insertId)
         {
-            $insertableItem = $itemRepository->findByUid($insertId);
+            $insertableItem = $itemRepository::findById($insertId);
             if ($insertableItem)
             {
                 $this->logger->debug('Creating google analytics stats for url ' . $this->config['urlprefixFixed'] . $insertableItem->getUrl());
@@ -233,7 +234,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
                     $socialInsertItem->setGoogleAnalyticCounter($gaCount);
                     $socialInsertItem->setGoogleAnalyticUpdatedAt(time());
                     $socialInsertItem->setType($type);
-                    $socialstatisticRepository->save($socialInsertItem);
+                    $socialInsertItem->save();
                 }
             }
         }
