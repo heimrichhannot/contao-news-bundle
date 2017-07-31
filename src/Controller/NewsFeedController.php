@@ -21,13 +21,18 @@ class NewsFeedController extends Controller
     /**
      * Generates Feed by type
      *
-     * @Route("/share/{alias}", name="heimrichhannot_newsbundle_dynamic_feed",defaults={"_format"="xml"})
+     * @param string|id $alias
+     *
+     * @return Response
+     *
+     * @Route("/share/{alias}", defaults={"_format"="xml"})
+     * @Route("/share/{alias}.{_format}", name="heimrichhannot_newsbundle_dynamic_feed", defaults={"_format"="xml"})
      */
     public function dynamicFeedByAliasAction($alias)
     {
         $this->container->get('contao.framework')->initialize();
 
-        $objFeed = \NewsFeedModel::findByAlias($alias);
+        $objFeed = \NewsFeedModel::findByIdOrAlias($alias);
         if ($objFeed === null)
         {
             throw $this->createNotFoundException('The rss feed you try to access does not exist.');
@@ -41,18 +46,19 @@ class NewsFeedController extends Controller
     /**
      * Generate feed by alias and type id
      *
-     * @param string $alias
+     * @param string|id $alias
      * @param string|id $id
      *
      * @return Response
      *
-     * @Route("/share/{alias}/{id}", name="heimrichhannot_newsbundle_dynamic_feed_single", defaults={"_format"="xml"})
+     * @Route("/share/{alias}/{id}", defaults={"_format"="xml"})
+     * @Route("/share/{alias}/{id}.{_format}", name="heimrichhannot_newsbundle_dynamic_feed_single", defaults={"_format"="xml"})
      */
     public function dynamicFeedByAliasAndIdAction($alias, $id)
     {
         $this->container->get('contao.framework')->initialize();
 
-        $objFeed = \NewsFeedModel::findByAlias($alias);
+        $objFeed = \NewsFeedModel::findByIdOrAlias($alias);
         if ($objFeed === null)
         {
             throw $this->createNotFoundException('The rss feed you try to access does not exist.');

@@ -38,7 +38,7 @@ class TagFeedSource implements FeedSourceInterface
      *
      * @return string
      */
-    public static function getType()
+    public static function getAlias()
     {
         return static::$strCol;
     }

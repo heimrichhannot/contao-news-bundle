@@ -88,43 +88,4 @@ class NewsFeedGenerator
         $strFeed = $objFeed->generateRss();
         return $strFeed;
     }
-
-    public function generateFeeds ()
-    {
-        /**
-         * @var FeedSourceInterface $source
-         */
-        foreach ($this->feedSource as $source)
-        {
-
-            $channels = $source->getChannels();
-            if ($channels === null)
-            {
-                break;
-            }
-            /**
-             * @var TagModel $channel
-             */
-            foreach ($channels as $channel)
-            {
-                $items = $source->getItemsByChannel($channel, $this->maxItems);
-                if ($items === null || $items->count() < 1)
-                {
-                    continue;
-                }
-                $name = !empty($channel->name) ? $channel->name : $source->getType().'_'.$channel->id;
-                $arrFeed = [
-                    'format' => 'rss',
-                    'feedName' => $name,
-                    'title' => $name,
-                    'description' => null,
-                    'language' => 'de',
-                    'tstamp' => time(),
-                    'source' => 'source_teaser',
-                    'archive' => $items
-                ];
-                $this->generateFiles($arrFeed);
-            }
-        }
-    }
 }
