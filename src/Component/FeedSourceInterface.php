@@ -25,28 +25,41 @@ interface FeedSourceInterface
     public function getLabel();
 
     /**
-     * Returns the type of the feed source, e.g. category, tag, collection,...
-     * Will be used to create a subfolder in web/rss, to get paths like web/rss/category/my-category.xml
+     * Returns the alias of the feed source, e.g. category, tag, collection,...
+     *
+     * Will be used to create a route in web/share, to get paths like web/share/category/my-category.xml
      * Should be the database column in tl_news.
+     * Should be unique.
      *
      * @return string
      */
-    public static function getType();
+    public static function getAlias();
 
     /**
-     * Return all rss channels that contain news entries, like a category, a tag, etc.
-     * The channel my-category leads to my-category.xml
+     * Returns a single news channel.
+     *
+     * Channels are collections of news entries, e.g. a category, a tag, etc.
+     * Channels should have an unique identifier and an unique alias
+     * The channel My Category can lead to /share/category/my-category or /share/category/4 (if 4 is the id).
+     *
+     * @param string|integer $channel identifier or unique alias of the channel
+     *
+     * @return Collection|Model|null
+     */
+    public function getChannel($channel);
+
+    /**
+     * Return all available channels.
+     *
+     * Channels: see getChannel() doc
      *
      * @return Collection|Model|null
      */
     public static function getChannels();
 
     /**
-     * @return Collection|Model|null
-     */
-//    public static function getItems();
-
-    /**
+     * Return news belonging to the channel
+     *
      * @param Collection|Model $channel
      * @param integer $maxItems Max items to return. 0 = all items
      *

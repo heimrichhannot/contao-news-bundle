@@ -31,6 +31,7 @@ class NewsFeedGenerator
      * @var FeedSourceInterface[] $feedSource
      */
     protected $feedSource = [];
+    protected $feedSourceId = [];
     protected $maxItems = 0;
 
     public function __construct()
@@ -74,49 +75,17 @@ class NewsFeedGenerator
         return $options;
     }
 
-    public function generateFeed($arrFeed)
+    /**
+     * @param array $arrFeed
+     * @param string|int $varId Id oder unique alias of news source
+     *
+     * @return string|null
+     */
+    public function generateFeed($arrFeed, $varId=0)
     {
         $news = new \HeimrichHannot\NewsBundle\News();
-        $objFeed = $news->generateDynamicFeed($arrFeed);
-        return $objFeed->generateRss();
-    }
-
-    public function generateFeeds ()
-    {
-        /**
-         * @var FeedSourceInterface $source
-         */
-        foreach ($this->feedSource as $source)
-        {
-
-            $channels = $source->getChannels();
-            if ($channels === null)
-            {
-                break;
-            }
-            /**
-             * @var TagModel $channel
-             */
-            foreach ($channels as $channel)
-            {
-                $items = $source->getItemsByChannel($channel, $this->maxItems);
-                if ($items === null || $items->count() < 1)
-                {
-                    continue;
-                }
-                $name = !empty($channel->name) ? $channel->name : $source->getType().'_'.$channel->id;
-                $arrFeed = [
-                    'format' => 'rss',
-                    'feedName' => $name,
-                    'title' => $name,
-                    'description' => null,
-                    'language' => 'de',
-                    'tstamp' => time(),
-                    'source' => 'source_teaser',
-                    'archive' => $items
-                ];
-                $this->generateFiles($arrFeed);
-            }
-        }
+        $objFeed = $news->generateDynamicFeed($arrFeed, $varId);
+        $strFeed = $objFeed->generateRss();
+        return $strFeed;
     }
 }
