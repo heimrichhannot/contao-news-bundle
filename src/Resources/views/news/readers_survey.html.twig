@@ -1,11 +1,16 @@
-{% if readersSurvey is not null %}
+{% block body %}
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    {{ form_errors(form) }}
     <div class="news-readers-survey">
-        <h5>{{ 'news.readers.survey.header'|trans }}</h5>
-        <form>
-            <div class="news-readers-survey-question">{{ readersSurvey.question }}</div>
-            {% for answer in readersSurvey.answers %}
-                <button typeof="radio">{{ answer }}</button>
-            {% endfor %}
-        </form>
+        <div class="form-body">
+            <h5>{{ 'news.readers.survey.header'|trans }}</h5>
+        </div>
+        <div>
+            {{ form_row(form.answers) }}
+        </div>
+        <div class="news-readers-survey-submit-container">
+            {{ form_row(form.submit) }}
+        </div>
     </div>
-{% endif %}
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,7 +1,6 @@
 <?php $this->extend('block_searchable'); ?>
 
 <?php $this->block('content'); ?>
-<div>teststset</div>
 <?= $this->contact_box ?>
 
 <?php $this->endblock(); ?>
