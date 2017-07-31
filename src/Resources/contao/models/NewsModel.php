@@ -557,7 +557,7 @@ class NewsModel extends Model
             return null;
         }
         $t = static::$strTable;
-        $objSource = \System::getContainer()->get('app.news_feed_generator')->getFeedSource($strSource);
+        $objSource = \System::getContainer()->get('hh.news-bundle.news_feed_generator')->getFeedSource($strSource);
         if ($varId !== 0)
         {
             $objChannel = $objSource->getChannel($varId);

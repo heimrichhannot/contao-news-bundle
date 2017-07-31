@@ -50,7 +50,7 @@ $fields = [
         'inputType'        => 'select',
         'filter'           => true,
         'eval'      => ['tl_class' => 'w50'],
-        'options_callback' => ['app.news_feed_generator', 'getDcaSourceOptions'],
+        'options_callback' => ['hh.news-bundle.news_feed_generator', 'getDcaSourceOptions'],
         'sql'              => "varchar(32) default NULL"
     ]
 ];

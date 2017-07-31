@@ -8,6 +8,9 @@ services:
             calls:
                 - ["setContainer", ["@service_container"]]
 
+        HeimrichHannot\NewsBundle\Component\FeedSourceInterface:
+            tags: [news-bundle.feed_source]
+
     app.news_tags_manager:
         class: HeimrichHannot\NewsBundle\Manager\NewsTagManager
         arguments:
@@ -17,8 +20,8 @@ services:
         tags:
             - { name: codefog_tags.manager, alias: app.news }
 
-    app.news_feed_generator:
+    hh.news-bundle.news_feed_generator:
         class: HeimrichHannot\NewsBundle\Component\NewsFeedGenerator
 
-    HeimrichHannot\NewsBundle\Component\TagFeedSource:
-        tags: [news-bundle.feed_source]
+    hh.news-bundle.news_feed_tag_source:
+        class: HeimrichHannot\NewsBundle\Component\TagFeedSource

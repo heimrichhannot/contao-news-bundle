@@ -39,7 +39,7 @@ class NewsFeedController extends Controller
         }
         $objFeed->feedName = $objFeed->alias ?: 'news' . $objFeed->id;
 
-        $strFeed = $this->container->get('app.news_feed_generator')->generateFeed($objFeed->row());
+        $strFeed = $this->container->get('hh.news-bundle.news_feed_generator')->generateFeed($objFeed->row());
         return new Response($strFeed);
     }
 
@@ -68,7 +68,7 @@ class NewsFeedController extends Controller
         {
             $id = intval($id);
         }
-        $strFeed = $this->container->get('app.news_feed_generator')->generateFeed($objFeed->row(), $id);
+        $strFeed = $this->container->get('hh.news-bundle.news_feed_generator')->generateFeed($objFeed->row(), $id);
         return new Response($strFeed);
     }
 }
