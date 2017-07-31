@@ -14,7 +14,7 @@ $dc['palettes']['__selector__'][] = 'add_contact_box';
 $dc['palettes']['__selector__'][] = 'add_teaser_image';
 $dc['palettes']['__selector__'][] = 'teaser_overwriteMeta';
 $dc['palettes']['__selector__'][] = 'add_readers_survey';
-array_insert($dc['palettes']['__selector__'], 0, 'info_box_selector');
+$dc['palettes']['__selector__'][] = 'info_box_selector';
 
 /**
  * Palettes
@@ -22,7 +22,7 @@ array_insert($dc['palettes']['__selector__'], 0, 'info_box_selector');
 $dc['palettes']['default'] = str_replace('author;', 'author;{writers_legend:hide},writers;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace(
     '{date_legend}',
-    '{tags_legend:hide},tags;{contact_box_legend},add_contact_box;{info_box_legend},info_box_selector;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
+    '{tags_legend:hide},tags;{contact_box_legend},add_contact_box;{info_box_legend:hide},info_box_selector;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
     $dc['palettes']['default']
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,add_teaser_image;', $dc['palettes']['default']);
@@ -35,9 +35,10 @@ $dc['subpalettes']['add_contact_box']                 = 'contact_box_members,con
 $dc['subpalettes']['add_teaser_image']                = 'teaser_singleSRC,teaser_size,teaser_floating,teaser_imagemargin,teaser_fullsize,teaser_overwriteMeta';
 $dc['subpalettes']['teaser_overwriteMeta']            = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
 $dc['subpalettes']['add_readers_survey']              = 'readers_survey_question, readers_survey_answers';
-$dc['subpalettes']['info_box_selector_info_box_none'] = 'info_box_none';
-$dc['subpalettes']['info_box_selector_info_box_text'] = 'info_box_text_header, info_box_text, info_box_text_link, info_box_text_link_text';
+$dc['subpalettes']['info_box_selector_info_box_text'] = 'info_box_text_header, info_box_text_text, info_box_text_link, info_box_text_link_text';
 $dc['subpalettes']['info_box_selector_info_box_link'] = 'info_box_link';
+$dc['subpalettes']['info_box_selector_info_box_none'] = '';
+
 
 /**
  * Fields
@@ -391,16 +392,11 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_selector'],
         'inputType' => 'radio',
         'options'   => ['info_box_none', 'info_box_text', 'info_box_link'],
+        'default'   => 'info_box_none',
         'exclude'   => true,
         'filter'    => true,
-        'default'   => 'info_box_none',
-        'sql'       => "varchar(255) NOT NULL default ''",
+        'sql'       => "varchar(20) NOT NULL default ''",
         'eval'      => ['submitOnChange' => true],
-    ],
-    'info_box_none'              => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_none'],
-        'inputType' => 'checkbox',
-        'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
     'info_box_text_header'       => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_header'],
@@ -408,11 +404,11 @@ $fields = [
         'eval'      => ['mandatory' => true],
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
-    'info_box_text'              => [
+    'info_box_text_text'         => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text'],
         'inputType' => 'textarea',
         'eval'      => ['rte' => 'tinyMCE', 'tl_class' => 'clr', 'mandatory' => true],
-        'sql'       => "text NOT NULL DEFAULT ''",
+        'sql'       => "text NULL",
     ],
     'info_box_text_link'         => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link'],

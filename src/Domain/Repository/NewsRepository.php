@@ -8,7 +8,7 @@ use HeimrichHannot\NewsBundle\NewsModel;
  * NewsRepository
  *
  */
-class NewsRepository
+class NewsRepository extends NewsModel
 {
     public function getAllForSocialstatsUpdate($countOnly = false, $offset = false, $limit = false)
     {

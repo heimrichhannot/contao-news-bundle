@@ -9,7 +9,9 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
+use Dav\LawyerSearchBundle\Form\SearchForm;
 use HeimrichHannot\Form\ReadersSurveyForm;
+use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\NewsModel;
 use Patchwork\Utf8;
 use Symfony\Component\Form\Forms;
@@ -99,6 +101,9 @@ class ModuleNewsReadersSurvey extends \ModuleNews
                 }
                 $newsModel->readers_survey_answers = serialize($readersSurveyAnswered);
                 $newsModel->save();
+                // redirect to same page without SearchForm GET Parameters
+                $strUrl = Url::removeQueryString([$form->getName()]);
+                \Controller::redirect($strUrl);
             }
         }
 
@@ -108,10 +113,7 @@ class ModuleNewsReadersSurvey extends \ModuleNews
         $twig = \System::getContainer()->get('twig');
         if ($readersSurvey !== null)
         {
-            $this->Template->readers_survey = $twig->render(
-                '@HeimrichHannotContaoNews/news/readers_survey.html.twig',
-                ['form' => $form->createView()]
-            );
+            $this->Template->readers_survey = $twig->render('@HeimrichHannotContaoNews/news/readers_survey.html.twig', ['form' => $form->createView()]);
         }
     }
 

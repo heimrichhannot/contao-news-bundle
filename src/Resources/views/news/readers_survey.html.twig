@@ -1,12 +1,14 @@
 {% block body %}
-    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    {{ form_start(form) }}
     {{ form_errors(form) }}
     <div class="news-readers-survey">
         <div class="form-body">
             <h5>{{ 'news.readers.survey.header'|trans }}</h5>
         </div>
         <div>
-            {{ form_row(form.answers) }}
+            {% for answer in form.answers %}
+                {{ form_widget(answer) }} {{ form_label(answer) }} <br>
+            {% endfor %}
         </div>
         <div class="news-readers-survey-submit-container">
             {{ form_row(form.submit) }}
