@@ -46,7 +46,7 @@ class NewsFeedGenerator
      */
     public function addFeedSource(FeedSourceInterface $source)
     {
-        $this->feedSource[$source->getType()] = $source;
+        $this->feedSource[$source->getAlias()] = $source;
     }
 
     /**
@@ -70,7 +70,7 @@ class NewsFeedGenerator
         $options = [];
         foreach ($this->feedSource as $source)
         {
-            $options[$source->getType()] = $source->getLabel();
+            $options[$source->getAlias()] = $source->getLabel();
         }
         return $options;
     }
