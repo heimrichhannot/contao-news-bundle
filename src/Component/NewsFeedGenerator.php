@@ -31,6 +31,7 @@ class NewsFeedGenerator
      * @var FeedSourceInterface[] $feedSource
      */
     protected $feedSource = [];
+    protected $feedSourceId = [];
     protected $maxItems = 0;
 
     public function __construct()
@@ -74,11 +75,18 @@ class NewsFeedGenerator
         return $options;
     }
 
-    public function generateFeed($arrFeed)
+    /**
+     * @param array $arrFeed
+     * @param string|int $varId Id oder unique alias of news source
+     *
+     * @return string|null
+     */
+    public function generateFeed($arrFeed, $varId=0)
     {
         $news = new \HeimrichHannot\NewsBundle\News();
-        $objFeed = $news->generateDynamicFeed($arrFeed);
-        return $objFeed->generateRss();
+        $objFeed = $news->generateDynamicFeed($arrFeed, $varId);
+        $strFeed = $objFeed->generateRss();
+        return $strFeed;
     }
 
     public function generateFeeds ()

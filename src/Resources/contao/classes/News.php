@@ -16,12 +16,18 @@ use HeimrichHannot\NewsBundle\Component\NewsFeedGenerator;
 
 class News extends \NewsCategories\News
 {
-    public function generateDynamicFeed($arrFeed)
+    /**
+     * @param array      $arrFeed
+     * @param string|int $varId ID or unique alias
+     *
+     * @return \Feed|null
+     */
+    public function generateDynamicFeed($arrFeed, $varId = 0)
     {
         $arrArchives = \StringUtil::deserialize($arrFeed['archives']);
         if (!is_array($arrArchives) || empty($arrArchives))
         {
-            return;
+            return null;
         }
         $strType = ($arrFeed['format'] == 'atom') ? 'generateAtom' : 'generateRss';
         $strLink = $arrFeed['feedBase'] ?: \Environment::get('base');
@@ -37,11 +43,11 @@ class News extends \NewsCategories\News
         // Get the items
         if ($arrFeed['maxItems'] > 0)
         {
-            $objArticle = NewsModel::findPublishedByNewsSource($arrFeed['news_source'], 0, $arrFeed['maxItems'], 0, ['news_source' => $arrFeed['news_source']]);
+            $objArticle = NewsModel::findPublishedByNewsSource($arrFeed['news_source'], $varId, $arrFeed['maxItems'], 0, ['news_source' => $arrFeed['news_source']]);
         }
         else
         {
-            $objArticle = NewsModel::findPublishedByNewsSource($arrFeed['news_source'], 0, 0, 0, ['news_source' => $arrFeed['news_source']]);
+            $objArticle = NewsModel::findPublishedByNewsSource($arrFeed['news_source'], $varId, 0, 0, ['news_source' => $arrFeed['news_source']]);
         }
 
         // Parse the items

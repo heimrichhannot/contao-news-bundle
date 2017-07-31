@@ -44,6 +44,22 @@ class TagFeedSource implements FeedSourceInterface
     }
 
     /**
+     * Returns a single news channel.
+     * Channels are collections of news entries, e.g. a category, a tag, etc.
+     * Channels should have an unique identifier and an unique alias
+     * The channel My Category can lead to /share/category/my-category or /share/category/4 (if 4 is the id).
+     *
+     * @param string|integer $channel identifier or unique alias of the channel
+     *
+     * @return Collection|Model|null
+     */
+    public function getChannel($varId, $arrOptions = [])
+    {
+        return NewsTagsModel::findTagsByIdOrAlias($varId, $arrOptions);
+    }
+
+
+    /**
      * Return all rss channels that contain news entries, like a category, a tag, etc.
      * The channel my-category leads to my-category.xml
      * The channel must implement a name property.
@@ -67,6 +83,7 @@ class TagFeedSource implements FeedSourceInterface
         {
             $opt['limit'] = $maxItems;
         }
-        return NewsTagsModel::findNewsByTagId($channel->id, $opt);
+        $objNews = NewsTagsModel::findNewsByTagId($channel->id, $opt);
+        return $objNews;
     }
 }

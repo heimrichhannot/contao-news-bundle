@@ -63,6 +63,35 @@ class NewsTagsModel extends Model
     }
 
     /**
+     * @param integer|string $varId
+     * @param array $arrOptions
+     *
+     * @return NewsTagsModel|null
+     */
+    public static function findTagsByIdOrAlias($varId, array $arrOptions = [])
+    {
+        $objTag = null;
+        if (is_int($varId))
+        {
+            if ($objNewsTag = static::findBy('cfg_tag_id', $varId, $arrOptions) !== null)
+            {
+                $objTag = TagModel::findOneById($varId, $arrOptions);
+            };
+
+        }
+        elseif (is_string($varId))
+        {
+            $objTag = TagModel::findOneByName($varId, $arrOptions);
+
+            if ($objNewsTag = static::findBy('cfg_tag_id', $objTag->id, $arrOptions) === null)
+            {
+                return null;
+            }
+        }
+        return $objTag;
+    }
+
+    /**
      * @param array $opt
      *
      * @return \Contao\Model\Collection|TagModel[]|TagModel|null
@@ -73,7 +102,10 @@ class NewsTagsModel extends Model
         $arrTagIds = [];
         foreach ($objNewsTags as $entry)
         {
-            $arrTagIds[] = $entry->cfg_tag_id;
+            if (!in_array($entry->cfg_tag_id, $arrTagIds))
+            {
+                $arrTagIds[] = $entry->cfg_tag_id;
+            }
         }
         $objTags = TagModel::findMultipleByIds($arrTagIds);
         return $objTags;

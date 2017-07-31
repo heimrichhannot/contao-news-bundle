@@ -537,38 +537,51 @@ class NewsModel extends Model
         $arrColumns = static::filterBySources($arrColumns, $arrOptions['news_source']);
     }
 
-    public static function findPublishedByNewsSource($strSource, $intId = 0, $intLimit = 0, $intOffset = 0, $arrOptions)
+    /**
+     * @param string $strSource News source
+     * @param int|string $varId Id or unique alias of news channel. 0 for all channels of type
+     * @param int $intLimit
+     * @param int $intOffset
+     * @param array $arrOptions
+     *
+     * @return NewsModel|NewsModel[]|\Model\Collection|null
+     */
+    public static function findPublishedByNewsSource($strSource, $varId = 0, $intLimit = 0, $intOffset = 0, $arrOptions)
     {
-
-
         if (!is_string($strSource) && empty($strSource))
         {
             return null;
         }
-        if (!is_int($intId))
+        if (!is_int($varId) && !is_string($varId))
         {
             return null;
         }
         $t = static::$strTable;
         $objSource = \System::getContainer()->get('app.news_feed_generator')->getFeedSource($strSource);
-        if ($intId > 0)
+        if ($varId !== 0)
         {
-            //TODO
+            $objChannel = $objSource->getChannel($varId);
+            $objNews = $objSource->getItemsByChannel($objChannel);
+            $arrNewsIds = [];
+            foreach ($objNews as $entry)
+            {
+                $arrNewsIds[] = $entry->id;
+            }
         }
         else
         {
-            $objSourceChannels = $objSource->getChannels();
+            $objChannels = $objSource->getChannels();
             $arrNewsIds = [];
-            foreach ($objSourceChannels as $channel)
+            while ($objChannels->next())
             {
-                $objNews = $objSource->getItemsByChannel($channel);
+                $objNews = $objSource->getItemsByChannel($objChannels);
                 foreach ($objNews as $entry)
                 {
                     $arrNewsIds[] = $entry->id;
                 }
             }
-            $arrColumns[] = "$t.id IN (".implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))).")";
         }
+        $arrColumns[] = "$t.id IN (".implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))).")";
         return static::findPublished($arrColumns,$intLimit,$intOffset,$arrOptions);
     }
 
