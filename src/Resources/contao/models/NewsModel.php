@@ -562,10 +562,14 @@ class NewsModel extends Model
         {
             $objChannel = $objSource->getChannel($varId);
             $objNews = $objSource->getItemsByChannel($objChannel);
-            $arrNewsIds = [];
-            foreach ($objNews as $entry)
+            if ($objNews === null)
             {
-                $arrNewsIds[] = $entry->id;
+                return null;
+            }
+            $arrNewsIds = [];
+            while ($objNews->next())
+            {
+                $arrNewsIds[] = $objNews->id;
             }
         }
         else
@@ -575,9 +579,13 @@ class NewsModel extends Model
             while ($objChannels->next())
             {
                 $objNews = $objSource->getItemsByChannel($objChannels);
-                foreach ($objNews as $entry)
+                if ($objNews === null)
                 {
-                    $arrNewsIds[] = $entry->id;
+                    continue;
+                }
+                while($objNews->next())
+                {
+                    $arrNewsIds[] = $objNews->id;
                 }
             }
         }
