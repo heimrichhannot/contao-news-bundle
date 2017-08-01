@@ -25,8 +25,8 @@ class NewsFeedController extends Controller
      *
      * @return Response
      *
-     * @Route("/share/{alias}", defaults={"_format"="xml"})
      * @Route("/share/{alias}.{_format}", name="heimrichhannot_newsbundle_dynamic_feed", defaults={"_format"="xml"})
+     * @Route("/share/{alias}", defaults={"_format"="xml"})
      */
     public function dynamicFeedByAliasAction($alias)
     {
@@ -51,8 +51,8 @@ class NewsFeedController extends Controller
      *
      * @return Response
      *
-     * @Route("/share/{alias}/{id}", defaults={"_format"="xml"})
      * @Route("/share/{alias}/{id}.{_format}", name="heimrichhannot_newsbundle_dynamic_feed_single", defaults={"_format"="xml"})
+     * @Route("/share/{alias}/{id}", defaults={"_format"="xml"})
      */
     public function dynamicFeedByAliasAndIdAction($alias, $id)
     {

@@ -17,11 +17,8 @@ class HeimrichHannotContaoNewsExtension extends Extension
         $loader = new YamlFileLoader(
             $container, new FileLocator(__DIR__ . '/../Resources/config')
         );
-
         $loader->load('commands.yml');
         $loader->load('listener.yml');
         $loader->load('services.yml');
     }
-
-
 }

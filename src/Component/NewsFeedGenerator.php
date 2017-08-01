@@ -32,10 +32,11 @@ class NewsFeedGenerator
      */
     protected $feedSource = [];
     protected $feedSourceId = [];
-    protected $maxItems = 10;
+    protected $maxItems;
 
-    public function __construct()
+    public function __construct($maxItems = 10)
     {
+        $this->maxItems = $maxItems;
     }
 
     /**

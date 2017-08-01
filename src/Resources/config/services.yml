@@ -1,3 +1,6 @@
+parameters:
+    hh.newsbundle.news-feed-count: 20
+
 services:
     _instanceof:
         Contao\CoreBundle\Framework\FrameworkAwareInterface:
@@ -22,6 +25,8 @@ services:
 
     hh.news-bundle.news_feed_generator:
         class: HeimrichHannot\NewsBundle\Component\NewsFeedGenerator
+        arguments:
+            - ['%hh.newsbundle.news-feed-count%']
 
     hh.news-bundle.news_feed_tag_source:
         class: HeimrichHannot\NewsBundle\Component\TagFeedSource
