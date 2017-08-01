@@ -32,11 +32,10 @@ class NewsFeedGenerator
      */
     protected $feedSource = [];
     protected $feedSourceId = [];
-    protected $maxItems = 0;
+    protected $maxItems = 10;
 
     public function __construct()
     {
-        $this->maxItems = 10;
     }
 
     /**
@@ -87,5 +86,21 @@ class NewsFeedGenerator
         $objFeed = $news->generateDynamicFeed($arrFeed, $varId);
         $strFeed = $objFeed->generateRss();
         return $strFeed;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems(): int
+    {
+        return $this->maxItems;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems(int $maxItems)
+    {
+        $this->maxItems = $maxItems;
     }
 }
