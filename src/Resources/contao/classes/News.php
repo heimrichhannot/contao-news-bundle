@@ -12,6 +12,7 @@
 namespace HeimrichHannot\NewsBundle;
 
 
+use Contao\System;
 use HeimrichHannot\NewsBundle\Component\NewsFeedGenerator;
 
 class News extends \NewsCategories\News
