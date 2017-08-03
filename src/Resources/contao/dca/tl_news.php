@@ -36,7 +36,6 @@ $dc['subpalettes']['add_teaser_image']                = 'teaser_singleSRC,teaser
 $dc['subpalettes']['teaser_overwriteMeta']            = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
 $dc['subpalettes']['add_readers_survey']              = 'readers_survey_question, readers_survey_answers';
 $dc['subpalettes']['info_box_selector_info_box_text'] = 'info_box_text_header, info_box_text_text, info_box_text_link, info_box_text_link_text';
-$dc['subpalettes']['info_box_selector_info_box_link'] = 'info_box_link';
 $dc['subpalettes']['info_box_selector_info_box_none'] = '';
 
 
@@ -391,7 +390,10 @@ $fields = [
     'info_box_selector'          => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_selector'],
         'inputType' => 'radio',
-        'options'   => ['info_box_none', 'info_box_text', 'info_box_link'],
+        'options'   => [
+            'info_box_none' => &$GLOBALS['TL_LANG']['tl_news']['info_box_none'],
+            'info_box_text' => &$GLOBALS['TL_LANG']['tl_news']['info_box_text'],
+        ],
         'default'   => 'info_box_none',
         'exclude'   => true,
         'filter'    => true,
@@ -419,14 +421,6 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link_text'],
         'inputType' => 'text',
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
-    ],
-    'info_box_link'              => [
-        'label'            => &$GLOBALS['TL_LANG']['tl_news']['info_box_link'],
-        'inputType'        => 'select',
-        'exclude'          => true,
-        'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getArticleAlias'],
-        'eval'             => ['chosen' => true, 'mandatory' => true],
-        'sql'              => "int(10) NOT NULL default '0'",
     ],
 ];
 
