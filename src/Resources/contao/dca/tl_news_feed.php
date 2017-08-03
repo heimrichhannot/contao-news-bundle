@@ -8,13 +8,6 @@
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
-
-//$dc = &$GLOBALS['TL_DCA']['tl_news_feed'];
-
-//$dc['palettes']['default'] = str_replace('archives', 'archives,sources', $dc['palettes']['default']);
-
-//\Haste\Dca\PaletteManipulator::create()->
-
 \Contao\CoreBundle\DataContainer\PaletteManipulator::create()
         ->addLegend('dynamic_feed_legend', 'archives_legend', \Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER)
         ->addField('feedGeneration','dynamic_feed_legend',\Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
@@ -50,7 +43,7 @@ $fields = [
         'inputType'        => 'select',
         'filter'           => true,
         'eval'      => ['tl_class' => 'w50'],
-        'options_callback' => ['app.news_feed_generator', 'getDcaSourceOptions'],
+        'options_callback' => ['hh.news-bundle.news_feed_generator', 'getDcaSourceOptions'],
         'sql'              => "varchar(32) default NULL"
     ]
 ];

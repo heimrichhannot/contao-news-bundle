@@ -34,11 +34,6 @@ class NewsFeedGenerator
     protected $feedSourceId = [];
     protected $maxItems = 0;
 
-    public function __construct()
-    {
-        $this->maxItems = 10;
-    }
-
     /**
      * Add feed source
      *
@@ -46,7 +41,7 @@ class NewsFeedGenerator
      */
     public function addFeedSource(FeedSourceInterface $source)
     {
-        $this->feedSource[$source->getType()] = $source;
+        $this->feedSource[$source->getAlias()] = $source;
     }
 
     /**
@@ -70,7 +65,7 @@ class NewsFeedGenerator
         $options = [];
         foreach ($this->feedSource as $source)
         {
-            $options[$source->getType()] = $source->getLabel();
+            $options[$source->getAlias()] = $source->getLabel();
         }
         return $options;
     }
@@ -83,9 +78,46 @@ class NewsFeedGenerator
      */
     public function generateFeed($arrFeed, $varId=0)
     {
+        if ($varId !== 0)
+        {
+            $objSource = static::getFeedSource($arrFeed['news_source']);
+            if ($objSource === null) {
+                return null;
+            }
+            $objChannel = $objSource->getChannel($varId);
+            if ($objChannel === null) {
+                return null;
+            }
+            $strTitle = $objSource->getChannelTitle($objChannel);
+            $strLabel = $objSource->getLabel();
+            if ($strTitle !== null) {
+                $arrFeed['title'] = str_replace($strLabel, $strTitle, $arrFeed['title']);
+            }
+        }
+        if ($this->maxItems > 0)
+        {
+            $arrFeed['maxItems'] = $this->maxItems;
+        }
+
         $news = new \HeimrichHannot\NewsBundle\News();
         $objFeed = $news->generateDynamicFeed($arrFeed, $varId);
         $strFeed = $objFeed->generateRss();
         return $strFeed;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems(): int
+    {
+        return $this->maxItems;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems(int $maxItems)
+    {
+        $this->maxItems = $maxItems;
     }
 }

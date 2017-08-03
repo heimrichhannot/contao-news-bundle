@@ -46,7 +46,7 @@ interface FeedSourceInterface
      *
      * @return Collection|Model|null
      */
-    public function getChannel($channel);
+    public function getChannel($varChannel);
 
     /**
      * Return all available channels.
@@ -65,6 +65,17 @@ interface FeedSourceInterface
      *
      * @return Collection|Model|NewsModel[]|NewsModel|null
      */
-    public static function getItemsByChannel($channel, $maxItems = 0);
+    public static function getItemsByChannel($objChannel, $maxItems = 0);
+
+    /**
+     * Returns the title of the channel.
+     *
+     * Return null, if channel not exist.
+     *
+     * @param Model $objChannel
+     *
+     * @return string|null
+     */
+    public static function getChannelTitle ($objChannel);
 
 }

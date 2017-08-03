@@ -86,4 +86,25 @@ class TagFeedSource implements FeedSourceInterface
         $objNews = NewsTagsModel::findNewsByTagId($channel->id, $opt);
         return $objNews;
     }
+
+    /**
+     * Returns the title of the channel.
+     *
+     * Return null, if channel not exist.
+     *
+     * @param Model $objChannel
+     *
+     * @return string|null
+     */
+    public static function getChannelTitle($objChannel)
+    {
+        $objTag = TagModel::findByIdOrAlias($objChannel->id);
+        if ($objTag === null)
+        {
+            return null;
+        }
+        return $objTag->name;
+    }
+
+
 }

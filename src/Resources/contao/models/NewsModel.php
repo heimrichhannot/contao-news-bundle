@@ -557,15 +557,19 @@ class NewsModel extends Model
             return null;
         }
         $t = static::$strTable;
-        $objSource = \System::getContainer()->get('app.news_feed_generator')->getFeedSource($strSource);
+        $objSource = \System::getContainer()->get('hh.news-bundle.news_feed_generator')->getFeedSource($strSource);
         if ($varId !== 0)
         {
             $objChannel = $objSource->getChannel($varId);
             $objNews = $objSource->getItemsByChannel($objChannel);
-            $arrNewsIds = [];
-            foreach ($objNews as $entry)
+            if ($objNews === null)
             {
-                $arrNewsIds[] = $entry->id;
+                return null;
+            }
+            $arrNewsIds = [];
+            while ($objNews->next())
+            {
+                $arrNewsIds[] = $objNews->id;
             }
         }
         else
@@ -575,9 +579,13 @@ class NewsModel extends Model
             while ($objChannels->next())
             {
                 $objNews = $objSource->getItemsByChannel($objChannels);
-                foreach ($objNews as $entry)
+                if ($objNews === null)
                 {
-                    $arrNewsIds[] = $entry->id;
+                    continue;
+                }
+                while($objNews->next())
+                {
+                    $arrNewsIds[] = $objNews->id;
                 }
             }
         }

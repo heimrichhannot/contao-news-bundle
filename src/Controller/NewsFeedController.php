@@ -12,12 +12,63 @@
 namespace HeimrichHannot\NewsBundle\Controller;
 
 
+use Haste\Http\Response\XmlResponse;
+use HeimrichHannot\NewsBundle\Component\FeedSourceInterface;
+use HeimrichHannot\NewsBundle\Component\NewsFeedGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
 
 class NewsFeedController extends Controller
 {
+    /**
+     * @param $alias
+     *
+     * @return Response
+     *
+     * @Route("/share/{alias}/source_channels.{_format}",
+     *     defaults={"_format"="json"},
+     *     name="hh_newsbundle_dynamicfeed_channels",
+     *     requirements={
+     *         "_format": "json"
+     *     })
+     * @Route("/share/{alias}/source_channels", defaults={"_format"="json"})
+     * @Route("/share/{alias}/source_channels/", defaults={"_format"="json"})
+     */
+    public function dynamicFeedByAliasChannels($alias, $_format)
+    {
+        $this->container->get('contao.framework')->initialize();
+
+        $objFeed = \NewsFeedModel::findByIdOrAlias($alias);
+        if ($objFeed === null)
+        {
+            throw $this->createNotFoundException('The rss feed you try to access does not exist.');
+        }
+        /**
+         * @var FeedSourceInterface $objSource
+         */
+        $objSource = $this->container->get('hh.news-bundle.news_feed_generator')->getFeedSource($objFeed->news_source);
+        $objChannels = $objSource->getChannels();
+        $arrChannels = [];
+        while ($objChannels->next())
+        {
+            $arrChannel = $objChannels->row();
+            if (!isset($arrChannel['name']) && isset($arrChannel['title']))
+            {
+                $arrChannel['name'] = $arrChannel['title'];
+            }
+            $arrChannels[] = $arrChannel;
+        }
+        switch ($_format)
+        {
+            default:
+            case "json":
+                return new JsonResponse($arrChannels);
+        }
+    }
+
     /**
      * Generates Feed by type
      *
@@ -25,8 +76,8 @@ class NewsFeedController extends Controller
      *
      * @return Response
      *
+     * @Route("/share/{alias}.{_format}", name="hh_newsbundle_dynamicfeed", defaults={"_format"="xml"})
      * @Route("/share/{alias}", defaults={"_format"="xml"})
-     * @Route("/share/{alias}.{_format}", name="heimrichhannot_newsbundle_dynamic_feed", defaults={"_format"="xml"})
      */
     public function dynamicFeedByAliasAction($alias)
     {
@@ -39,7 +90,7 @@ class NewsFeedController extends Controller
         }
         $objFeed->feedName = $objFeed->alias ?: 'news' . $objFeed->id;
 
-        $strFeed = $this->container->get('app.news_feed_generator')->generateFeed($objFeed->row());
+        $strFeed = $this->container->get('hh.news-bundle.news_feed_generator')->generateFeed($objFeed->row());
         return new Response($strFeed);
     }
 
@@ -51,10 +102,11 @@ class NewsFeedController extends Controller
      *
      * @return Response
      *
+     * @Route("/share/{alias}/{id}.{_format}", name="hh_newsbundle_dynamicfeed_single", defaults={"_format"="xml"})
+     * @Route("/share/{alias}/{id}.{_format}/{count}", defaults={"_format"="xml"})
      * @Route("/share/{alias}/{id}", defaults={"_format"="xml"})
-     * @Route("/share/{alias}/{id}.{_format}", name="heimrichhannot_newsbundle_dynamic_feed_single", defaults={"_format"="xml"})
      */
-    public function dynamicFeedByAliasAndIdAction($alias, $id)
+    public function dynamicFeedByAliasAndIdAction($alias, $id, $count = 0)
     {
         $this->container->get('contao.framework')->initialize();
 
@@ -68,7 +120,15 @@ class NewsFeedController extends Controller
         {
             $id = intval($id);
         }
-        $strFeed = $this->container->get('app.news_feed_generator')->generateFeed($objFeed->row(), $id);
+        /**
+         * @var NewsFeedGenerator $objNewsGeneratior
+         */
+        $objNewsGeneratior = $this->container->get('hh.news-bundle.news_feed_generator');
+        if (is_numeric($count))
+        {
+            $objNewsGeneratior->setMaxItems(intval($count));
+        }
+        $strFeed = $objNewsGeneratior->generateFeed($objFeed->row(), $id);
         return new Response($strFeed);
     }
 }

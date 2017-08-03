@@ -27,11 +27,10 @@ class FeedSourcePass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('app.news_feed_generator')) {
+        if (!$container->has('hh.news-bundle.news_feed_generator')) {
             return;
         }
-
-        $definition = $container->findDefinition('app.news_feed_generator');
+        $definition = $container->findDefinition('hh.news-bundle.news_feed_generator');
 
         // find all service IDs with the app.mail_transport tag
         $taggedServices = $container->findTaggedServiceIds('news-bundle.feed_source');

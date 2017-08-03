@@ -17,7 +17,7 @@ The dynamic rss feed is based on feed sources and their channels. Feed sources c
 #### Register a feed source
 1. Your class must implement `FeedSourceInterface`
 2. Create a service for your class and add the `news-bundle.feed_source` tag.
-3. Create a new feed in the Contao-Backend (News->Create Feed) and select dynamic feed.
+3. Create a new feed in the Contao-Backend (News -> Create Feed), select dynamic feed and the corresponding feed source.
 
 ```
 // Example for codefog/tags-bundle
@@ -27,6 +27,6 @@ HeimrichHannot\NewsBundle\Component\TagFeedSource:
         tags: [news-bundle.feed_source]
 ```
 
-The bundle will add following routes for your feed source:
-* /share/[feedAlias|feedId]
-* /share/[feddAlias|feedId]/[channelId|channelAlias]
+The bundle will then add following routes for your feed source:
+* `/share/[feedAlias|feedId]`
+* `/share/[feddAlias|feedId]/[channelId|channelAlias]`
