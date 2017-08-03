@@ -94,7 +94,10 @@ class NewsFeedGenerator
                 $arrFeed['title'] = str_replace($strLabel, $strTitle, $arrFeed['title']);
             }
         }
-
+        if ($this->maxItems > 0)
+        {
+            $arrFeed['maxItems'] = $this->maxItems;
+        }
 
         $news = new \HeimrichHannot\NewsBundle\News();
         $objFeed = $news->generateDynamicFeed($arrFeed, $varId);

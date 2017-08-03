@@ -15,7 +15,7 @@ namespace HeimrichHannot\NewsBundle;
 use Contao\System;
 use HeimrichHannot\NewsBundle\Component\NewsFeedGenerator;
 
-class News extends \NewsCategories\News
+class News extends \Contao\News
 {
     /**
      * @param array      $arrFeed
@@ -154,8 +154,6 @@ class News extends \NewsCategories\News
         }
         return $objFeed;
     }
-
-
 
     /**
      * Generate an XML files and save them to the root directory
