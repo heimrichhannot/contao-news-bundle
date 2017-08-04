@@ -18,7 +18,7 @@ class TwitterCrawler extends AbstractCrawler
      */
     public function getCount($url = null)
     {
-        return 0;
+//        return 0;
 
         $response = $this->client->request('GET', 'http://urls.api.twitter.com/1/urls/count.json?url=' . $this->url);
 

@@ -311,7 +311,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -329,7 +329,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -347,7 +347,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -365,7 +365,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -383,7 +383,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],

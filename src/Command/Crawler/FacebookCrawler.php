@@ -7,22 +7,22 @@ class FacebookCrawler extends AbstractCrawler
     {
         parent::__construct($client, $url);
     }
-    
+
     public function getCount($url = null)
     {
-		$response = $this->client->request('GET', 'https://graph.facebook.com/?id=' . $this->url);
+        $response = $this->client->request('GET', 'https://graph.facebook.com/?id=' . $this->url);
 
-		$count = 0;
+        $count = 0;
 
-		if($response->getStatusCode() == 200)
-		{
-			$data = json_decode($response->getBody()->getContents(), true);
+        if ($response->getStatusCode() == 200)
+        {
+            $data = json_decode($response->getBody()->getContents(), true);
 
-			if($data['id'] == $this->url)
-			{
-				$count = intval($data['shares']);
-			}
-		}
+            if ($data['id'] == $this->url)
+            {
+                $count = intval($data['shares']);
+            }
+        }
 
         return $count;
     }

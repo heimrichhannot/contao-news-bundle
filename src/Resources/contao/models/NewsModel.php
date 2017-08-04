@@ -11,8 +11,7 @@
 namespace HeimrichHannot\NewsBundle;
 
 use \Haste\Model\Model;
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
-use Symfony\Component\DependencyInjection\Container;
+use NewsCategories\NewsCategoryModel;
 
 /**
  * Reads and writes news
@@ -165,178 +164,84 @@ class NewsModel extends Model
      */
     protected static $strTable = 'tl_news';
 
+    static $TYPE_NEWS = 1;
+
     /**
      * type
      *
      * @var \string
      */
-    protected $type;
+    public $type;
 
     /**
      * facebookCounter
      *
      * @var \integer
      */
-    protected $facebookCounter;
+    public $facebook_counter;
 
     /**
      * facebookUpdatedAt
      *
-     * @var \DateTime
+     * @var int
      */
-    protected $facebookUpdatedAt;
+    public $facebook_updated_at;
 
     /**
      * twitterCounter
      *
      * @var \integer
      */
-    protected $twitterCounter;
+    public $twitter_counter;
 
     /**
      * twitterUpdatedAt
      *
-     * @var \DateTime
+     * @var \integer
      */
-    protected $twitterUpdatedAt;
+    public $twitter_updated_at;
 
     /**
      * googlePlusCounter
      *
      * @var \integer
      */
-    protected $googlePlusCounter;
+    public $google_plus_counter;
 
     /**
      * googlePlusUpdatedAt
      *
      * @var \string
      */
-    protected $googlePlusUpdatedAt;
+    public $google_plus_updated_at;
 
     /**
      * disqusCounter
      *
      * @var \integer
      */
-    protected $disqusCounter;
+    public $disqus_counter;
 
     /**
      * disqusUpdatedAt
      *
-     * @var \DateTime
+     * @var \integer
      */
-    protected $disqusUpdatedAt;
+    public $disqus_updated_at;
 
     /**
      * googleAnalyticCounter
      *
      * @var \integer
      */
-    protected $googleAnalyticCounter;
+    public $google_analytic_counter;
 
     /**
      * googleAnalyticUpdatedAt
      *
-     * @var \DateTime
+     * @var \integer
      */
-    protected $googleAnalyticUpdatedAt;
-
-    /**
-     * @return int
-     */
-    public function getFacebookCounter(): int
-    {
-        return $this->facebookCounter;
-    }
-
-    /**
-     * @param int $facebookCounter
-     */
-    public function setFacebookCounter(int $facebookCounter)
-    {
-        $this->facebookCounter = $facebookCounter;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getFacebookUpdatedAt(): \DateTime
-    {
-        return $this->facebookUpdatedAt;
-    }
-
-    /**
-     * @param \DateTime $facebookUpdatedAt
-     */
-    public function setFacebookUpdatedAt(\DateTime $facebookUpdatedAt)
-    {
-        $this->facebookUpdatedAt = $facebookUpdatedAt;
-    }
-
-    /**
-     * @return int
-     */
-    public function getGooglePlusCounter(): int
-    {
-        return $this->googlePlusCounter;
-    }
-
-    /**
-     * @param int $googlePlusCounter
-     */
-    public function setGooglePlusCounter(int $googlePlusCounter)
-    {
-        $this->googlePlusCounter = $googlePlusCounter;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGooglePlusUpdatedAt(): string
-    {
-        return $this->googlePlusUpdatedAt;
-    }
-
-    /**
-     * @param string $googlePlusUpdatedAt
-     */
-    public function setGooglePlusUpdatedAt(string $googlePlusUpdatedAt)
-    {
-        $this->googlePlusUpdatedAt = $googlePlusUpdatedAt;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDisqusCounter(): int
-    {
-        return $this->disqusCounter;
-    }
-
-    /**
-     * @param int $disqusCounter
-     */
-    public function setDisqusCounter(int $disqusCounter)
-    {
-        $this->disqusCounter = $disqusCounter;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getDisqusUpdatedAt(): \DateTime
-    {
-        return $this->disqusUpdatedAt;
-    }
-
-    /**
-     * @param \DateTime $disqusUpdatedAt
-     */
-    public function setDisqusUpdatedAt(\DateTime $disqusUpdatedAt)
-    {
-        $this->disqusUpdatedAt = $disqusUpdatedAt;
-    }
+    public $google_analytic_updated_at;
 
     /**
      * @return string
@@ -354,87 +259,7 @@ class NewsModel extends Model
         self::$strTable = $strTable;
     }
 
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     */
-    public function setType(string $type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTwitterCounter(): int
-    {
-        return $this->twitterCounter;
-    }
-
-    /**
-     * @param int $twitterCounter
-     */
-    public function setTwitterCounter(int $twitterCounter)
-    {
-        $this->twitterCounter = $twitterCounter;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getTwitterUpdatedAt(): \DateTime
-    {
-        return $this->twitterUpdatedAt;
-    }
-
-    /**
-     * @param \DateTime $twitterUpdatedAt
-     */
-    public function setTwitterUpdatedAt(\DateTime $twitterUpdatedAt)
-    {
-        $this->twitterUpdatedAt = $twitterUpdatedAt;
-    }
-
-    /**
-     * @return int
-     */
-    public function getGoogleAnalyticCounter(): int
-    {
-        return $this->googleAnalyticCounter;
-    }
-
-    /**
-     * @param int $googleAnalyticCounter
-     */
-    public function setGoogleAnalyticCounter(int $googleAnalyticCounter)
-    {
-        $this->googleAnalyticCounter = $googleAnalyticCounter;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getGoogleAnalyticUpdatedAt(): \DateTime
-    {
-        return $this->googleAnalyticUpdatedAt;
-    }
-
-    /**
-     * @param \DateTime $googleAnalyticUpdatedAt
-     */
-    public function setGoogleAnalyticUpdatedAt(\DateTime $googleAnalyticUpdatedAt)
-    {
-        $this->googleAnalyticUpdatedAt = $googleAnalyticUpdatedAt;
-    }
-
-    protected static function filterBySources ($arrColumns, $news_source)
+    protected static function filterBySources($arrColumns, $news_source)
     {
         $t = static::$strTable;
 
@@ -446,8 +271,9 @@ class NewsModel extends Model
             {
                 $arrNewsIds[] = $entry->news_id;
             }
-            $arrColumns[] = "$t.id IN (".implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))).")";
+            $arrColumns[] = "$t.id IN (" . implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))) . ")";
         }
+
         return $arrColumns;
     }
 
@@ -469,7 +295,7 @@ class NewsModel extends Model
         }
         $t            = static::$strTable;
         $arrColumns[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ")";
-        $arrColumns[] = "AND $t.$column = $val";
+        $arrColumns[] = "$t.$column = $val";
 
         return static::findBy($arrColumns, null, $arrOptions);
     }
@@ -538,11 +364,11 @@ class NewsModel extends Model
     }
 
     /**
-     * @param string $strSource News source
-     * @param int|string $varId Id or unique alias of news channel. 0 for all channels of type
-     * @param int $intLimit
-     * @param int $intOffset
-     * @param array $arrOptions
+     * @param string     $strSource News source
+     * @param int|string $varId     Id or unique alias of news channel. 0 for all channels of type
+     * @param int        $intLimit
+     * @param int        $intOffset
+     * @param array      $arrOptions
      *
      * @return NewsModel|NewsModel[]|\Model\Collection|null
      */
@@ -556,12 +382,12 @@ class NewsModel extends Model
         {
             return null;
         }
-        $t = static::$strTable;
+        $t         = static::$strTable;
         $objSource = \System::getContainer()->get('hh.news-bundle.news_feed_generator')->getFeedSource($strSource);
         if ($varId !== 0)
         {
             $objChannel = $objSource->getChannel($varId);
-            $objNews = $objSource->getItemsByChannel($objChannel);
+            $objNews    = $objSource->getItemsByChannel($objChannel);
             if ($objNews === null)
             {
                 return null;
@@ -575,7 +401,7 @@ class NewsModel extends Model
         else
         {
             $objChannels = $objSource->getChannels();
-            $arrNewsIds = [];
+            $arrNewsIds  = [];
             while ($objChannels->next())
             {
                 $objNews = $objSource->getItemsByChannel($objChannels);
@@ -583,17 +409,18 @@ class NewsModel extends Model
                 {
                     continue;
                 }
-                while($objNews->next())
+                while ($objNews->next())
                 {
                     $arrNewsIds[] = $objNews->id;
                 }
             }
         }
-        $arrColumns[] = "$t.id IN (".implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))).")";
-        return static::findPublished($arrColumns,$intLimit,$intOffset,$arrOptions);
+        $arrColumns[] = "$t.id IN (" . implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))) . ")";
+
+        return static::findPublished($arrColumns, $intLimit, $intOffset, $arrOptions);
     }
 
-    private static function findPublished ($arrColumns, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
+    private static function findPublished($arrColumns, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
         $t = static::$strTable;
         // Never return unpublished elements in the back end, so they don't end up in the RSS feed
@@ -782,5 +609,58 @@ class NewsModel extends Model
         }
 
         return static::countBy($arrColumns, [$intFrom, $intTo], $arrOptions);
+    }
+
+    public function getUrl($baseUrl)
+    {
+        $urlString[] = \NewsArchiveModel::findByPk($this->pid) == null ? null : \NewsArchiveModel::findByPk($this->pid)->title;
+        $urlString[] = NewsCategoryModel::findPublishedByIdOrAlias($this->id) == null ? null : NewsCategoryModel::findPublishedByIdOrAlias($this->id)->title;
+        $urlString[] = $this->alias . '.html';
+        $url         = $baseUrl;
+        foreach ($urlString as $string)
+        {
+            if ($string !== null)
+            {
+                $url .= '/' . strtolower($string);
+            }
+        }
+
+        return urlencode($url);
+    }
+
+    /**
+     * @param bool $countOnly
+     * @param bool $offset
+     * @param bool $limit
+     *
+     * @return NewsModel|NewsModel[]|int|\Model\Collection|null
+     */
+    public static function getAllForSocialStatsUpdate($countOnly = false, $offset = false, $limit = false)
+    {
+        $arrOptions['order'] = 'date ASC';
+        $tsPeriod            = time() - (60 * 60 * 24 * 180); // 180 days
+
+        $column = ['date>?', 'hidden=?'];
+        $value  = [$tsPeriod, 0];
+
+        if (false !== $offset)
+        {
+            $arrOptions['offset'] = $offset;
+        }
+        if (false !== $limit)
+        {
+            $arrOptions['limit'] = $limit;
+        }
+
+        if ($countOnly)
+        {
+            $result = NewsModel::findBy($column, $value, $arrOptions)->count();
+        }
+        else
+        {
+            $result = NewsModel::findBy($column, $value, $arrOptions);
+        }
+
+        return $result;
     }
 }

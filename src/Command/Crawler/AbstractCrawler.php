@@ -6,13 +6,15 @@
  * Time: 10:18
  */
 
-namespace  HeimrichHannot\NewsBundle\Command\Crawler;
+namespace HeimrichHannot\NewsBundle\Command\Crawler;
 
+
+use GuzzleHttp\Client;
 
 abstract class AbstractCrawler implements CrawlerInterface
 {
     /**
-     * @var \Google_Client
+     * @var \Google_Client | Client
      */
     protected $client;
     protected $url;
