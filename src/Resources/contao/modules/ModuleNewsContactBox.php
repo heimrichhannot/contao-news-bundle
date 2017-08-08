@@ -81,13 +81,12 @@ class ModuleNewsContactBox extends \ModuleNews
 
         $contactMembers = $this->getContactMembers($objArticle);
         $contactLinks   = $this->getContactLinks($objArticle);
-        $contactBox     = $this->getContactBoxInfo($objArticle);
 
         if ($contactMembers !== null)
         {
             $this->Template->contact_box = $twig->render(
                 '@HeimrichHannotContaoNews/news/contact_box.html.twig',
-                ['contactMembers' => $contactMembers, 'contactLinks' => $contactLinks, 'contactBox' => $contactBox]
+                ['contactMembers' => $contactMembers, 'contactLinks' => $contactLinks, 'contactBox' => $objArticle->contact_box_header]
             );
         }
     }
@@ -123,14 +122,4 @@ class ModuleNewsContactBox extends \ModuleNews
         return $contactLinks;
 
     }
-
-    protected function getContactBoxInfo($objArticle)
-    {
-        $contactBox['header'] = $objArticle->contact_box_header;
-        $contactBox['title']  = $objArticle->contact_box_topic == '' ? null : $objArticle->contact_box_topic;
-        $contactBox['topic']  = $objArticle->contact_box_title == '' ? null : $objArticle->contact_box_title;
-
-        return $contactBox;
-    }
-
 }
