@@ -8,9 +8,6 @@ services:
             calls:
                 - ["setContainer", ["@service_container"]]
 
-        HeimrichHannot\NewsBundle\Component\FeedSourceInterface:
-            tags: [news-bundle.feed_source]
-
     app.news_tags_manager:
         class: HeimrichHannot\NewsBundle\Manager\NewsTagManager
         arguments:
@@ -25,3 +22,4 @@ services:
 
     hh.news-bundle.news_feed_tag_source:
         class: HeimrichHannot\NewsBundle\Component\TagFeedSource
+        tags: [news-bundle.feed_source, hh.newsalert.topic_source]

@@ -11,14 +11,15 @@
 
 namespace HeimrichHannot\NewsBundle\Component;
 
-
 use Codefog\TagsBundle\Model\TagModel;
+use HeimrichHannot\ContaoNewsAlertBundle\Components\NewsTopicSourceInterface;
 use HeimrichHannot\Haste\Model\Model;
 use Model\Collection;
 use HeimrichHannot\NewsBundle\NewsTagsModel;
 
-class TagFeedSource implements FeedSourceInterface
+class TagFeedSource implements FeedSourceInterface, NewsTopicSourceInterface
 {
+
     private static $strCol = 'tags';
 
     /**
@@ -106,5 +107,42 @@ class TagFeedSource implements FeedSourceInterface
         return $objTag->name;
     }
 
+    /**
+     * Return all available topics.
+     *
+     * @return array
+     */
+    public static function getTopics()
+    {
+        $objChannels = static::getChannels();
+        $arrTopics = [];
+        while ($objChannels->next())
+        {
+            $arrTopics[] = $objChannels->name;
+        }
+        return $arrTopics;
+    }
+
+    /**
+     * Returns topics by news item
+     *
+     * @param $objItem \NewsModel
+     *
+     * @return array
+     */
+    public static function getTopicsByItem($objItem)
+    {
+        $objNewsTags = NewsTagsModel::findByNews_id($objItem->id);
+        $arrTopics = [];
+        if ($objNewsTags !== null)
+        {
+            while($objNewsTags->next())
+            {
+                $objTag = TagModel::findOneBy('id',$objNewsTags->cfg_tag_id);
+                $arrTopics[] = $objTag->name;
+            }
+        }
+        return $arrTopics;
+    }
 
 }
