@@ -10,13 +10,13 @@
                 <div class="contact-box-card-block">
                     <div class="contact-box-contact">
                         <div class="h6 contact-column-header">{{ 'news.contact.box.contact.header'| trans }}</div>
-                        {% if contactBox.topic is not null %}
-                            <div class="contact-topic">{{ contactBox.topic }}</div>
-                        {% endif %}
                         {% for member in contactMembers %}
+                            {% if member.organizazion is not null %}
+                                <div class="contact-topic">{{ contactBox.topic }}</div>
+                            {% endif %}
                             <div class="h6 contact-name">{{ member.first_name }} {{ member.last_name }}</div>
-                            {% if contactBox.title is not null %}
-                                <div class="contact-title">{{ contactBox.title }}</div>
+                            {% if member.title is not null %}
+                                <div class="contact-title">{{ member.title }}</div>
                             {% endif %}
                             {% if (member.phone is not null) or (member.fax is not null) %}
                                 <div class="contact-contact-mobile">

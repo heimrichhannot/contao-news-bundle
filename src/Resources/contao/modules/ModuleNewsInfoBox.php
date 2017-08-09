@@ -76,7 +76,11 @@ class ModuleNewsInfoBox extends \ModuleNews
 
         if ($objArticle->info_box_selector === 'info_box_text')
         {
-            $infoBox = $this->getInfoBox($objArticle);
+            $infoBox = $this->getInfoBoxText($objArticle);
+        }
+        if ($objArticle->info_box_selector === 'info_box_link')
+        {
+            $infoBox = $this->getInfoBoxLink($objArticle);
         }
         /**
          * @var \Twig_Environment $twig
@@ -91,7 +95,7 @@ class ModuleNewsInfoBox extends \ModuleNews
         }
     }
 
-    protected function getInfoBox($objArticle)
+    protected function getInfoBoxText($objArticle)
     {
         $infoBox             = null;
         $infoBox['header']   = $objArticle->info_box_text_header;
@@ -100,6 +104,11 @@ class ModuleNewsInfoBox extends \ModuleNews
         $infoBox['linkText'] = $objArticle->info_box_text_link_text == '' ? null : $objArticle->info_box_text_link_text;
 
         return $infoBox;
+    }
+
+    protected function getInfoBoxLink($objArticle)
+    {
+        $module = \Controller::getFrontendModule($objArticle->info_box_link);
     }
 
 }

@@ -31,12 +31,11 @@ $dc['palettes']['default'] = str_replace('teaser;', 'teaser,add_teaser_image;', 
 /**
  * Subpalettes
  */
-$dc['subpalettes']['add_contact_box']                 = 'contact_box_members,contact_box_header,contact_box_topic,contact_box_title,add_contact_box_link';
+$dc['subpalettes']['add_contact_box']                 = 'contact_box_members,contact_box_header,add_contact_box_link';
 $dc['subpalettes']['add_teaser_image']                = 'teaser_singleSRC,teaser_size,teaser_floating,teaser_imagemargin,teaser_fullsize,teaser_overwriteMeta';
 $dc['subpalettes']['teaser_overwriteMeta']            = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
 $dc['subpalettes']['add_readers_survey']              = 'readers_survey_question, readers_survey_answers';
 $dc['subpalettes']['info_box_selector_info_box_text'] = 'info_box_text_header, info_box_text_text, info_box_text_link, info_box_text_link_text';
-$dc['subpalettes']['info_box_selector_info_box_link'] = 'info_box_link';
 $dc['subpalettes']['info_box_selector_info_box_none'] = '';
 
 
@@ -90,16 +89,6 @@ $fields = [
         'inputType' => 'text',
         'sql'       => "varchar(255) NOT NULL default ''",
         'eval'      => ['mandatory' => true],
-    ],
-    'contact_box_topic'          => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contact_box_topic'],
-        'inputType' => 'text',
-        'sql'       => "varchar(255) NOT NULL default ''",
-    ],
-    'contact_box_title'          => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contact_box_title'],
-        'inputType' => 'text',
-        'sql'       => "varchar(255) NOT NULL default ''",
     ],
     'add_contact_box_link'       => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_contact_box_link'],
@@ -252,7 +241,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_readers_survey'],
         'inputType' => 'checkbox',
         'exclude'   => true,
-        'sql'       => "varchar(255) NOT NULL default ''",
+        'sql'       => "int(10) NOT NULL default 0",
         'eval'      => ['submitOnChange' => true],
     ],
     'readers_survey_question'    => [
@@ -312,7 +301,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -330,7 +319,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -348,7 +337,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -366,7 +355,7 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
@@ -384,14 +373,17 @@ $fields = [
         'inputType' => 'text',
         'eval'      => [
             'size' => 10,
-            'rgxp' => 'datim',
+            'rgxp' => 'time',
         ],
         'sql'       => "int(10) unsigned NOT NULL default '0'",
     ],
     'info_box_selector'          => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_selector'],
         'inputType' => 'radio',
-        'options'   => ['info_box_none', 'info_box_text', 'info_box_link'],
+        'options'   => [
+            'info_box_none' => &$GLOBALS['TL_LANG']['tl_news']['info_box_none'],
+            'info_box_text' => &$GLOBALS['TL_LANG']['tl_news']['info_box_text'],
+        ],
         'default'   => 'info_box_none',
         'exclude'   => true,
         'filter'    => true,
@@ -419,14 +411,6 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link_text'],
         'inputType' => 'text',
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
-    ],
-    'info_box_link'              => [
-        'label'            => &$GLOBALS['TL_LANG']['tl_news']['info_box_link'],
-        'inputType'        => 'select',
-        'exclude'          => true,
-        'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getArticleAlias'],
-        'eval'             => ['chosen' => true, 'mandatory' => true],
-        'sql'              => "int(10) NOT NULL default '0'",
     ],
 ];
 

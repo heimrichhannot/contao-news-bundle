@@ -24,7 +24,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
         $this->serviceAccountClientId = $serviceAccountClientId;
         $this->gaProfileId            = $gaProfileId;
         $this->gaAccountId            = $gaAccountId;
-        $this->init($most);
+        $this->init();
     }
 
     public function getCount($url)
@@ -37,7 +37,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
         return $this->results[$url];
     }
 
-    private function init($most)
+    private function init()
     {
         $this->client->setApplicationName('test-dav-aa'); // name of your app
 
@@ -50,33 +50,24 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
 
         $key = file_get_contents($keyFile);
 
-        $this->client->setAuthConfig($key);
+        $this->client->setDeveloperKey($key);
         $this->client->setScopes(['https://www.googleapis.com/auth/analytics.readonly']);
 
         // other settings
-//        $this->client->setClientId($this->serviceAccountClientId); // from API console
+        $this->client->setClientId($this->serviceAccountClientId); // from API console
 
         // create service and get data
         $this->service = new \Google_Service_Analytics($this->client);
 
-        $this->fetchData($most);
+        $this->fetchData();
 
     }
 
-    public function fetchData($most)
+    public function fetchData()
     {
-        if ($most)
-        {
-            $interval   = 3600 * 24 * 14; // latest 14 days - #4787
-            $startdate  = date("Y-m-d", (time() - $interval));
-            $maxResults = 10;
-        }
-        else
-        {
-            $startdate  = '2005-01-01'; // Startdate of ga profile
-            $maxResults = 10000;
-        }
-        $result = $this->service->data_ga->get(
+        $startdate  = '2005-01-01'; // Startdate of ga profile
+        $maxResults = 10000;
+        $result     = $this->service->data_ga->get(
             'ga:' . $this->gaProfileId,
             $startdate,
             date("Y-m-d"),
@@ -96,24 +87,6 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
             $this->results[$url] = $row[2];
         }
     }
-
-    public function getCountMost()
-    {
-        $views = [];
-        foreach ($this->results as $url => $count)
-        {
-            $pathRaw = trim($url, "/");
-            $pathArr = explode("/", $pathRaw);
-            if (count($pathArr) > 4)
-            {
-                $uid         = intval($pathArr[(count($pathArr) - 2)]);
-                $views[$uid] = intval($count);
-            }
-        }
-
-        return $views;
-    }
-
 }
 
 ?>
