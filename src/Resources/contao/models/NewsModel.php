@@ -663,4 +663,36 @@ class NewsModel extends Model
 
         return $result;
     }
+
+    /**
+     * @param int $pid
+     *
+     * @return array|\Contao\Database\Result|object
+     */
+    public static function getNewsYearsByPid($pId)
+    {
+        $t     = static::$strTable;
+        $years = \Database::getInstance()->prepare("SELECT FROM_UNIXTIME(date, '%Y') as year FROM $t WHERE pid = $pId GROUP BY year")->execute();
+
+        if (!$years->numRows)
+        {
+            return [];
+        }
+
+        return $years;
+    }
+
+    /**
+     * @param       $year
+     * @param array $arrOptions
+     *
+     * @return NewsModel|NewsModel[]|\Model\Collection|null
+     */
+    public static function getNewsByYearAndPid($year, $pId, array $arrOptions = [])
+    {
+        $yearStart = mktime(0, 0, 0, 0, 0, intval($year));
+        $yearEnd   = mktime(0, 0, 0, 0, 0, intval($year) + 1);
+
+        return self::findBy(['date > ?', 'date < ?', 'pid=?'], [$yearStart, $yearEnd, $pId], $arrOptions);
+    }
 }
