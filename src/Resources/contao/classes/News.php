@@ -17,6 +17,15 @@ use HeimrichHannot\NewsBundle\Component\NewsFeedGenerator;
 
 class News extends \Contao\News
 {
+
+    const XHR_READER_SURVEY_RESULT_ACTION = 'showReadersSurveyResultAction';
+    const XHR_READER_SURVEY_SAVE_ACTION   = 'saveReadersSurveyAnswerAction';
+
+    const XHR_GROUP = 'hh_news_bundle';
+
+    const XHR_PARAMETER_ID = 'id';
+    const INPUTS_ANSWER_ID = 'answerId';
+
     /**
      * @param array      $arrFeed
      * @param string|int $varId ID or unique alias
@@ -34,12 +43,12 @@ class News extends \Contao\News
         $strLink = $arrFeed['feedBase'] ?: \Environment::get('base');
         $strFile = $arrFeed['feedName'];
 
-        $objFeed = new \Feed($strFile);
-        $objFeed->link = $strLink;
-        $objFeed->title = $arrFeed['title'];
+        $objFeed              = new \Feed($strFile);
+        $objFeed->link        = $strLink;
+        $objFeed->title       = $arrFeed['title'];
         $objFeed->description = $arrFeed['description'];
-        $objFeed->language = $arrFeed['language'];
-        $objFeed->published = $arrFeed['tstamp'];
+        $objFeed->language    = $arrFeed['language'];
+        $objFeed->published   = $arrFeed['tstamp'];
 
         // Get the items
         if ($arrFeed['maxItems'] > 0)
@@ -54,7 +63,7 @@ class News extends \Contao\News
         // Parse the items
         if ($objArticle !== null)
         {
-            $arrUrls = array();
+            $arrUrls = [];
             while ($objArticle->next())
             {
                 $strNewsSource = $arrFeed['news_source'];
@@ -91,10 +100,10 @@ class News extends \Contao\News
                 {
                     continue;
                 }
-                $strUrl = $arrUrls[$jumpTo];
-                $objItem = new \FeedItem();
-                $objItem->title = $objArticle->headline;
-                $objItem->link = $this->getLink($objArticle, $strUrl);
+                $strUrl             = $arrUrls[$jumpTo];
+                $objItem            = new \FeedItem();
+                $objItem->title     = $objArticle->headline;
+                $objItem->link      = $this->getLink($objArticle, $strUrl);
                 $objItem->published = $objArticle->date;
                 /** @var BackendUser $objAuthor */
                 if (($objAuthor = $objArticle->getRelated('author')) !== null)
@@ -105,7 +114,7 @@ class News extends \Contao\News
                 if ($arrFeed['source'] == 'source_text')
                 {
                     $strDescription = '';
-                    $objElement = \ContentModel::findPublishedByPidAndTable($objArticle->id, 'tl_news');
+                    $objElement     = \ContentModel::findPublishedByPidAndTable($objArticle->id, 'tl_news');
                     if ($objElement !== null)
                     {
                         // Overwrite the request (see #7756)
@@ -122,7 +131,7 @@ class News extends \Contao\News
                 {
                     $strDescription = $objArticle->teaser;
                 }
-                $strDescription = $this->replaceInsertTags($strDescription, false);
+                $strDescription       = $this->replaceInsertTags($strDescription, false);
                 $objItem->description = $this->convertRelativeUrls($strDescription, $strLink);
                 // Add the article image as enclosure
                 if ($objArticle->addImage)
@@ -152,6 +161,7 @@ class News extends \Contao\News
                 $objFeed->addItem($objItem);
             }
         }
+
         return $objFeed;
     }
 

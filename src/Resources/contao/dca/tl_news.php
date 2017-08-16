@@ -34,7 +34,7 @@ $dc['palettes']['default'] = str_replace('teaser;', 'teaser,add_teaser_image;', 
 $dc['subpalettes']['add_contact_box']                 = 'contact_box_members,contact_box_header,add_contact_box_link';
 $dc['subpalettes']['add_teaser_image']                = 'teaser_singleSRC,teaser_size,teaser_floating,teaser_imagemargin,teaser_fullsize,teaser_overwriteMeta';
 $dc['subpalettes']['teaser_overwriteMeta']            = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
-$dc['subpalettes']['add_readers_survey']              = 'readers_survey_question, readers_survey_answers';
+$dc['subpalettes']['add_readers_survey']              = 'readers_survey';
 $dc['subpalettes']['info_box_selector_info_box_text'] = 'info_box_text_header, info_box_text_text, info_box_text_link, info_box_text_link_text';
 $dc['subpalettes']['info_box_selector_info_box_none'] = '';
 
@@ -241,40 +241,78 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_readers_survey'],
         'inputType' => 'checkbox',
         'exclude'   => true,
-        'sql'       => "int(10) NOT NULL default 0",
+        'sql'       => "char(1) NOT NULL default ''",
         'eval'      => ['submitOnChange' => true],
     ],
-    'readers_survey_question'    => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['readers_survey_question'],
-        'inputType' => 'text',
-        'sql'       => "varchar(255) NOT NULL DEFAULT ''",
-        'eval'      => ['mandatory' => true],
-    ],
-    'readers_survey_answers'     => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['readers_survey_answers'],
-        'inputType' => 'multiColumnEditor',
-        'eval'      => [
-            'multiColumnEditor' => [
-                'class'               => 'readers_survey_answers',
-                // set to 0 if it should also be possible to have *no* row (default: 1)
-                'minRowCount'         => 1,
-                // set to 0 if an infinite number of rows should be possible (default: 0)
-                'maxRowCount'         => 0,
-                // defaults to false
-                'skipCopyValuesOnAdd' => false,
-                'fields'              => [
-                    // place your fields here as you would normally in your DCA
-                    // (sql is not required)
-                    'readers_survey_answer'      => [
-                        'label'     => &$GLOBALS['TL_LANG']['tl_news']['readers_survey_answer'],
-                        'inputType' => 'text',
-                        'eval'      => ['groupStyle' => 'width:800px', 'mandatory' => true],
+    'readers_survey'             => [
+        'label'        => &$GLOBALS['TL_LANG']['tl_news']['readers_survey_question'],
+        'inputType'    => 'fieldpalette',
+        'foreignKey'   => 'tl_fieldpalette.id',
+        'relation'     => ['type' => 'hasMany', 'load' => 'eager'],
+        'sql'          => "blob NULL",
+        'fieldpalette' => [
+            'config'   => [
+                'hidePublished' => false,
+            ],
+            'list'     => [
+                'label' => [
+                    'fields' => ['news_question'],
+                    'format' => '%s',
+                ],
+            ],
+            'palettes' => [
+                'default' => 'news_question, news_answers',
+            ],
+            'fields'   => [
+                'news_question' => [
+                    'label'     => &$GLOBALS['TL_LANG']['tl_news']['readers_survey_question'],
+                    'exclude'   => true,
+                    'search'    => true,
+                    'inputType' => 'text',
+                    'eval'      => ['maxlength' => 255, 'tl_class' => 'long'],
+                    'sql'       => "varchar(255) NOT NULL default ''",
+                ],
+                'news_answers'  => [
+                    'label'        => &$GLOBALS['TL_LANG']['tl_news']['news_answers'],
+                    'inputType'    => 'fieldpalette',
+                    'foreignKey'   => 'tl_fieldpalette.id',
+                    'relation'     => ['type' => 'hasMany', 'load' => 'eager'],
+                    'sql'          => "blob NULL",
+                    'fieldpalette' => [
+                        'config'   => [
+                            'hidePublished' => false,
+                        ],
+                        'list'     => [
+                            'label' => [
+                                'fields' => ['news_answer'],
+                                'format' => '%s',
+                            ],
+                        ],
+                        'palettes' => [
+                            'default' => 'news_answer',
+                        ],
+                        'fields'   => [
+                            'news_answer'      => [
+                                'label'     => &$GLOBALS['TL_LANG']['tl_news']['news_answers'],
+                                'exclude'   => true,
+                                'search'    => true,
+                                'inputType' => 'text',
+                                'eval'      => ['maxlength' => 255, 'tl_class' => 'long'],
+                                'sql'       => "varchar(255) NOT NULL default ''",
+                            ],
+                            'news_answer_vote' => [
+                                'label'     => &$GLOBALS['TL_LANG']['tl_news']['readers_survey_answers'],
+                                'exclude'   => true,
+                                'search'    => true,
+                                'inputType' => 'text',
+                                'eval'      => ['maxlength' => 255, 'tl_class' => 'long'],
+                                'sql'       => "int(10) NOT NULL default 0",
+                            ],
+                        ],
                     ],
-                    'readers_survey_answer_vote' => [],
                 ],
             ],
         ],
-        'sql'       => "blob NULL",
     ],
     'type'                       => [
         'exclude' => 0,

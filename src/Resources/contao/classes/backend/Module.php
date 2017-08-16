@@ -12,12 +12,17 @@ namespace HeimrichHannot\NewsBundle\Backend;
 class Module extends \Backend
 {
 
-    public function getNewsReadersSurveyModules(\DataContainer $dc)
+    public function getNewsReadersSurveyModules()
     {
         return static::getModuleOptions('news_readers_survey');
     }
 
-    public function getNewsInfoBoxModules(\DataContainer $dc)
+    public function getNewsReadersSurveyResultModules()
+    {
+        return static::getModuleOptions('news_readers_survey_result');
+    }
+
+    public function getNewsInfoBoxModules()
     {
         return static::getModuleOptions('news_info_box');
     }

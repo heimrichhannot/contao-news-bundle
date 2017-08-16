@@ -68,8 +68,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $config       = ['ssl.certificate_authority' => false];
         $route        = System::getContainer()->get('router')->getContext();
         $this->config = [
-            'base_url' => $route->getScheme() . $route->getHost(),
-            System::getContainer()->getParameter('social_stats'),
+            'base_url'     => $route->getScheme() . $route->getHost(),
+            'social_stats' => System::getContainer()->getParameter('social_stats'),
         ];
         try
         {
@@ -78,8 +78,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             try
             {
                 // update google analytics
-                $newsItems = NewsModel::getAllForSocialStatsUpdate(false);
-
+//                $newsItems = NewsModel::getAllForSocialStatsUpdate(false);
+                $newsItems = NewsModel::findAll();
                 $this->updatePageViews($newsItems);
             } catch (\Exception $e)
             {
@@ -89,7 +89,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             // count all items
             $numItems  = NewsModel::getAllForSocialStatsUpdate(true);
             $offset    = 0;
-            $chunkSize = (intval($this->config['chunksize']) > 0 ? intval($this->config['chunksize']) : 100);
+            $chunkSize = (intval($this->config['social_stats']['chunksize']) > 0 ? intval($this->config['social_stats']['chunksize']) : 100);
             $numChunks = intval(ceil($numItems / $chunkSize));
 
             // chunking
@@ -152,11 +152,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         }
 
         $client                 = new \Google_Client();
-        $keyfile                = $this->config['google_sa_keyfile'];
-        $serviceAccountEmail    = $this->config['google_sa_email'];
-        $serviceAccountClientId = $this->config['google_sa_clientid'];
-        $gaProfileId            = $this->config['google_analytics_profile_id'];
-        $gaAccountId            = $this->config['google_analytics_account_id'];
+        $keyfile                = $this->config['social_stats']['google_sa_keyfile'];
+        $serviceAccountEmail    = $this->config['social_stats']['google_sa_email'];
+        $serviceAccountClientId = $this->config['social_stats']['google_sa_clientid'];
+        $gaProfileId            = $this->config['social_stats']['google_analytics_profile_id'];
+        $gaAccountId            = $this->config['social_stats']['google_analytics_account_id'];
         $ga                     = new GoogleAnalyticsCrawler($client, $keyfile, $serviceAccountEmail, $serviceAccountClientId, $gaProfileId, $gaAccountId);
 
         // update existing items
@@ -246,10 +246,10 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
                         }
 
                         $this->logger->debug('Updating disqus stats for identifier: ' . $identifier);
-                        $disqusPublicApiKey      = $this->config['disqusPublicApiKey'];
-                        $disqusForumName         = $this->config['disqusForumName'];
+                        $disqusPublicApiKey      = $this->config['social_stats']['disqusPublicApiKey'];
+                        $disqusForumName         = $this->config['social_stats']['disqusForumName'];
                         $d                       = new DisqusCrawler(
-                            $this->httpClient, $this->config['urlprefixFixed'] . $item->url, $disqusPublicApiKey, $disqusForumName, $identifier
+                            $this->httpClient, $this->config['social_stats']['urlprefixFixed'] . $item->url, $disqusPublicApiKey, $disqusForumName, $identifier
                         );
                         $item->disqus_counter    = $d->getCount();
                         $item->disqus_updated_at = time();

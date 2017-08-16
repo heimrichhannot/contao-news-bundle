@@ -1,0 +1,13 @@
+{% block body %}
+    <div class="news-readers-survey">
+        <div class="form-body">
+            <h5>{{ 'news.readers.survey.result.header'|trans }}</h5>
+        </div>
+        <div class="news-readers-survey-question">{{ question }}</div>
+        <div>
+            {% for key,answer in answers %}
+                <div>{{ key }} <span>{{ answer }}</span></div> <br>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
