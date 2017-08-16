@@ -27,7 +27,6 @@ $dc['palettes']['default'] = str_replace(
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,add_teaser_image;', $dc['palettes']['default']);
 
-
 /**
  * Subpalettes
  */
@@ -182,8 +181,7 @@ $fields = [
         'inputType'        => 'imageSize',
         'reference'        => &$GLOBALS['TL_LANG']['MSC'],
         'eval'             => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
-        'options_callback' => function ()
-        {
+        'options_callback' => function () {
             return System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(BackendUser::getInstance());
         },
         'sql'              => "varchar(64) NOT NULL default ''",
@@ -241,7 +239,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_readers_survey'],
         'inputType' => 'checkbox',
         'exclude'   => true,
-        'sql'       => "int(10) NOT NULL default 0",
+        'sql'       => "char(1) NOT NULL default ''",
         'eval'      => ['submitOnChange' => true],
     ],
     'readers_survey_question'    => [
