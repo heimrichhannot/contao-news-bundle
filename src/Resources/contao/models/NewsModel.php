@@ -683,6 +683,29 @@ class NewsModel extends Model
     }
 
     /**
+     * @param int $pid
+     *
+     * @return array|\Contao\Database\Result|object
+     */
+    public static function getNewsMonthsByYearAndPid($pId, $year)
+    {
+        $yearStart = mktime(0, 0, 0, 0, 0, intval($year));
+        $yearEnd   = mktime(0, 0, 0, 0, 0, intval($year) + 1);
+
+        $t      = static::$strTable;
+        $months = \Database::getInstance()
+            ->prepare("SELECT FROM_UNIXTIME(date, '%m') as month FROM $t WHERE pid = $pId AND date > $yearStart AND date < $yearEnd GROUP BY month")
+            ->execute();
+
+        if (!$months->numRows)
+        {
+            return [];
+        }
+
+        return $months;
+    }
+
+    /**
      * @param       $year
      * @param array $arrOptions
      *
@@ -692,6 +715,20 @@ class NewsModel extends Model
     {
         $yearStart = mktime(0, 0, 0, 0, 0, intval($year));
         $yearEnd   = mktime(0, 0, 0, 0, 0, intval($year) + 1);
+
+        return self::findBy(['date > ?', 'date < ?', 'pid=?'], [$yearStart, $yearEnd, $pId], $arrOptions);
+    }
+
+    /**
+     * @param       $year
+     * @param array $arrOptions
+     *
+     * @return NewsModel|NewsModel[]|\Model\Collection|null
+     */
+    public static function getNewsByYearMonthAndPid($year, $month, $pId, array $arrOptions = [])
+    {
+        $yearStart = mktime(0, 0, 0, intval($month), 1, intval($year));
+        $yearEnd   = mktime(0, 0, 0, intval($month) + 1, 1, intval($year));
 
         return self::findBy(['date > ?', 'date < ?', 'pid=?'], [$yearStart, $yearEnd, $pId], $arrOptions);
     }

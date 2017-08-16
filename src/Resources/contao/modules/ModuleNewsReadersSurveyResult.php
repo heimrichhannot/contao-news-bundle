@@ -9,23 +9,21 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
-use HeimrichHannot\Ajax\AjaxAction;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Form\ReadersSurveyForm;
 use HeimrichHannot\Haste\Util\Url;
-use HeimrichHannot\NewsBundle\News;
 use HeimrichHannot\NewsBundle\NewsModel;
 use Patchwork\Utf8;
 use Symfony\Component\Form\Forms;
 
-class ModuleNewsReadersSurvey extends \ModuleNews
+class ModuleNewsReadersSurveyResult extends \ModuleNews
 {
     /**
      * Template
      *
      * @var string
      */
-    protected $strTemplate = 'mod_news_readers_survey';
+    protected $strTemplate = 'mod_news_readers_survey_result';
 
     /**
      * Display a wildcard in the back end
@@ -75,7 +73,6 @@ class ModuleNewsReadersSurvey extends \ModuleNews
     {
         // Get the news item
         $objArticle = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
-        $factory    = Forms::createFormFactoryBuilder()->addExtensions([])->getFormFactory();
         if ($objArticle === null || !$objArticle->add_readers_survey)
         {
             return '';
@@ -85,37 +82,12 @@ class ModuleNewsReadersSurvey extends \ModuleNews
          */
         $twig = \System::getContainer()->get('twig');
 
-        $arrOptions                                       = [];
-        $arrOptions['action'][ReadersSurveyForm::ANSWERS] =
-            AjaxAction::generateUrl(News::XHR_GROUP, News::XHR_READER_SURVEY_RESULT_ACTION, [News::XHR_PARAMETER_ID => $this->news_readers_survey_result]);
-        $arrOptions['action'][ReadersSurveyForm::SUBMIT]  =
-            AjaxAction::generateUrl(News::XHR_GROUP, News::XHR_READER_SURVEY_SAVE_ACTION, [News::XHR_PARAMETER_ID => $this->news_readers_survey_result]);
-        $readersSurvey                                    = $this->getReadersSurvey($objArticle);
-        $form                                             = $factory->create(ReadersSurveyForm::class, $readersSurvey, $arrOptions);
-        $form->handleRequest();
+        $readersSurvey = $this->getReadersSurvey($objArticle);
 
-//        if ($form->isSubmitted())
-//        {
-//            if ($form->isValid())
-//            {
-//                $data       = $form->getData();
-//                $fieldModel = FieldPaletteModel::findById($data['answers']);
-//                if ($fieldModel !== null)
-//                {
-//                    $fieldModel->news_answer_vote = $fieldModel->news_answer_vote + 1;
-//                    $fieldModel->save();
-//                }
-//                $answers = $this->getAnswersVote($objArticle);
-//
-//                return $this->Template->readers_survey =
-//                    $twig->render('@HeimrichHannotContaoNews/news/readers_survey_result.html.twig', ['answers' => $answers, 'question' => $readersSurvey['question']]);
-//            }
-//        }
-        if ($readersSurvey !== null)
-        {
-            $this->Template->readers_survey =
-                $twig->render('@HeimrichHannotContaoNews/news/readers_survey.html.twig', ['form' => $form->createView(), 'question' => $readersSurvey['question']]);
-        }
+        $answers = $this->getAnswersVote($objArticle);
+
+        return $this->Template->readers_survey =
+            $twig->render('@HeimrichHannotContaoNews/news/readers_survey_result.html.twig', ['answers' => $answers, 'question' => $readersSurvey['question']]);
     }
 
     protected function getReadersSurvey($objArticle)

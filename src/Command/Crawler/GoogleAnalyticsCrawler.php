@@ -8,6 +8,9 @@ namespace  HeimrichHannot\NewsBundle\Command\Crawler;
  */
 class GoogleAnalyticsCrawler extends AbstractCrawler
 {
+    /**
+     * @var \Google_Service_Analytics
+     */
     private $service                = null;
     private $results                = [];
     private $keyfile                = null; // 3e87b7c8ae683f264264779bf135cc613e516737-privatekey.p12
@@ -41,26 +44,22 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
     {
         $this->client->setApplicationName('test-dav-aa'); // name of your app
 
-        $keyFile = '/home/kwagner/Kunden/dav/anwaltauskunft/produkte/contao/files/e1bc8698bc015b6bd01001951103eed7a1bad8b3-privatekey.p12';
+        $keyFile = '/home/kwagner/Kunden/dav/anwaltauskunft/produkte/contao/files/Anwaltverein-fadb2d22927b.json';
 
         if (!file_exists($keyFile))
         {
             return false;
         }
 
-        $key = file_get_contents($keyFile);
 
-        $this->client->setDeveloperKey($key);
+        $this->client->setAuthConfig($keyFile);
         $this->client->setScopes(['https://www.googleapis.com/auth/analytics.readonly']);
-
-        // other settings
-        $this->client->setClientId($this->serviceAccountClientId); // from API console
-
+//        $key = file_get_contents($keyFile);
+//        $this->client->setDeveloperKey('AIzaSyBJtPPO2nAnbgVn24mHMu9fwglF_uQCaqM');
         // create service and get data
         $this->service = new \Google_Service_Analytics($this->client);
 
         $this->fetchData();
-
     }
 
     public function fetchData()

@@ -5,6 +5,7 @@
         <div class="form-body">
             <h5>{{ 'news.readers.survey.header'|trans }}</h5>
         </div>
+        <div class="news-readers-survey-question">{{ question }}</div>
         <div>
             {% for answer in form.answers %}
                 {{ form_widget(answer) }} {{ form_label(answer) }} <br>
