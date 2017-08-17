@@ -83,9 +83,9 @@ class ModuleNewsReadersSurvey extends \ModuleNews
         /**
          * @var \Twig_Environment $twig
          */
-        $twig       = \System::getContainer()->get('twig');
-        $arrOptions = [];
-        $showResult = AjaxAction::generateUrl(
+        $twig          = \System::getContainer()->get('twig');
+        $arrOptions    = [];
+        $showResult    = AjaxAction::generateUrl(
             News::XHR_GROUP,
             News::XHR_READER_SURVEY_RESULT_ACTION,
             [
@@ -93,8 +93,6 @@ class ModuleNewsReadersSurvey extends \ModuleNews
                 'items'                => \Input::get('items'),
             ]
         );
-//        $arrOptions['action'][ReadersSurveyForm::SUBMIT]  =
-//            AjaxAction::generateUrl(News::XHR_GROUP, News::XHR_READER_SURVEY_SAVE_ACTION, [News::XHR_PARAMETER_ID => $this->news_readers_survey_result]);
         $readersSurvey = $this->getReadersSurvey($objArticle);
         $form          = $factory->create(ReadersSurveyForm::class, $readersSurvey, $arrOptions);
         $form->handleRequest();
