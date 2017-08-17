@@ -19,12 +19,11 @@ class News extends \Contao\News
 {
 
     const XHR_READER_SURVEY_RESULT_ACTION = 'showReadersSurveyResultAction';
-    const XHR_READER_SURVEY_SAVE_ACTION   = 'saveReadersSurveyAnswerAction';
 
     const XHR_GROUP = 'hh_news_bundle';
 
-    const XHR_PARAMETER_ID = 'id';
-    const INPUTS_ANSWER_ID = 'answerId';
+    const XHR_PARAMETER_ID    = 'id';
+    const XHR_PARAMETER_ITEMS = 'items';
 
     /**
      * @param array      $arrFeed

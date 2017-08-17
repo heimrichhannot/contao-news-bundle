@@ -83,38 +83,41 @@ class ModuleNewsReadersSurvey extends \ModuleNews
         /**
          * @var \Twig_Environment $twig
          */
-        $twig = \System::getContainer()->get('twig');
-
-        $arrOptions                                       = [];
-        $arrOptions['action'][ReadersSurveyForm::ANSWERS] =
-            AjaxAction::generateUrl(News::XHR_GROUP, News::XHR_READER_SURVEY_RESULT_ACTION, [News::XHR_PARAMETER_ID => $this->news_readers_survey_result]);
-        $arrOptions['action'][ReadersSurveyForm::SUBMIT]  =
-            AjaxAction::generateUrl(News::XHR_GROUP, News::XHR_READER_SURVEY_SAVE_ACTION, [News::XHR_PARAMETER_ID => $this->news_readers_survey_result]);
-        $readersSurvey                                    = $this->getReadersSurvey($objArticle);
-        $form                                             = $factory->create(ReadersSurveyForm::class, $readersSurvey, $arrOptions);
+        $twig          = \System::getContainer()->get('twig');
+        $arrOptions    = [];
+        $showResult    = AjaxAction::generateUrl(
+            News::XHR_GROUP,
+            News::XHR_READER_SURVEY_RESULT_ACTION,
+            [
+                News::XHR_PARAMETER_ID => $this->news_readers_survey_result,
+                'items'                => \Input::get('items'),
+            ]
+        );
+        $readersSurvey = $this->getReadersSurvey($objArticle);
+        $form          = $factory->create(ReadersSurveyForm::class, $readersSurvey, $arrOptions);
         $form->handleRequest();
 
-//        if ($form->isSubmitted())
-//        {
-//            if ($form->isValid())
-//            {
-//                $data       = $form->getData();
-//                $fieldModel = FieldPaletteModel::findById($data['answers']);
-//                if ($fieldModel !== null)
-//                {
-//                    $fieldModel->news_answer_vote = $fieldModel->news_answer_vote + 1;
-//                    $fieldModel->save();
-//                }
-//                $answers = $this->getAnswersVote($objArticle);
-//
-//                return $this->Template->readers_survey =
-//                    $twig->render('@HeimrichHannotContaoNews/news/readers_survey_result.html.twig', ['answers' => $answers, 'question' => $readersSurvey['question']]);
-//            }
-//        }
+        if ($form->isSubmitted())
+        {
+            if ($form->isValid())
+            {
+                $data       = $form->getData();
+                $fieldModel = FieldPaletteModel::findById($data['answers']);
+                if ($fieldModel !== null)
+                {
+                    $fieldModel->news_answer_vote = $fieldModel->news_answer_vote + 1;
+                    $fieldModel->save();
+                }
+
+                return $this->Template->readers_survey = \Controller::getFrontendModule($this->news_readers_survey_result);
+            }
+        }
         if ($readersSurvey !== null)
         {
-            $this->Template->readers_survey =
-                $twig->render('@HeimrichHannotContaoNews/news/readers_survey.html.twig', ['form' => $form->createView(), 'question' => $readersSurvey['question']]);
+            $this->Template->readers_survey = $twig->render(
+                '@HeimrichHannotContaoNews/news/readers_survey.html.twig',
+                ['form' => $form->createView(), 'question' => $readersSurvey['question'], 'showResult' => $showResult]
+            );
         }
     }
 

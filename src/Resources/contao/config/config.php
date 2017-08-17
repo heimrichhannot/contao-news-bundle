@@ -29,17 +29,10 @@ $GLOBALS['TL_HOOKS']['initializeSystem'][] = ['HeimrichHannot\NewsBundle\Control
  */
 $GLOBALS['AJAX'][\HeimrichHannot\NewsBundle\News::XHR_GROUP] = [
     'actions' => [
-        \HeimrichHannot\NewsBundle\News::XHR_READER_SURVEY_SAVE_ACTION   => [
-            'arguments' => [
-                \HeimrichHannot\NewsBundle\News::XHR_PARAMETER_ID,
-                \HeimrichHannot\NewsBundle\News::INPUTS_ANSWER_ID,
-            ],
-            'optional'  => [],
-        ],
         \HeimrichHannot\NewsBundle\News::XHR_READER_SURVEY_RESULT_ACTION => [
             'arguments' => [
                 \HeimrichHannot\NewsBundle\News::XHR_PARAMETER_ID,
-                \HeimrichHannot\NewsBundle\News::INPUTS_ANSWER_ID,
+                \HeimrichHannot\NewsBundle\News::XHR_PARAMETER_ITEMS,
             ],
             'optional'  => [],
         ],
