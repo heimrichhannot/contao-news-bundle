@@ -39,7 +39,7 @@ $GLOBALS['AJAX'][\HeimrichHannot\NewsBundle\News::XHR_GROUP] = [
         \HeimrichHannot\NewsBundle\News::XHR_READER_SURVEY_RESULT_ACTION => [
             'arguments' => [
                 \HeimrichHannot\NewsBundle\News::XHR_PARAMETER_ID,
-                \HeimrichHannot\NewsBundle\News::INPUTS_ANSWER_ID,
+                \HeimrichHannot\NewsBundle\News::XHR_PARAMETER_ITEMS,
             ],
             'optional'  => [],
         ],

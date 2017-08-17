@@ -23,8 +23,9 @@ class News extends \Contao\News
 
     const XHR_GROUP = 'hh_news_bundle';
 
-    const XHR_PARAMETER_ID = 'id';
-    const INPUTS_ANSWER_ID = 'answerId';
+    const XHR_PARAMETER_ID    = 'id';
+    const INPUTS_ANSWER_ID    = 'answerId';
+    const XHR_PARAMETER_ITEMS = 'items';
 
     /**
      * @param array      $arrFeed
