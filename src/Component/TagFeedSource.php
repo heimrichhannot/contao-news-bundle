@@ -114,7 +114,7 @@ class TagFeedSource implements FeedSourceInterface, NewsTopicSourceInterface
      */
     public static function getTopics()
     {
-        $objChannels = static::getChannels();
+        $objChannels = TagModel::findBySource('app.news');
         $arrTopics = [];
         while ($objChannels->next())
         {
