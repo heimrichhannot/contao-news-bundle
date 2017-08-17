@@ -6,7 +6,11 @@
         <div class="news-readers-survey-question">{{ question }}</div>
         <div>
             {% for key,answer in answers %}
-                <div>{{ key }} <span>{{ answer }}</span></div> <br>
+                <div>{{ key }}</div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: {{ answer }}%;" aria-valuenow="{{ answer }}" aria-valuemin="0" aria-valuemax="100">{{ answer }}%
+                    </div>
+                </div>
             {% endfor %}
         </div>
     </div>

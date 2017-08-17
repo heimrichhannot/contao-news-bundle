@@ -32,32 +32,6 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
      */
     public function generate()
     {
-        if (TL_MODE == 'BE')
-        {
-            /** @var \BackendTemplate|object $objTemplate */
-            $objTemplate = new \BackendTemplate('be_wildcard');
-
-            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['newsreader'][0]) . ' ###';
-            $objTemplate->title    = $this->headline;
-            $objTemplate->id       = $this->id;
-            $objTemplate->link     = $this->name;
-            $objTemplate->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
-
-            return $objTemplate->parse();
-        }
-
-        // Set the item from the auto_item parameter
-        if (!isset($_GET['items']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
-        {
-            \Input::setGet('items', \Input::get('auto_item'));
-        }
-
-        // Do not index or cache the page if no news item has been specified
-        if (!\Input::get('items'))
-        {
-            return '';
-        }
-
         $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($this->news_archives));
 
         // Do not index or cache the page if there are no archives
@@ -86,8 +60,10 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
 
         $answers = $this->getAnswersVote($objArticle);
 
-        return $this->Template->readers_survey =
-            $twig->render('@HeimrichHannotContaoNews/news/readers_survey_result.html.twig', ['answers' => $answers, 'question' => $readersSurvey['question']]);
+        return $this->Template->readers_survey = $twig->render(
+            '@HeimrichHannotContaoNews/news/readers_survey_result.html.twig',
+            ['answers' => $answers, 'question' => $readersSurvey['question']]
+        );
     }
 
     protected function getReadersSurvey($objArticle)
@@ -114,9 +90,10 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
 
     protected function getAnswersVote($objArticle)
     {
-        $answers = null;
+        $result  = null;
         $surveys = unserialize($objArticle->readers_survey);
-
+        $answers = [];
+        $sum     = 0;
         foreach ($surveys as $survey)
         {
             $fieldPaletteQuestion = FieldPaletteModel::findById($survey);
@@ -125,10 +102,17 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
             {
                 $fieldPaletteAnswer                        = FieldPaletteModel::findById($answerId);
                 $answers[$fieldPaletteAnswer->news_answer] = $fieldPaletteAnswer->news_answer_vote;
+                $sum                                       += $fieldPaletteAnswer->news_answer_vote;
             }
         }
 
-        return $answers;
+        foreach ($answers as $key => $value)
+        {
+            $vote         = (intval($value) / intval($sum)) * 100;
+            $result[$key] = round($vote);
+        }
+
+        return $result;
     }
 
 }

@@ -40,7 +40,7 @@ class ReadersSurveyForm extends AbstractType
             [
                 'label' => 'news.readers.survey.submit',
                 'attr'  => [
-                    'data-action' => $options['action'][static::SUBMIT],
+//                    'data-action' => $options['action'][static::SUBMIT],
                     'class'       => 'btn btn-primary',
                 ],
             ]

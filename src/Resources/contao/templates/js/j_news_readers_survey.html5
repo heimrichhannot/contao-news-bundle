@@ -6,13 +6,11 @@
                 this.registerSubmit();
             },
             registerSubmit: function () {
-                $(document).on('click', '#readers_survey_form_submit', function () {
-                    $('.preload').css('visibility', 'visible');
+                $(document).on('click', '#showReadersSurveyResult', function () {
                     $.ajax({
-                        url: $("#readers_survey_form_submit").data("action") + '&sort=' + $('#readers_survey_form_submit').val(),
+                        url: $("#showReadersSurveyResult").data("action"),
                         success: function (data, textStatus, jqXHR) {
                             $(".mod_news_readers_survey").html(data.result.html);
-                            $('.preload').css('visibility', 'hidden');
                         }
                     });
                 })
