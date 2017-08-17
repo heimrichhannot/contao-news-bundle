@@ -18,11 +18,5 @@ $GLOBALS['TL_DCA']['tl_news_tags'] = [
         'id'         => [
             'sql' => ['type' => 'integer', 'unsigned' => true, 'autoincrement' => true],
         ],
-//        'news_id'    => [
-//            'sql' => ['type' => 'integer', 'unsigned' => true],
-//        ],
-//        'cfg_tag_id' => [
-//            'sql' => ['type' => 'integer', 'unsigned' => true],
-//        ],
     ],
 ];

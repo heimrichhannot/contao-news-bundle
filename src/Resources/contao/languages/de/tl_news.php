@@ -5,6 +5,7 @@ $arrLang = &$GLOBALS['TL_LANG']['tl_news'];
 /**
  * Fields
  */
+$arrLang['teaser_short']            = ['Teasertext (kurz)', 'Der Teasertext kann in einer Nachrichtenliste anstatt des ganzen Beitrags angezeigt werden.'];
 $arrLang['writers']                 = ['Verfasser auswählen', 'Wählen Sie einen oder mehrere Verfasser aus der Mitgliederdatenbank aus.'];
 $arrLang['tags']                    = ['Schlagwörter', 'Vergeben Sie ein oder mehrere Schlagwörter.'];
 $arrLang['add_contact_box']         = ['Kontaktbox hinzufügen'];

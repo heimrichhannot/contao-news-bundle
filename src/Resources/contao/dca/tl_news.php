@@ -25,7 +25,7 @@ $dc['palettes']['default'] = str_replace(
     '{tags_legend:hide},tags;{contact_box_legend},add_contact_box;{info_box_legend:hide},info_box_selector;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
     $dc['palettes']['default']
 );
-$dc['palettes']['default'] = str_replace('teaser;', 'teaser,add_teaser_image;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
 
 /**
  * Subpalettes
@@ -42,6 +42,14 @@ $dc['subpalettes']['info_box_selector_info_box_none'] = '';
  * Fields
  */
 $fields = [
+    'teaser_short'               => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['teaser_short'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'textarea',
+        'eval'      => ['rte' => 'tinyMCE', 'tl_class' => 'clr'],
+        'sql'       => "text NULL",
+    ],
     'tags'                       => [
         'label'         => &$GLOBALS['TL_LANG']['tl_news']['tags'],
         'exclude'       => true,
