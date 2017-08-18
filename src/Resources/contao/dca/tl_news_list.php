@@ -24,18 +24,25 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
 
     // Config
     'config'      => [
-        'label'            => $GLOBALS['TL_LANG']['tl_news_archive']['lists'][0],
-        'dataContainer'    => 'Table',
-        'enableVersioning' => true,
-        'onload_callback'  => [//            array('tl_news_list', 'checkPermission')
+        'label'             => $GLOBALS['TL_LANG']['tl_news_archive']['lists'][0],
+        'dataContainer'     => 'Table',
+        'enableVersioning'  => true,
+        'onload_callback'   => [
+            ['HeimrichHannot\NewsBundle\Backend\NewsList', 'checkPermission'],
         ],
-        'sql'              => [
+        'onsubmit_callback' => [
+            ['HeimrichHannot\Haste\Dca\General', 'setDateAdded'],
+        ],
+        'oncopy_callback'   => [
+            ['HeimrichHannot\FieldPalette\FieldPalette', 'copyFieldPaletteRecords'],
+        ],
+        'sql'               => [
             'keys' => [
                 'id'  => 'primary',
                 'pid' => 'index',
             ],
         ],
-        'backlink'         => 'do=news',
+        'backlink'          => 'do=news',
     ],
 
     // List
@@ -64,29 +71,31 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'edit'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_news_list']['edit'],
                 'href'  => 'act=edit',
-                'icon'  => 'edit.gif',
+                'icon'  => 'edit.svg',
             ],
             'copy'   => [
-                'label' => &$GLOBALS['TL_LANG']['tl_news_list']['copy'],
-                'href'  => 'act=copy',
-                'icon'  => 'copy.gif',
+                'label'           => &$GLOBALS['TL_LANG']['tl_news_list']['copy'],
+                'href'            => 'act=copy',
+                'icon'            => 'copy.svg',
+                'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'copyList'],
             ],
             'delete' => [
-                'label'      => &$GLOBALS['TL_LANG']['tl_news_list']['delete'],
-                'href'       => 'act=delete',
-                'icon'       => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+                'label'           => &$GLOBALS['TL_LANG']['tl_news_list']['delete'],
+                'href'            => 'act=delete',
+                'icon'            => 'delete.svg',
+                'attributes'      => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+                'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'deleteList'],
+            ],
+            'toggle' => [
+                'label'           => &$GLOBALS['TL_LANG']['tl_news_list']['toggle'],
+                'icon'            => 'visible.svg',
+                'attributes'      => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
+                'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'toggleList'],
             ],
             'show'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_news_list']['show'],
                 'href'  => 'act=show',
-                'icon'  => 'show.gif',
-            ],
-            'toggle' => [
-                'label'      => &$GLOBALS['TL_LANG']['tl_news_list']['toggle'],
-                'icon'       => 'visible.gif',
-                'attributes' => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-                //                'button_callback' => ['tl_news_list', 'toggleIcon'],
+                'icon'  => 'show.svg',
             ],
         ],
     ],
@@ -94,7 +103,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
     // Palettes
     'palettes'    => [
         '__selector__' => ['published'],
-        'default'      => '{title_legend},title;{publish_legend},published',
+        'default'      => '{general_legend},title,news;{publish_legend},published',
     ],
     // Sub palettes
     'subpalettes' => [
@@ -114,6 +123,13 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
         'tstamp'    => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
+        'dateAdded' => [
+            'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
+            'sorting' => true,
+            'flag'    => 6,
+            'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
+            'sql'     => "int(10) unsigned NOT NULL default '0'",
+        ],
         'title'     => [
             'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['title'],
             'exclude'   => true,
@@ -124,7 +140,39 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
         'news'      => [
-
+            'label'        => &$GLOBALS['TL_LANG']['tl_news_list']['news'],
+            'inputType'    => 'fieldpalette',
+            'foreignKey'   => 'tl_fieldpalette.id',
+            'relation'     => ['type' => 'hasMany', 'load' => 'eager'],
+            'eval'         => ['tl_class' => 'clr wizard'],
+            'sql'          => "blob NULL",
+            'fieldpalette' => [
+                'config'   => [
+                    'hidePublished' => false,
+                ],
+                'list'     => [
+                    'label' => [
+                        'fields'         => ['news_list_news'],
+                        'format'         => '%s',
+                        'label_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateNewsItemLabel'],
+                    ],
+                ],
+                'palettes' => [
+                    'default' => 'news_list_news',
+                ],
+                'fields'   => [
+                    'news_list_news' => [
+                        'label'            => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_news'],
+                        'exclude'          => true,
+                        'inputType'        => 'select',
+                        'foreignKey'       => 'tl_news.title',
+                        'relation'         => ['type' => 'hasMany', 'load' => 'eager'],
+                        'options_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'getNewsOptions'],
+                        'eval'             => ['mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
+                        'sql'              => "int(10) unsigned NOT NULL default '0'",
+                    ],
+                ],
+            ],
         ],
         'published' => [
             'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['published'],
