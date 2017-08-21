@@ -11,8 +11,7 @@ class FacebookCrawler extends AbstractCrawler
     public function getCount($url = null)
     {
         $response = $this->client->request('GET', 'https://graph.facebook.com/?id=' . $this->url);
-
-        $count = 0;
+        $count    = 0;
 
         if ($response->getStatusCode() == 200)
         {
@@ -20,7 +19,7 @@ class FacebookCrawler extends AbstractCrawler
 
             if ($data['id'] == $this->url)
             {
-                $count = intval($data['shares']);
+                $count = intval($data['share']['share_count']);
             }
         }
 

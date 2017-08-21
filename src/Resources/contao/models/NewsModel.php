@@ -615,7 +615,7 @@ class NewsModel extends Model
     {
         $urlString[] = \NewsArchiveModel::findByPk($this->pid) == null ? null : \NewsArchiveModel::findByPk($this->pid)->title;
         $urlString[] = NewsCategoryModel::findPublishedByIdOrAlias($this->id) == null ? null : NewsCategoryModel::findPublishedByIdOrAlias($this->id)->title;
-        $urlString[] = $this->alias . '.html';
+        $urlString[] = $this->alias;
         $url         = $baseUrl;
         foreach ($urlString as $string)
         {

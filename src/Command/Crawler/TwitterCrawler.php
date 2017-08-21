@@ -20,7 +20,13 @@ class TwitterCrawler extends AbstractCrawler
     {
 //        return 0;
 
-        $response = $this->client->request('GET', 'http://urls.api.twitter.com/1/urls/count.json?url=' . $this->url);
+        $this->url = 'https://anwaltauskunft.de/magazin/beruf/bildung-ausbildung/2113/bewerbung-bei-der-polizei-wer-darf-ordnungshueter-werden/';
+
+//        $response = $this->client->request('GET', 'http://urls.api.twitter.com/1/urls/count.json?url=' . $this->url);
+        $response = $this->client->request(
+            'GET',
+            'https://api.twitter.com/1.1/search/tweets.json?q=https://anwaltauskunft.de/magazin/beruf/bildung-ausbildung/2113/bewerbung-bei-der-polizei-wer-darf-ordnungshueter-werden/'
+        );
 
         $count = 0;
 

@@ -78,8 +78,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             try
             {
                 // update google analytics
-//                $newsItems = NewsModel::getAllForSocialStatsUpdate(false);
-                $newsItems = NewsModel::findAll();
+                $newsItems = NewsModel::getAllForSocialStatsUpdate(false);
+//                $newsItems = NewsModel::findAll();
                 $this->updatePageViews($newsItems);
             } catch (\Exception $e)
             {
@@ -97,13 +97,13 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             {
                 $newsItems = NewsModel::getAllForSocialStatsUpdate(false, $offset, $chunkSize);
 
-                try
-                {
-                    $this->updateStats($newsItems, 'facebook', NewsModel::$TYPE_NEWS);
-                } catch (GuzzleException $e)
-                {
-                    $this->logger->warning('facebook stats: ' . $e->getMessage());
-                };
+//                try
+//                {
+//                    $this->updateStats($newsItems, 'facebook', NewsModel::$TYPE_NEWS);
+//                } catch (GuzzleException $e)
+//                {
+//                    $this->logger->warning('facebook stats: ' . $e->getMessage());
+//                };
 
                 try
                 {
