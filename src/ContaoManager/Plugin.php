@@ -22,7 +22,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     {
         return [
             BundleConfig::create(HeimrichHannotContaoNewsBundle::class)
-                ->setLoadAfter([CodefogTagsBundle::class, 'news_categories', ContaoNewsBundle::class])
+                ->setLoadAfter([ContaoNewsBundle::class, CodefogTagsBundle::class])
         ];
     }
 

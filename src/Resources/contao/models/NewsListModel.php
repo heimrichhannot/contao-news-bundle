@@ -8,9 +8,11 @@
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
-$lang = &$GLOBALS['TL_LANG']['tl_news_archive'];
+namespace HeimrichHannot\NewsBundle;
 
-/**
- * Buttons
- */
-$GLOBALS['TL_LANG']['tl_news_archive']['lists'] = ['Nachrichtenlisten', 'Mehrere Nachrichten in eigenen Listen individuell gruppieren.'];
+
+class NewsListModel extends \Model
+{
+    protected static $strTable = 'tl_news_list';
+
+}
