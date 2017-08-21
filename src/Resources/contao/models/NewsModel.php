@@ -732,4 +732,101 @@ class NewsModel extends Model
 
         return self::findBy(['date > ?', 'date < ?', 'pid=?'], [$yearStart, $yearEnd, $pId], $arrOptions);
     }
+
+    /**
+     * Count published news items by their parent ID
+     *
+     * @param array   $arrPids     An array of news archive IDs
+     * @param array   $arrIds      An array of news IDs
+     * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
+     * @param array   $arrOptions  An optional options array
+     *
+     * @return integer The number of news items
+     */
+    public static function countPublishedByPidsAndIds($arrPids, $arrIds, $blnFeatured = null, array $arrOptions = [])
+    {
+        if (!is_array($arrPids) || empty($arrPids))
+        {
+            return 0;
+        }
+
+        $t          = static::$strTable;
+        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")"];
+
+        if (is_array($arrIds) && !empty($arrIds))
+        {
+            $arrColumn[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ")";
+        }
+
+        if ($blnFeatured === true)
+        {
+            $arrColumns[] = "$t.featured='1'";
+        }
+        elseif ($blnFeatured === false)
+        {
+            $arrColumns[] = "$t.featured=''";
+        }
+
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
+        {
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+        }
+
+        return static::countBy($arrColumns, null, $arrOptions);
+    }
+
+    /**
+     * Find published news items by their parent ID
+     *
+     * @param array   $arrPids     An array of news archive IDs
+     * @param array   $arrIds      An array of news IDs
+     * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
+     * @param integer $intLimit    An optional limit
+     * @param integer $intOffset   An optional offset
+     * @param array   $arrOptions  An optional options array
+     *
+     * @return \Model\Collection|NewsModel[]|NewsModel|null A collection of models or null if there are no news
+     */
+    public static function findPublishedByPidsAndIds($arrPids, $arrIds, $blnFeatured = null, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
+    {
+        if (!is_array($arrPids) || empty($arrPids))
+        {
+            return null;
+        }
+
+        $t          = static::$strTable;
+        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")"];
+
+        if (is_array($arrIds) && !empty($arrIds))
+        {
+            $arrColumn[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ")";
+        }
+
+        if ($blnFeatured === true)
+        {
+            $arrColumns[] = "$t.featured='1'";
+        }
+        elseif ($blnFeatured === false)
+        {
+            $arrColumns[] = "$t.featured=''";
+        }
+
+        // Never return unpublished elements in the back end, so they don't end up in the RSS feed
+        if (!BE_USER_LOGGED_IN || TL_MODE == 'BE')
+        {
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+        }
+
+        if (!isset($arrOptions['order']))
+        {
+            $arrOptions['order'] = "$t.date DESC";
+        }
+
+        $arrOptions['limit']  = $intLimit;
+        $arrOptions['offset'] = $intOffset;
+
+        return static::findBy($arrColumns, null, $arrOptions);
+    }
 }

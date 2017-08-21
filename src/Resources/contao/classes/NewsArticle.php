@@ -39,48 +39,8 @@ class NewsArticle
 
     protected function extend()
     {
-        $this->addParentCategory();
     }
 
-    protected function addParentCategory()
-    {
-        $set = new \stdClass();
-
-        $categories = deserialize($this->article->categories, true);
-
-        if ($this->article->primaryCategory > 0
-            && ($tree = \System::getContainer()->get('hh.news-bundle.category_helper')->getCategoryTree($this->article->primaryCategory, 0)) !== null)
-        {
-            $set->primary = $tree[0];
-        }
-
-        if (count($categories) > 0 && ($objAllCategories = NewsCategoryModel::findPublishedByIds($categories)) !== null)
-        {
-            $all = [];
-
-            while ($objAllCategories->next())
-            {
-                // set first category as primary category
-                if (!$set->primary && ($tree = \System::getContainer()->get('hh.news-bundle.category_helper')->getCategoryTree($this->article->primaryCategory, 0)) !== null)
-                {
-                    $set->primary = $tree[0];
-                }
-
-                $category       = (object) $objAllCategories->row();
-                $category->tree = \System::getContainer()->get('hh.news-bundle.category_helper')->getCategoryTree($objAllCategories->id);
-                $all[]          = $category;
-            }
-
-            $set->categories = $all;
-        }
-
-        $this->template->categories = $set;
-    }
-
-    protected function getCategoryTree($intCategory)
-    {
-
-    }
 
     /**
      * @return \FrontendTemplate

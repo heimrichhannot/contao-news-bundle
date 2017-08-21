@@ -31,8 +31,10 @@ $GLOBALS['TL_MODELS']['tl_news_list'] = '\HeimrichHannot\NewsBundle\NewsListMode
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['initializeSystem'][] = ['HeimrichHannot\NewsBundle\Controller\FrontendController', 'xhrAction'];
-$GLOBALS['TL_HOOKS']['parseArticles'][]    = ['HeimrichHannot\NewsBundle\Hooks', 'parseArticleHook'];
+$GLOBALS['TL_HOOKS']['initializeSystem']['hh-news-bundle']   = ['HeimrichHannot\NewsBundle\Controller\FrontendController', 'xhrAction'];
+$GLOBALS['TL_HOOKS']['parseArticles']['hh-news-bundle']      = ['HeimrichHannot\NewsBundle\Hooks', 'parseArticleHook'];
+$GLOBALS['TL_HOOKS']['newsListCountItems']['hh-news-bundle'] = ['HeimrichHannot\NewsBundle\Hooks', 'newsListCountItemsHook'];
+$GLOBALS['TL_HOOKS']['newsListFetchItems']['hh-news-bundle'] = ['HeimrichHannot\NewsBundle\Hooks', 'newsListFetchItemsHook'];
 
 /**
  * Ajax Actions

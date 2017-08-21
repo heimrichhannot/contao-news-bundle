@@ -23,6 +23,3 @@ services:
     hh.news-bundle.news_feed_tag_source:
         class: HeimrichHannot\NewsBundle\Component\TagFeedSource
         tags: [news-bundle.feed_source, hh.newsalert.topic_source]
-
-    hh.news-bundle.category_helper:
-        class: HeimrichHannot\NewsBundle\Services\CategoryHelper
