@@ -30,7 +30,13 @@ $arrLang['info_box_text_link']      = ['Infobox-Link hinzufügen'];
 $arrLang['info_box_text_link_text'] = ['Infobox-Link-Text hinzufügen'];
 $arrLang['info_box_text_header']    = ['Infobox-Überschrift hinzufügen'];
 $arrLang['add_related_news']        = ['Verwandte Nachrichten hinzufügen', 'Verknüpfen Sie verwandte Nachrichten für diesen Beitrag.'];
-$arrLang['related_news']            = ['Verwandte Nachrichten', 'Erhalten Sie eine Auswahl von verwandten Nachrichten indem Sie deren Überschriften in dieses Feld eingeben. (Nachrichten können per Drag & Drop in soriert werden)'];
+$arrLang['related_news']            = [
+    'Verwandte Nachrichten',
+    'Erhalten Sie eine Auswahl von verwandten Nachrichten indem Sie deren Überschriften in dieses Feld eingeben. (Nachrichten können per Drag & Drop in soriert werden)',
+];
+$arrLang['page_title']              = ['Seitentitel', 'Vergeben Sie einen individuellen Seitentitel &lt;title&gt; für diese Nachricht. (Standard: Titel)'];
+$arrLang['meta_description']        = ['Meta-Description', 'Vergeben Sie eine individuellen &lt;meta name="description"&gt; für diese Nachricht. (Standard: Teasertext)'];
+$arrLang['meta_keywords']           = ['Meta-Keywords', 'Vergeben Sie individuelle &lt;meta type="keywords"&gt; für diese Nachricht. (Standard: Keine)'];
 
 /**
  * Legends
@@ -41,6 +47,7 @@ $arrLang['contact_box_legend']    = 'Kontakt';
 $arrLang['readers_survey_legend'] = 'Leser-Umfrage';
 $arrLang['info_box_legend']       = 'Infobox';
 $arrLang['related_news_legend']   = 'Verwandte Nachrichten';
+$arrLang['meta_legend']           = 'Metadaten';
 
 /**
  * Placeholders

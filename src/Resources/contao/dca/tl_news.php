@@ -27,6 +27,7 @@ $dc['palettes']['default'] = str_replace(
     $dc['palettes']['default']
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},page_title,meta_description,meta_keywords;', $dc['palettes']['default']);
 
 /**
  * Subpalettes
@@ -255,6 +256,7 @@ $fields = [
     'readers_survey'             => [
         'label'        => &$GLOBALS['TL_LANG']['tl_news']['readers_survey_question'],
         'inputType'    => 'fieldpalette',
+        'exclude'      => true,
         'foreignKey'   => 'tl_fieldpalette.id',
         'relation'     => ['type' => 'hasMany', 'load' => 'eager'],
         'sql'          => "blob NULL",
@@ -322,106 +324,35 @@ $fields = [
             ],
         ],
     ],
-    'type'                       => [
-        'exclude' => 0,
-        'type'    => 'text',
-        'eval'    => ['size' => 30],
-        'sql'     => ['type' => 'string', 'default' => ''],
-    ],
-    'hidden'                     => [
-        'exclude' => 1,
-        'type'    => 'checkbox',
-        'sql'     => 'int(1) NOT NULL default 0',
-    ],
     'facebook_counter'           => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 4,
-            'rgxp' => 'alnum',
-        ],
-        'sql'       => ['type' => 'integer', 'default' => '0'],
+        'sql' => ['type' => 'integer', 'default' => '0'],
     ],
     'facebook_updated_at'        => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 10,
-            'rgxp' => 'time',
-        ],
-        'sql'       => "int(10) unsigned NOT NULL default '0'",
+        'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
     'twitter_counter'            => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 4,
-            'rgxp' => 'alnum',
-        ],
-        'sql'       => ['type' => 'integer', 'default' => '0'],
+        'sql' => ['type' => 'integer', 'default' => '0'],
     ],
     'twitter_updated_at'         => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 10,
-            'rgxp' => 'time',
-        ],
-        'sql'       => "int(10) unsigned NOT NULL default '0'",
+        'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
     'google_plus_counter'        => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 4,
-            'rgxp' => 'alnum',
-        ],
-        'sql'       => ['type' => 'integer', 'default' => '0'],
+        'sql' => ['type' => 'integer', 'default' => '0'],
     ],
     'google_plus_updated_at'     => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 10,
-            'rgxp' => 'time',
-        ],
-        'sql'       => "int(10) unsigned NOT NULL default '0'",
+        'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
     'disqus_counter'             => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 4,
-            'rgxp' => 'alnum',
-        ],
-        'sql'       => ['type' => 'integer', 'default' => '0'],
+        'sql' => ['type' => 'integer', 'default' => '0'],
     ],
     'disqus_updated_at'          => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 10,
-            'rgxp' => 'time',
-        ],
-        'sql'       => "int(10) unsigned NOT NULL default '0'",
+        'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
     'google_analytic_counter'    => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 4,
-            'rgxp' => 'alnum',
-        ],
-        'sql'       => ['type' => 'integer', 'default' => '0'],
+        'sql' => ['type' => 'integer', 'default' => '0'],
     ],
     'google_analytic_updated_at' => [
-        'exclude'   => 0,
-        'inputType' => 'text',
-        'eval'      => [
-            'size' => 10,
-            'rgxp' => 'time',
-        ],
-        'sql'       => "int(10) unsigned NOT NULL default '0'",
+        'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
     'info_box_selector'          => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_selector'],
@@ -439,23 +370,27 @@ $fields = [
     'info_box_text_header'       => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_header'],
         'inputType' => 'text',
+        'exclude'   => true,
         'eval'      => ['mandatory' => true],
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
     'info_box_text_text'         => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text'],
         'inputType' => 'textarea',
+        'exclude'   => true,
         'eval'      => ['rte' => 'tinyMCE', 'tl_class' => 'clr', 'mandatory' => true],
         'sql'       => "text NULL",
     ],
     'info_box_text_link'         => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link'],
         'inputType' => 'text',
+        'exclude'   => true,
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
     'info_box_text_link_text'    => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link_text'],
         'inputType' => 'text',
+        'exclude'   => true,
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
     'add_related_news'           => [
@@ -484,6 +419,32 @@ $fields = [
                 'limit'        => 10,
             ],
         ],
+    ],
+    'page_title'                 => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['page_title'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'text',
+        'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
+        'sql'       => "varchar(255) NOT NULL default ''",
+    ],
+    'meta_description'           => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['meta_description'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'textarea',
+        'eval'      => ['maxlength' => 255, 'tl_class' => 'clr'],
+        'sql'       => "text NULL",
+    ],
+    'meta_keywords'              => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['meta_keywords'],
+        'inputType' => 'tagsinput',
+        'eval'      => [
+            'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['meta_keywords'],
+            'freeInput'   => true,
+            'multiple'    => true,
+        ],
+        'sql'       => "blob NULL",
     ],
 ];
 
