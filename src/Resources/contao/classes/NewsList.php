@@ -28,7 +28,7 @@ class NewsList
      *
      * @var bool
      */
-    protected $blnFeatured = false;
+    protected $blnFeatured;
 
     /**
      * Current front end module instance
@@ -47,11 +47,11 @@ class NewsList
     /**
      * NewsList constructor.
      *
-     * @param array   $newsArchives
-     * @param bool    $blnFeatured
-     * @param \Module $objModule
+     * @param array     $newsArchives
+     * @param bool|null $blnFeatured
+     * @param \Module   $objModule
      */
-    public function __construct(array $newsArchives, bool $blnFeatured, \Module $objModule)
+    public function __construct(array $newsArchives, $blnFeatured, \Module $objModule)
     {
         $this->newsArchives = $newsArchives;
         $this->blnFeatured  = $blnFeatured;

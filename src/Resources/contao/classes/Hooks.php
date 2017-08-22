@@ -9,13 +9,13 @@ class Hooks
     /**
      * Extend the news list count all items
      *
-     * @param array   $newsArchives
-     * @param bool    $blnFeatured
-     * @param \Module $objModule
+     * @param array     $newsArchives
+     * @param bool|null $blnFeatured
+     * @param \Module   $objModule
      *
      * @return int|boolean Return the number of total items or false if next hook should be triggered
      */
-    public function newsListCountItemsHook(array $newsArchives, bool $blnFeatured, \Module $objModule)
+    public function newsListCountItemsHook(array $newsArchives, $blnFeatured, \Module $objModule)
     {
         $objNewsList = new NewsList($newsArchives, $blnFeatured, $objModule);
 
@@ -26,15 +26,15 @@ class Hooks
     /**
      * Extend fetch matching of news list items
      *
-     * @param  array   $newsArchives
-     * @param  boolean $blnFeatured
-     * @param  integer $limit
-     * @param  integer $offset
-     * @param \Module  $objModule
+     * @param  array        $newsArchives
+     * @param  boolean|null $blnFeatured
+     * @param  integer      $limit
+     * @param  integer      $offset
+     * @param \Module       $objModule
      *
      * @return \Model\Collection|NewsModel|null|false Return a collection of items or false if next hook should be triggered
      */
-    public function newsListFetchItemsHook(array $newsArchives, bool $blnFeatured, $limit, $offset, \Module $objModule)
+    public function newsListFetchItemsHook(array $newsArchives, $blnFeatured, $limit, $offset, \Module $objModule)
     {
         $objNewsList = new NewsList($newsArchives, $blnFeatured, $objModule);
 
