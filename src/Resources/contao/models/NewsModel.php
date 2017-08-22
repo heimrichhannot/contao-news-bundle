@@ -800,7 +800,7 @@ class NewsModel extends Model
 
         if (is_array($arrIds) && !empty($arrIds))
         {
-            $arrColumn[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ")";
+            $arrColumns[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ")";
         }
 
         if ($blnFeatured === true)

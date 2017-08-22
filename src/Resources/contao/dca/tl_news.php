@@ -462,7 +462,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_related_news'],
         'inputType' => 'checkbox',
         'exclude'   => true,
-        'sql'       => "varchar(255) NOT NULL default ''",
+        'sql'       => "char(1) NOT NULL default ''",
         'eval'      => ['submitOnChange' => true],
     ],
     'related_news'               => [
