@@ -363,63 +363,6 @@ class NewsModel extends Model
         $arrColumns = static::filterBySources($arrColumns, $arrOptions['news_source']);
     }
 
-    /**
-     * @param string     $strSource News source
-     * @param int|string $varId     Id or unique alias of news channel. 0 for all channels of type
-     * @param int        $intLimit
-     * @param int        $intOffset
-     * @param array      $arrOptions
-     *
-     * @return NewsModel|NewsModel[]|\Model\Collection|null
-     */
-    public static function findPublishedByNewsSource($strSource, $varId = 0, $intLimit = 0, $intOffset = 0, $arrOptions)
-    {
-        if (!is_string($strSource) && empty($strSource))
-        {
-            return null;
-        }
-        if (!is_int($varId) && !is_string($varId))
-        {
-            return null;
-        }
-        $t         = static::$strTable;
-        $objSource = \System::getContainer()->get('hh.news-bundle.news_feed_generator')->getFeedSource($strSource);
-        if ($varId !== 0)
-        {
-            $objChannel = $objSource->getChannel($varId);
-            $objNews    = $objSource->getItemsByChannel($objChannel);
-            if ($objNews === null)
-            {
-                return null;
-            }
-            $arrNewsIds = [];
-            while ($objNews->next())
-            {
-                $arrNewsIds[] = $objNews->id;
-            }
-        }
-        else
-        {
-            $objChannels = $objSource->getChannels();
-            $arrNewsIds  = [];
-            while ($objChannels->next())
-            {
-                $objNews = $objSource->getItemsByChannel($objChannels);
-                if ($objNews === null)
-                {
-                    continue;
-                }
-                while ($objNews->next())
-                {
-                    $arrNewsIds[] = $objNews->id;
-                }
-            }
-        }
-        $arrColumns[] = "$t.id IN (" . implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))) . ")";
-
-        return static::findPublished($arrColumns, $intLimit, $intOffset, $arrOptions);
-    }
-
     private static function findPublished($arrColumns, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
         $t = static::$strTable;

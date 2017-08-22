@@ -29,7 +29,6 @@ class HeimrichHannotContaoNewsBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new FeedSourcePass());
     }
 
 

@@ -25,8 +25,6 @@ $GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list';
  * Models
  */
 $GLOBALS['TL_MODELS']['tl_news']      = '\HeimrichHannot\NewsBundle\NewsModel';
-$GLOBALS['TL_MODELS']['tl_news_tags'] = '\HeimrichHannot\NewsBundle\NewsTagsModel';
-$GLOBALS['TL_MODELS']['tl_news_list'] = '\HeimrichHannot\NewsBundle\NewsListModel';
 
 /**
  * Hooks

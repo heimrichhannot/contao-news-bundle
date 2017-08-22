@@ -16,10 +16,3 @@ services:
             - "tags"
         tags:
             - { name: codefog_tags.manager, alias: app.news }
-
-    hh.news-bundle.news_feed_generator:
-        class: HeimrichHannot\NewsBundle\Component\NewsFeedGenerator
-
-    hh.news-bundle.news_feed_tag_source:
-        class: HeimrichHannot\NewsBundle\Component\TagFeedSource
-        tags: [news-bundle.feed_source, hh.newsalert.topic_source]
