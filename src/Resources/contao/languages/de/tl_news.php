@@ -29,6 +29,8 @@ $arrLang['info_box_text']           = ['Infobox-Text hinzufügen'];
 $arrLang['info_box_text_link']      = ['Infobox-Link hinzufügen'];
 $arrLang['info_box_text_link_text'] = ['Infobox-Link-Text hinzufügen'];
 $arrLang['info_box_text_header']    = ['Infobox-Überschrift hinzufügen'];
+$arrLang['add_related_news']        = ['Verwandte Nachrichten hinzufügen', 'Verknüpfen Sie verwandte Nachrichten für diesen Beitrag.'];
+$arrLang['related_news']            = ['Verwandte Nachrichten', 'Erhalten Sie eine Auswahl von verwandten Nachrichten indem Sie deren Überschriften in dieses Feld eingeben. (Nachrichten können per Drag & Drop in soriert werden)'];
 
 /**
  * Legends
@@ -38,6 +40,7 @@ $arrLang['tags_legend']           = 'Schlagwörter';
 $arrLang['contact_box_legend']    = 'Kontakt';
 $arrLang['readers_survey_legend'] = 'Leser-Umfrage';
 $arrLang['info_box_legend']       = 'Infobox';
+$arrLang['related_news_legend']   = 'Verwandte Nachrichten';
 
 /**
  * Placeholders

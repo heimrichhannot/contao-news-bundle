@@ -3,3 +3,5 @@ services:
         class: HeimrichHannot\NewsBundle\EventListener\TagManagerListener
         arguments:
             - "@codefog_tags.manager_registry"
+    heimrichhannot_news.listener.backend.tl_news:
+        class: HeimrichHannot\NewsBundle\EventListener\Backend\NewsListener

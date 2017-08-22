@@ -15,6 +15,7 @@ $dc['palettes']['__selector__'][] = 'add_teaser_image';
 $dc['palettes']['__selector__'][] = 'teaser_overwriteMeta';
 $dc['palettes']['__selector__'][] = 'add_readers_survey';
 $dc['palettes']['__selector__'][] = 'info_box_selector';
+$dc['palettes']['__selector__'][] = 'add_related_news';
 
 /**
  * Palettes
@@ -22,7 +23,7 @@ $dc['palettes']['__selector__'][] = 'info_box_selector';
 $dc['palettes']['default'] = str_replace('author;', 'author;{writers_legend:hide},writers;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace(
     '{date_legend}',
-    '{tags_legend:hide},tags;{contact_box_legend},add_contact_box;{info_box_legend:hide},info_box_selector;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
+    '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{contact_box_legend},add_contact_box;{info_box_legend:hide},info_box_selector;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
     $dc['palettes']['default']
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
@@ -36,6 +37,7 @@ $dc['subpalettes']['teaser_overwriteMeta']            = 'teaser_alt,teaser_image
 $dc['subpalettes']['add_readers_survey']              = 'readers_survey';
 $dc['subpalettes']['info_box_selector_info_box_text'] = 'info_box_text_header, info_box_text_text, info_box_text_link, info_box_text_link_text';
 $dc['subpalettes']['info_box_selector_info_box_none'] = '';
+$dc['subpalettes']['add_related_news']                = 'related_news';
 
 
 /**
@@ -455,6 +457,33 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link_text'],
         'inputType' => 'text',
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
+    ],
+    'add_related_news'           => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_related_news'],
+        'inputType' => 'checkbox',
+        'exclude'   => true,
+        'sql'       => "varchar(255) NOT NULL default ''",
+        'eval'      => ['submitOnChange' => true],
+    ],
+    'related_news'               => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['related_news'],
+        'inputType' => 'tagsinput',
+        'sql'       => "blob NULL",
+        'eval'      => [
+            'placeholder'   => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['related_news'],
+            'freeInput'     => false,
+            'multiple'      => true,
+            'mode'          => \TagsInput::MODE_REMOTE,
+            'tags_callback' => [['heimrichhannot_news.listener.backend.tl_news', 'getRelatedNews']],
+            'remote'        => [
+                'fields'       => ['headline', 'id'],
+                'format'       => '%s [ID:%s]',
+                'queryField'   => 'headline',
+                'queryPattern' => '%QUERY%',
+                'foreignKey'   => 'tl_news.id',
+                'limit'        => 10,
+            ],
+        ],
     ],
 ];
 
