@@ -25,4 +25,9 @@ class CfgTagModel extends \Model
     {
         return parent::findBy('source', $source, $arrOptions);
     }
+
+    public static function findBy($column, $value, array $arrOptions = [])
+    {
+        return parent::findBy($column, $value, $arrOptions);
+    }
 }
