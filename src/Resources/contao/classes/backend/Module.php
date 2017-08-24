@@ -11,6 +11,14 @@ namespace HeimrichHannot\NewsBundle\Backend;
 
 class Module extends \Backend
 {
+    public function getNewsListRelatedModules(\DataContainer $dc)
+    {
+        $options = static::getModuleOptions('newslist_related');
+
+        unset($options[$dc->id]);
+
+        return $options;
+    }
 
     public function getNewsReadersSurveyModules()
     {

@@ -264,14 +264,12 @@ class NewsModel extends Model
         $t = static::$strTable;
 
         $objTags = NewsTagsModel::findAll();
-        if ($objTags !== null)
-        {
+        if ($objTags !== null) {
             $arrNewsIds = [];
-            foreach ($objTags as $entry)
-            {
+            foreach ($objTags as $entry) {
                 $arrNewsIds[] = $entry->news_id;
             }
-            $arrColumns[] = "$t.id IN (" . implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))) . ")";
+            $arrColumns[] = "$t.id IN (".implode(',', (empty($arrNewsIds) ? [] : array_unique($arrNewsIds))).")";
         }
 
         return $arrColumns;
@@ -289,12 +287,11 @@ class NewsModel extends Model
      */
     public static function findByAndInIds($column, $val, $arrIds, array $arrOptions = [])
     {
-        if (!is_array($arrIds) || empty($arrIds))
-        {
+        if (!is_array($arrIds) || empty($arrIds)) {
             return null;
         }
         $t            = static::$strTable;
-        $arrColumns[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ")";
+        $arrColumns[] = "$t.id IN(".implode(',', array_map('intval', $arrIds)).")";
         $arrColumns[] = "$t.$column = $val";
 
         return static::findBy($arrColumns, null, $arrOptions);
@@ -311,19 +308,17 @@ class NewsModel extends Model
      */
     public static function findPublishedByParentAndIdOrAlias($varId, $arrPids, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids))
-        {
+        if (!is_array($arrPids) || empty($arrPids)) {
             return null;
         }
 
         $t            = static::$strTable;
         $arrColumns   = !is_numeric($varId) ? ["$t.alias=?"] : ["$t.id=?"];
-        $arrColumns[] = "$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")";
+        $arrColumns[] = "$t.pid IN(".implode(',', array_map('intval', $arrPids)).")";
 
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time         = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
         }
 
         return static::findOneBy($arrColumns, $varId, $arrOptions);
@@ -343,20 +338,16 @@ class NewsModel extends Model
      */
     public static function findPublishedByPids($arrPids, $blnFeatured = null, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids))
-        {
+        if (!is_array($arrPids) || empty($arrPids)) {
             return null;
         }
 
         $t          = static::$strTable;
-        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")"];
+        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).")"];
 
-        if ($blnFeatured === true)
-        {
+        if ($blnFeatured === true) {
             $arrColumns[] = "$t.featured='1'";
-        }
-        elseif ($blnFeatured === false)
-        {
+        } elseif ($blnFeatured === false) {
             $arrColumns[] = "$t.featured=''";
         }
 
@@ -367,14 +358,12 @@ class NewsModel extends Model
     {
         $t = static::$strTable;
         // Never return unpublished elements in the back end, so they don't end up in the RSS feed
-        if (!BE_USER_LOGGED_IN || TL_MODE == 'BE')
-        {
+        if (!BE_USER_LOGGED_IN || TL_MODE == 'BE') {
             $time         = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
         }
 
-        if (!isset($arrOptions['order']))
-        {
+        if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.date DESC";
         }
 
@@ -396,27 +385,22 @@ class NewsModel extends Model
      */
     public static function countPublishedByPids($arrPids, $blnFeatured = null, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids))
-        {
+        if (!is_array($arrPids) || empty($arrPids)) {
             return 0;
         }
 
         $t          = static::$strTable;
-        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")"];
+        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).")"];
 
-        if ($blnFeatured === true)
-        {
+        if ($blnFeatured === true) {
             $arrColumns[] = "$t.featured='1'";
-        }
-        elseif ($blnFeatured === false)
-        {
+        } elseif ($blnFeatured === false) {
             $arrColumns[] = "$t.featured=''";
         }
 
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time         = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
         }
 
         return static::countBy($arrColumns, null, $arrOptions);
@@ -436,14 +420,12 @@ class NewsModel extends Model
         $t          = static::$strTable;
         $arrColumns = ["$t.pid=? AND $t.source='default'"];
 
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time         = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
         }
 
-        if (!isset($arrOptions['order']))
-        {
+        if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.date DESC";
         }
 
@@ -465,19 +447,16 @@ class NewsModel extends Model
         $t          = static::$strTable;
         $arrColumns = ["$t.pid=?"];
 
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time         = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
         }
 
-        if (!isset($arrOptions['order']))
-        {
+        if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.date DESC";
         }
 
-        if ($intLimit > 0)
-        {
+        if ($intLimit > 0) {
             $arrOptions['limit'] = $intLimit;
         }
 
@@ -499,22 +478,19 @@ class NewsModel extends Model
      */
     public static function findPublishedFromToByPids($intFrom, $intTo, $arrPids, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids))
-        {
+        if (!is_array($arrPids) || empty($arrPids)) {
             return null;
         }
 
         $t          = static::$strTable;
-        $arrColumns = ["$t.date>=? AND $t.date<=? AND $t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")"];
+        $arrColumns = ["$t.date>=? AND $t.date<=? AND $t.pid IN(".implode(',', array_map('intval', $arrPids)).")"];
 
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time         = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
         }
 
-        if (!isset($arrOptions['order']))
-        {
+        if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.date DESC";
         }
 
@@ -537,18 +513,16 @@ class NewsModel extends Model
      */
     public static function countPublishedFromToByPids($intFrom, $intTo, $arrPids, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids))
-        {
+        if (!is_array($arrPids) || empty($arrPids)) {
             return null;
         }
 
         $t          = static::$strTable;
-        $arrColumns = ["$t.date>=? AND $t.date<=? AND $t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")"];
+        $arrColumns = ["$t.date>=? AND $t.date<=? AND $t.pid IN(".implode(',', array_map('intval', $arrPids)).")"];
 
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time         = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
         }
 
         return static::countBy($arrColumns, [$intFrom, $intTo], $arrOptions);
@@ -560,11 +534,9 @@ class NewsModel extends Model
         $urlString[] = NewsCategoryModel::findPublishedByIdOrAlias($this->id) == null ? null : NewsCategoryModel::findPublishedByIdOrAlias($this->id)->title;
         $urlString[] = $this->alias;
         $url         = $baseUrl;
-        foreach ($urlString as $string)
-        {
-            if ($string !== null)
-            {
-                $url .= '/' . strtolower($string);
+        foreach ($urlString as $string) {
+            if ($string !== null) {
+                $url .= '/'.strtolower($string);
             }
         }
 
@@ -586,21 +558,16 @@ class NewsModel extends Model
         $column = ['date>?', 'hidden=?'];
         $value  = [$tsPeriod, 0];
 
-        if (false !== $offset)
-        {
+        if (false !== $offset) {
             $arrOptions['offset'] = $offset;
         }
-        if (false !== $limit)
-        {
+        if (false !== $limit) {
             $arrOptions['limit'] = $limit;
         }
 
-        if ($countOnly)
-        {
+        if ($countOnly) {
             $result = NewsModel::findBy($column, $value, $arrOptions)->count();
-        }
-        else
-        {
+        } else {
             $result = NewsModel::findBy($column, $value, $arrOptions);
         }
 
@@ -617,8 +584,7 @@ class NewsModel extends Model
         $t     = static::$strTable;
         $years = \Database::getInstance()->prepare("SELECT FROM_UNIXTIME(date, '%Y') as year FROM $t WHERE pid = $pId GROUP BY year")->execute();
 
-        if (!$years->numRows)
-        {
+        if (!$years->numRows) {
             return [];
         }
 
@@ -640,8 +606,7 @@ class NewsModel extends Model
             ->prepare("SELECT FROM_UNIXTIME(date, '%m') as month FROM $t WHERE pid = $pId AND date > $yearStart AND date < $yearEnd GROUP BY month")
             ->execute();
 
-        if (!$months->numRows)
-        {
+        if (!$months->numRows) {
             return [];
         }
 
@@ -771,5 +736,103 @@ class NewsModel extends Model
         $arrOptions['offset'] = $intOffset;
 
         return static::findBy($arrColumns, null, $arrOptions);
+    }
+
+    /**
+     * Count published news items by their parent ID
+     *
+     * @param array   $arrPids     An array of news archive IDs
+     * @param array   $callback    A callback function to modify $arrColumns, $arrValues and $arrOptions
+     * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
+     * @param array   $arrOptions  An optional options array
+     *
+     * @return integer The number of news items
+     */
+    public static function countPublishedByPidsAndCallback($arrPids, $callback = null, $blnFeatured = null, array $arrOptions = [])
+    {
+        if (!is_array($arrPids) || empty($arrPids)) {
+            return 0;
+        }
+
+        $t          = static::$strTable;
+        $arrValues  = null;
+        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).")"];
+
+        if ($blnFeatured === true) {
+            $arrColumns[] = "$t.featured='1'";
+        } elseif ($blnFeatured === false) {
+            $arrColumns[] = "$t.featured=''";
+        }
+
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+        }
+
+        if ($callback !== null) {
+            if (is_array($callback)) {
+                if (is_callable($callback)) {
+                    $callback($arrColumns, $arrValues, $arrOptions);
+                } else {
+                    \Controller::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
+                }
+            }
+        }
+
+        return static::countBy($arrColumns, null, $arrOptions);
+    }
+
+    /**
+     * Find published news items by their parent ID
+     *
+     * @param array   $arrPids     An array of news archive IDs
+     * @param array   $callback    A callback function to modify $arrColumns, $arrValues and $arrOptions
+     * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
+     * @param integer $intLimit    An optional limit
+     * @param integer $intOffset   An optional offset
+     * @param array   $arrOptions  An optional options array
+     *
+     * @return \Model\Collection|NewsModel[]|NewsModel|null A collection of models or null if there are no news
+     */
+    public static function findPublishedByPidsAndCallback($arrPids, $callback = null, $blnFeatured = null, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
+    {
+        if (!is_array($arrPids) || empty($arrPids)) {
+            return null;
+        }
+
+        $t          = static::$strTable;
+        $arrValues  = null;
+        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).")"];
+
+        if ($blnFeatured === true) {
+            $arrColumns[] = "$t.featured='1'";
+        } elseif ($blnFeatured === false) {
+            $arrColumns[] = "$t.featured=''";
+        }
+
+        // Never return unpublished elements in the back end, so they don't end up in the RSS feed
+        if (!BE_USER_LOGGED_IN || TL_MODE == 'BE') {
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+        }
+
+        if (!isset($arrOptions['order'])) {
+            $arrOptions['order'] = "$t.date DESC";
+        }
+
+        $arrOptions['limit']  = $intLimit;
+        $arrOptions['offset'] = $intOffset;
+
+        if ($callback !== null) {
+            if (is_array($callback)) {
+                if (is_callable($callback)) {
+                    $callback($arrColumns, $arrValues, $arrOptions);
+                } else {
+                    \Controller::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
+                }
+            }
+        }
+
+        return static::findBy($arrColumns, $arrValues, $arrOptions);
     }
 }

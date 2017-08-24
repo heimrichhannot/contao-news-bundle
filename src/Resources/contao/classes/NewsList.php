@@ -12,9 +12,13 @@ namespace HeimrichHannot\NewsBundle;
 
 
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
+use NewsCategories\NewsCategories;
+use NewsCategories\NewsCategoryModel;
 
 class NewsList
 {
+
+    const SESSION_SEEN_NEWS = 'SESSION_SEEN_NEWS';
 
     /**
      * List of news archive ids
@@ -28,34 +32,55 @@ class NewsList
      *
      * @var bool
      */
-    protected $blnFeatured;
+    protected $featured;
 
     /**
      * Current front end module instance
      *
      * @var \Module
      */
-    protected $objModule;
+    protected $module;
 
     /**
      * News table
      *
      * @var string
      */
-    protected static $strTable = 'tl_news';
+    protected static $table = 'tl_news';
+
+    /**
+     * Filter statement columns
+     *
+     * @var array
+     */
+    protected $filterColumns = [];
+
+    /**
+     * Filter statement values
+     *
+     * @var null|array
+     */
+    protected $filterValues = null;
+
+    /**
+     * Filter statement options
+     *
+     * @var array
+     */
+    protected $filterOptions = [];
 
     /**
      * NewsList constructor.
      *
      * @param array     $newsArchives
-     * @param bool|null $blnFeatured
-     * @param \Module   $objModule
+     * @param bool|null $featured
+     * @param \Module   $module
      */
-    public function __construct(array $newsArchives, $blnFeatured, \Module $objModule)
+    public function __construct(array $newsArchives, $featured, \Module $module)
     {
         $this->newsArchives = $newsArchives;
-        $this->blnFeatured  = $blnFeatured;
-        $this->objModule    = $objModule;
+        $this->featured     = $featured;
+        $this->module       = $module;
     }
 
     /**
@@ -65,19 +90,34 @@ class NewsList
      */
     public function count()
     {
-        if ($this->objModule->use_news_lists)
-        {
-            $objRelations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->objModule->news_lists, true), 'tl_news_list', 'news');
+        return NewsModel::countPublishedByPidsAndCallback($this->newsArchives, $this->featured, [], [$this, 'extendCount']);
+    }
 
-            if ($objRelations === null)
-            {
-                return false;
-            }
+    /**
+     * Extend count news items statement
+     *
+     * @param array      $columns
+     * @param array|null $values
+     * @param array      $options
+     */
+    public function extendCount(array &$columns, &$values, array &$options)
+    {
+        $this->filterColumns = $columns;
+        $this->filterValues  = $values;
+        $this->filterOptions = $options;
 
-            return NewsModel::countPublishedByPidsAndIds($this->newsArchives, $objRelations->fetchEach('news_list_news'), $this->blnFeatured);
-        }
+        $this->addCountFilters();
 
-        return false;
+        $columns = $this->filterColumns;
+        $values  = $this->filterValues;
+        $options = $this->filterOptions;
+    }
+
+    protected function addCountFilters()
+    {
+        $this->addNewsListFilter();
+        $this->addSkipPreviousNewsFilter();
+        $this->addCategoryFilter();
     }
 
     /**
@@ -90,25 +130,185 @@ class NewsList
      */
     public function fetch($limit, $offset)
     {
-        if ($this->objModule->use_news_lists)
-        {
-            $t = static::$strTable;
+        return NewsModel::findPublishedByPidsAndCallback($this->newsArchives, [$this, 'extendFetch'], $this->featured, $limit, $offset, []);
+    }
 
-            $objRelations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->objModule->news_lists, true), 'tl_news_list', 'news');
 
-            if ($objRelations === null)
-            {
+    /**
+     * Extend fetch news items statement
+     *
+     * @param array      $columns
+     * @param array|null $values
+     * @param array      $options
+     */
+    public function extendFetch(array &$columns, &$values, array &$options)
+    {
+        $this->filterColumns = $columns;
+        $this->filterValues  = $values;
+        $this->filterOptions = $options;
+
+        $this->addFetchFilters();
+
+        $columns = $this->filterColumns;
+        $values  = $this->filterValues;
+        $options = $this->filterOptions;
+    }
+
+    protected function addFetchFilters()
+    {
+        $this->addNewsListFilter();
+        $this->addSkipPreviousNewsFilter();
+        $this->addCategoryFilter();
+    }
+
+    private function addSkipPreviousNewsFilter()
+    {
+        if ($this->module->skipPreviousNews && ($skipIds = static::getSeen()) !== null) {
+            $t                     = static::$table;
+            $this->filterColumns[] = "$t.id NOT IN(".implode(',', array_map('intval', $skipIds)).")";
+        }
+    }
+
+    private function addNewsListFilter()
+    {
+        if ($this->module->use_news_lists) {
+
+            $t = static::$table;
+
+            $objRelations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news');
+
+            if ($objRelations === null) {
                 return false;
             }
 
             $ids = $objRelations->fetchEach('news_list_news');
 
-            $arrOptions['order'] = "FIELD($t.pid, " . implode(',', array_map('intval', $this->newsArchives)) . "), FIELD($t.id, " . implode(',', array_map('intval', $ids)) . ")";
-
-            return NewsModel::findPublishedByPidsAndIds($this->newsArchives, $ids, $this->blnFeatured, $limit, $offset, $arrOptions);
+            $this->filterColumns[]        = "$t.id IN(".implode(',', array_map('intval', $ids)).")";
+            $this->filterOptions['order'] = "FIELD($t.pid, ".implode(',', array_map('intval', $this->newsArchives))."), FIELD($t.id, ".implode(',', array_map('intval', $ids)).")";
         }
-
-        return false;
     }
 
+    private function addCategoryFilter()
+    {
+        $t = static::$table;
+
+        // Use the default filter
+        if (is_array($GLOBALS['NEWS_FILTER_DEFAULT']) && !empty($GLOBALS['NEWS_FILTER_DEFAULT'])) {
+            $arrCategories = \NewsCategories\NewsModel::getCategoriesCache();
+
+            if (!empty($arrCategories)) {
+                $arrIds = array();
+
+                // Get the news IDs for particular categories
+                foreach ($GLOBALS['NEWS_FILTER_DEFAULT'] as $category) {
+                    if (isset($arrCategories[$category])) {
+                        $arrIds = array_merge($arrCategories[$category], $arrIds);
+                    }
+                }
+
+                $strKey = 'category';
+
+                // Preserve the default category
+                if ($GLOBALS['NEWS_FILTER_PRESERVE']) {
+                    $strKey = 'category_default';
+                }
+
+                $strQuery = "$t.id IN (".implode(',', (empty($arrIds) ? array(0) : array_unique($arrIds))).")";
+
+                if ($GLOBALS['NEWS_FILTER_PRIMARY']) {
+                    $strQuery .= " AND $t.primaryCategory IN (".implode(',', $GLOBALS['NEWS_FILTER_DEFAULT']).")";
+                }
+
+                $this->filterColumns[$strKey] = $strQuery;
+            }
+        }
+
+        // Exclude particular news items
+        if (is_array($GLOBALS['NEWS_FILTER_EXCLUDE']) && !empty($GLOBALS['NEWS_FILTER_EXCLUDE'])) {
+            $this->filterColumns[] = "$t.id NOT IN (".implode(',', array_map('intval', $GLOBALS['NEWS_FILTER_EXCLUDE'])).")";
+        }
+
+        $strParam = NewsCategories::getParameterName();
+
+        // Try to find by category
+        if ($GLOBALS['NEWS_FILTER_CATEGORIES'] && \Input::get($strParam)) {
+            $objCategory = NewsCategoryModel::findPublishedByIdOrAlias(\Input::get($strParam));
+
+            if ($objCategory === null) {
+                return null;
+            }
+
+            $arrCategories                   = \NewsCategories\NewsModel::getCategoriesCache();
+            $this->filterColumns['category'] = "$t.id IN (".implode(',', (empty($arrCategories[$objCategory->id]) ? array(0) : $arrCategories[$objCategory->id])).")";
+        }
+    }
+
+
+    /**
+     * Add news to list of already seen for current page
+     *
+     * @param integer $id     News id
+     * @param integer $pageId Page id
+     */
+    public static function addSeen($id, $pageId = null)
+    {
+        if ($pageId === null) {
+            global $objPage;
+            $pageId = $objPage->id;
+        }
+
+        $pages = \Session::getInstance()->get(static::SESSION_SEEN_NEWS);
+
+        if (!is_array($pages)) {
+            $pages = [];
+        }
+
+
+        $pages[$pageId][$id] = $id;
+
+        \Session::getInstance()->set(static::SESSION_SEEN_NEWS, $pages);
+    }
+
+    /**
+     * Get list of already seen news for current or given page
+     *
+     * @param null $pageId Set pageId or null for current page
+     *
+     * @return array|null List of news for current or given page id
+     */
+    public static function getSeen($pageId = null)
+    {
+        if ($pageId === null) {
+            global $objPage;
+            $pageId = $objPage->id;
+        }
+
+        $pages = \Session::getInstance()->get(static::SESSION_SEEN_NEWS);
+
+        if (!is_array($pages) || !isset($pages[$pageId])) {
+            return null;
+        }
+
+        return is_array($pages[$pageId]) ? $pages[$pageId] : null;
+    }
+
+    /**
+     * Reset the already seen news for current page of given page
+     *
+     * @param null $pageId
+     */
+    public static function resetSeen($pageId = null)
+    {
+        if ($pageId === null) {
+            global $objPage;
+            $pageId = $objPage->id;
+        }
+
+        $pages = \Session::getInstance()->get(static::SESSION_SEEN_NEWS);
+
+        if (is_array($pages) && isset($pages[$pageId])) {
+            unset($pages[$pageId]);
+            \Session::getInstance()->set(static::SESSION_SEEN_NEWS, $pages);
+        }
+    }
 }

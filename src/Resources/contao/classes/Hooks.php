@@ -5,6 +5,17 @@ namespace HeimrichHannot\NewsBundle;
 
 class Hooks
 {
+    /**
+     * Modify the page or layout object
+     *
+     * @param \PageModel   $objPage
+     * @param \LayoutModel $objLayout
+     * @param \PageRegular $objPageRegular
+     */
+    public function getPageLayoutHook(\PageModel $objPage, \LayoutModel $objLayout, \PageRegular $objPageRegular)
+    {
+        NewsList::resetSeen($objPage->id); // reset seen news articles on request
+    }
 
     /**
      * Extend the news list count all items
@@ -45,14 +56,14 @@ class Hooks
     /**
      * Extend news article data
      *
-     * @param \FrontendTemplate $objTemplate
-     * @param array             $arrArticle
-     * @param \Module           $objModule
+     * @param \FrontendTemplate $template
+     * @param array             $article
+     * @param \Module           $module
      */
-    public function parseArticleHook(\FrontendTemplate $objTemplate, array $arrArticle, \Module $objModule)
+    public function parseArticleHook(\FrontendTemplate $template, array $article, \Module $module)
     {
-        $objArticle  = new NewsArticle($objTemplate, $arrArticle);
-        $objTemplate = $objArticle->getTemplate();
+        $objArticle = new NewsArticle($template, $article, $module);
+        $template   = $objArticle->generate();
     }
 
 }

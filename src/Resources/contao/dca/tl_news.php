@@ -433,7 +433,7 @@ $fields = [
         'exclude'   => true,
         'search'    => true,
         'inputType' => 'textarea',
-        'eval'      => ['maxlength' => 255, 'tl_class' => 'clr'],
+        'eval'      => ['tl_class' => 'clr'],
         'sql'       => "text NULL",
     ],
     'meta_keywords'              => [
