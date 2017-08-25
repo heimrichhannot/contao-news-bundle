@@ -45,6 +45,8 @@ class NewsArticle extends \ModuleNews
         $this->twig     = \System::getContainer()->get('twig');
 
         parent::__construct($module->objModel);
+
+        $this->generate();
     }
 
     protected function compile()

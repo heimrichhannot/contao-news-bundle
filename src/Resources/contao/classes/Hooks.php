@@ -63,7 +63,7 @@ class Hooks
     public function parseArticleHook(\FrontendTemplate $template, array $article, \Module $module)
     {
         $objArticle = new NewsArticle($template, $article, $module);
-        $template   = $objArticle->generate();
+        $template   = $objArticle->getNewsTemplate();
     }
 
 }
