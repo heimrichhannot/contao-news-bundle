@@ -9,7 +9,10 @@
 namespace HeimrichHannot\NewsBundle;
 
 
+use Codefog\TagsBundle\Model\TagModel;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Dav\NewsBundle\Models\NewsTagsModel;
+use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
@@ -60,9 +63,47 @@ class NewsArticle extends \ModuleNews
      */
     protected function compile()
     {
+        $this->module->news_metaFields = deserialize($this->module->news_metaFields, true);
+
         $this->setSeen();
         $this->addRelatedNews();
         $this->addWriters();
+        $this->addTags();
+    }
+
+
+    /**
+     * Add news tags
+     */
+    protected function addTags()
+    {
+        if (!in_array('tags', $this->module->news_metaFields)) {
+            return;
+        }
+
+        $ids = deserialize($this->article->tags, true);
+
+        if (empty($ids)) {
+            return;
+        }
+
+        /**
+         * @var $manager NewsTagManager
+         */
+        $manager = \System::getContainer()->get('app.news_tags_manager');
+
+        if (($models = $manager->findMultiple(['values' => $ids])) === null) {
+            return;
+        }
+
+        $tags = [];
+
+        while ($models->next()) {
+            $tags[] = $models->row();
+        }
+
+        $this->template->tags          = $tags;
+        $this->template->hasMetaFields = true;
     }
 
     /**
@@ -70,10 +111,13 @@ class NewsArticle extends \ModuleNews
      */
     protected function addWriters()
     {
-        $metaFields = deserialize($this->module->news_metaFields);
-        $ids        = deserialize($this->article->writers, true);
+        if (!in_array('writers', $this->module->news_metaFields)) {
+            return;
+        }
 
-        if (!in_array('writers', $metaFields) || empty($ids)) {
+        $ids = deserialize($this->article->writers, true);
+
+        if (empty($ids)) {
             return;
         }
 
@@ -108,7 +152,8 @@ class NewsArticle extends \ModuleNews
             return implode($delimiter, $names);
         };
 
-        $this->template->writers = $writers;
+        $this->template->writers       = $writers;
+        $this->template->hasMetaFields = true;
     }
 
     /**

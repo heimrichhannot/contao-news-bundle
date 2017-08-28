@@ -95,5 +95,6 @@ $arrFields = [
 ];
 
 $dc['fields']['news_metaFields']['options'][] = 'writers';
+$dc['fields']['news_metaFields']['options'][] = 'tags';
 
 $dc['fields'] = array_merge($dc['fields'], $arrFields);
