@@ -35,6 +35,9 @@ $dc['palettes']['newslist'] = str_replace('{template_legend', '{news_related_leg
 
 $dc['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dc['palettes']['newslist']);
 
+// update slick_newslist because already invoked
+$dc['palettes']['slick_newslist'] = $dc['palettes']['newslist'];
+
 /**
  * Subpalettes
  */
