@@ -21,6 +21,7 @@ array_insert(
  * Back end modules
  */
 $GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list';
+$GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list_archive';
 
 /**
  * Models
@@ -49,3 +50,9 @@ $GLOBALS['AJAX'][\HeimrichHannot\NewsBundle\News::XHR_GROUP] = [
         ],
     ],
 ];
+
+/**
+ * Permissions
+ */
+$GLOBALS['TL_PERMISSIONS'][] = 'newslists';
+$GLOBALS['TL_PERMISSIONS'][] = 'newslistp';

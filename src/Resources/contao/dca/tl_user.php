@@ -4,7 +4,7 @@
  * Extend default palette
  */
 $GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = str_replace('newsfeedp', 'newsfeedp,newslists,newslistp;', $GLOBALS['TL_DCA']['tl_user']['palettes']['extend']);
-$GLOBALS['TL_DCA']['tl_user']['palettes']['custom'] = str_replace('newsfeedp', 'newsfeedp,newslists,newslistp;', $GLOBALS['TL_DCA']['tl_user']['palettes']['custom']);
+$GLOBALS['TL_DCA']['tl_user']['paettes']['custom'] = str_replace('newsfeedp', 'newsfeedp,newslists,newslistp;', $GLOBALS['TL_DCA']['tl_user']['palettes']['custom']);
 
 
 /**
@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['newslists'] = [
     'label'      => &$GLOBALS['TL_LANG']['tl_user']['newslists'],
     'exclude'    => true,
     'inputType'  => 'checkbox',
-    'foreignKey' => 'tl_news_list.title',
+    'foreignKey' => 'tl_news_list_archive.title',
     'eval'       => ['multiple' => true],
     'sql'        => "blob NULL",
 ];
