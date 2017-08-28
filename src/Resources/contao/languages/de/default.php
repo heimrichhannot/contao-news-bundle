@@ -8,5 +8,6 @@
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
+$GLOBALS['TL_LANG']['MSC']['moreNewsCategory'] = 'Artikel aus der Kategorie: %s';
 
-
+$GLOBALS['TL_LANG']['MSC']['writers'] = 'Verfasser (Mitglieder)';

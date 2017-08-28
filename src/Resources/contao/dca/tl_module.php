@@ -3,6 +3,11 @@
 $dc = &$GLOBALS['TL_DCA']['tl_module'];
 
 /**
+ * Config
+ */
+$dc['config']['onload_callback']['huh.newsbundle'] = ['HeimrichHannot\NewsBundle\Backend\Module', 'modifyDC'];
+
+/**
  * Selectors
  */
 $dc['palettes']['__selector__'][] = 'use_news_lists';
@@ -88,5 +93,7 @@ $arrFields = [
         'sql'       => "char(1) NOT NULL default ''",
     ],
 ];
+
+$dc['fields']['news_metaFields']['options'][] = 'writers';
 
 $dc['fields'] = array_merge($dc['fields'], $arrFields);

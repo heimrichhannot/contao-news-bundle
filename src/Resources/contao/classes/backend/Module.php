@@ -11,6 +11,27 @@ namespace HeimrichHannot\NewsBundle\Backend;
 
 class Module extends \Backend
 {
+    /**
+     * Modify data container config
+     *
+     * @param \DataContainer $dc
+     */
+    public function modifyDC(\DataContainer $dc)
+    {
+        $objModule = \ModuleModel::findByPk($dc->id);
+
+        if ($objModule === null) {
+            return;
+        }
+
+        $dca = &$GLOBALS['TL_DCA']['tl_module'];
+
+        if ($objModule->type == 'newslist_related') {
+            $dca['fields']['customTpl']['options'] = $this->getTemplateGroup('mod_newslist');
+            unset($dca['fields']['customTpl']['options_callback']);
+        }
+    }
+
     public function getNewsListRelatedModules(\DataContainer $dc)
     {
         $options = static::getModuleOptions('newslist_related');
@@ -41,8 +62,7 @@ class Module extends \Backend
 
         $objModules = \ModuleModel::findByType($strType);
 
-        if ($objModules === null)
-        {
+        if ($objModules === null) {
             return $arrOptions;
         }
 

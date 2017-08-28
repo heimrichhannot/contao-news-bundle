@@ -37,6 +37,12 @@ class NewsArticle extends \ModuleNews
      */
     protected $twig;
 
+    /**
+     * Initialize the object
+     * @param \FrontendTemplate $template
+     * @param array $article
+     * @param \Module $module
+     */
     public function __construct(\FrontendTemplate $template, array $article, \Module $module)
     {
         $this->template = $template;
@@ -49,10 +55,60 @@ class NewsArticle extends \ModuleNews
         $this->generate();
     }
 
+    /**
+     * Compile the current element
+     */
     protected function compile()
     {
         $this->setSeen();
         $this->addRelatedNews();
+        $this->addWriters();
+    }
+
+    /**
+     * Add article writers from member table
+     */
+    protected function addWriters()
+    {
+        $metaFields = deserialize($this->module->news_metaFields);
+        $ids        = deserialize($this->article->writers, true);
+
+        if (!in_array('writers', $metaFields) || empty($ids)) {
+            return;
+        }
+
+        if (($members = \MemberModel::findMultipleByIds($ids)) === null) {
+            return;
+        }
+
+        $writers = [];
+
+        while ($members->next()) {
+            $writers[] = $members->row();
+        }
+
+        /**
+         * Provide a helper function that returns the writer names separated with given delimiter
+         * @param string $delimiter The delimiter
+         * @param string|null $format The writer name format string (default: ##firstname## ##lastname##)
+         * @return string The writers separated by the delimiter string
+         */
+        $this->template->writerNames = function ($delimiter = ',', $format = null) use ($writers) {
+            if ($format === null) {
+                $format = '##firstname## ##lastname##';
+            }
+
+            $names = [];
+
+            foreach ($writers as $writer) {
+                $names[] = trim(\StringUtil::parseSimpleTokens($format, $writer));
+            }
+
+
+            return implode($delimiter, $names);
+        };
+
+        $this->template->writers = $writers;
     }
 
     /**
@@ -66,18 +122,21 @@ class NewsArticle extends \ModuleNews
     }
 
 
+    /**
+     * Add related news to article
+     */
     protected function addRelatedNews()
     {
         if (!$this->article->add_related_news || !$this->module->related_news_module) {
             $this->template->add_related_news = false;
 
-            return false;
+            return;
         }
 
         if (($model = \ModuleModel::findByPk($this->module->related_news_module)) === null) {
             $this->template->add_related_news = false;
 
-            return false;
+            return;
         }
 
         $strClass = \Module::findClass($model->type);
@@ -88,11 +147,11 @@ class NewsArticle extends \ModuleNews
 
             \System::getContainer()->get('monolog.logger.contao')->log(
                 LogLevel::ERROR,
-                'Module class "'.$strClass.'" (module "'.$model->type.'") does not exist',
+                'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
                 ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
             );
 
-            return false;
+            return;
         }
 
         $model->typePrefix = 'mod_';
@@ -102,16 +161,9 @@ class NewsArticle extends \ModuleNews
         $objModule->setNews($this->article->id);
         $strBuffer = $objModule->generate();
 
-        // HOOK: add custom logic
-        if (isset($GLOBALS['TL_HOOKS']['getFrontendModule']) && is_array($GLOBALS['TL_HOOKS']['getFrontendModule'])) {
-            foreach ($GLOBALS['TL_HOOKS']['getFrontendModule'] as $callback) {
-                $strBuffer = static::importStatic($callback[0])->{$callback[1]}($model, $strBuffer, $objModule);
-            }
-        }
-
         // Disable indexing if protected
         if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
-            $strBuffer = "\n<!-- indexer::stop -->".$strBuffer."<!-- indexer::continue -->\n";
+            $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
         }
 
         $this->template->related_news = $strBuffer;
