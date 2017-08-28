@@ -18,174 +18,242 @@ class NewsList extends \Contao\Backend
 {
     public function checkPermission()
     {
-        $objUser     = \BackendUser::getInstance();
-        $objSession  = \Session::getInstance();
-        $objDatabase = \Database::getInstance();
+        $user = \BackendUser::getInstance();
+        $database = \Database::getInstance();
+        $bundles = \System::getContainer()->getParameter('kernel.bundles');
 
-        if ($objUser->isAdmin)
+        // HOOK: comments extension required
+        if (!isset($bundles['ContaoCommentsBundle']))
+        {
+            $key = array_search('allowComments', $GLOBALS['TL_DCA']['tl_news_list']['list']['sorting']['headerFields']);
+            unset($GLOBALS['TL_DCA']['tl_news_list']['list']['sorting']['headerFields'][$key]);
+        }
+
+        if ($user->isAdmin)
         {
             return;
         }
-        // Set root IDs
-        if (!is_array($objUser->newslists) || empty($objUser->newslists))
+
+        // Set the root IDs
+        if (!is_array($user->newslists) || empty($user->newslists))
         {
             $root = [0];
         }
         else
         {
-            $root = $objUser->newslists;
+            $root = $user->newslists;
         }
-        $GLOBALS['TL_DCA']['tl_news_list']['list']['sorting']['root'] = $root;
-        // Check permissions to add archives
-        if (!$objUser->hasAccess('create', 'newslistp'))
-        {
-            $GLOBALS['TL_DCA']['tl_news_list']['config']['closed'] = true;
-        }
+
+        $id = strlen(\Input::get('id')) ? \Input::get('id') : CURRENT_ID;
+
         // Check current action
         switch (\Input::get('act'))
         {
-            case 'create':
-            case 'select':
+            case 'paste':
                 // Allow
                 break;
-            case 'edit':
-                // Dynamically add the record to the user profile
-                if (!in_array(\Input::get('id'), $root))
-                {
-                    $arrNew = $objSession->get('new_records');
-                    if (is_array($arrNew['tl_news_list']) && in_array(\Input::get('id'), $arrNew['tl_news_list']))
-                    {
-                        // Add permissions on user level
-                        if ($objUser->inherit == 'custom' || !$objUser->groups[0])
-                        {
-                            $objUser    = $objDatabase->prepare("SELECT newslists, newslistp FROM tl_user WHERE id=?")->limit(1)->execute($objUser->id);
-                            $arrModulep = deserialize($objUser->newslistp);
-                            if (is_array($arrModulep) && in_array('create', $arrModulep))
-                            {
-                                $arrModules   = deserialize($objUser->newslists);
-                                $arrModules[] = \Input::get('id');
-                                $objDatabase->prepare("UPDATE tl_user SET newslists=? WHERE id=?")->execute(serialize($arrModules), $objUser->id);
-                            }
-                        } // Add permissions on group level
-                        elseif ($objUser->groups[0] > 0)
-                        {
-                            $objGroup   = $objDatabase->prepare("SELECT newslists, newslistp FROM tl_user_group WHERE id=?")->limit(1)->execute($objUser->groups[0]);
-                            $arrModulep = deserialize($objGroup->newslistp);
-                            if (is_array($arrModulep) && in_array('create', $arrModulep))
-                            {
-                                $arrModules   = deserialize($objGroup->newslists);
-                                $arrModules[] = \Input::get('id');
-                                $objDatabase->prepare("UPDATE tl_user_group SET newslists=? WHERE id=?")->execute(serialize($arrModules), $objUser->groups[0]);
-                            }
-                        }
-                        // Add new element to the user object
-                        $root[]          = \Input::get('id');
-                        $objUser->modals = $root;
-                    }
-                }
-            // No break;
-            case 'copy':
-            case 'delete':
-            case 'show':
-                if (!in_array(\Input::get('id'), $root) || (\Input::get('act') == 'delete' && !$objUser->hasAccess('delete', 'newslistp')))
-                {
-                    \System::getContainer()->get('monolog.logger.contao')->log(
-                        LogLevel::ERROR,
-                        'Not enough permissions to ' . \Input::get('act') . ' news list ID "' . \Input::get('id') . '"',
-                        ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
-                    );
 
-                    \Controller::redirect('contao/main.php?act=error');
+            case 'create':
+                if (!strlen(\Input::get('pid')) || !in_array(\Input::get('pid'), $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to create news_list items in news_list archive ID ' . \Input::get('pid') . '.');
                 }
                 break;
+
+            case 'cut':
+            case 'copy':
+                if (!in_array(\Input::get('pid'), $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list item ID ' . $id . ' to news_list archive ID ' . \Input::get('pid') . '.');
+                }
+            // NO BREAK STATEMENT HERE
+
+            case 'edit':
+            case 'show':
+            case 'delete':
+            case 'toggle':
+            case 'feature':
+                $objArchive = $database->prepare("SELECT pid FROM tl_news_list WHERE id=?")
+                    ->limit(1)
+                    ->execute($id);
+
+                if ($objArchive->numRows < 1)
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list item ID ' . $id . '.');
+                }
+
+                if (!in_array($objArchive->pid, $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list item ID ' . $id . ' of news_list archive ID ' . $objArchive->pid . '.');
+                }
+                break;
+
+            case 'select':
             case 'editAll':
             case 'deleteAll':
             case 'overrideAll':
-                $session = $objSession->getData();
-                if (\Input::get('act') == 'deleteAll' && !$objUser->hasAccess('delete', 'newslistp'))
+            case 'cutAll':
+            case 'copyAll':
+                if (!in_array($id, $root))
                 {
-                    $session['CURRENT']['IDS'] = [];
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID ' . $id . '.');
                 }
-                else
+
+                $objArchive = $database->prepare("SELECT id FROM tl_news_list WHERE pid=?")
+                    ->execute($id);
+
+                if ($objArchive->numRows < 1)
                 {
-                    $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $root);
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list archive ID ' . $id . '.');
                 }
-                $objSession->setData($session);
+
+                /** @var Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+                $session = \System::getContainer()->get('session');
+
+                $session = $session->all();
+                $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objArchive->fetchEach('id'));
+                $session->replace($session);
                 break;
+
             default:
                 if (strlen(\Input::get('act')))
                 {
-                    \System::getContainer()->get('monolog.logger.contao')->log(
-                        LogLevel::ERROR,
-                        'Not enough permissions to ' . \Input::get('act') . ' news list',
-                        ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
-                    );
-                    \Controller::redirect('contao/main.php?act=error');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "' . \Input::get('act') . '".');
+                }
+                elseif (!in_array($id, $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID ' . $id . '.');
                 }
                 break;
         }
     }
 
-    public function toggleList($row, $href, $label, $title, $icon, $attributes)
+    public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
     {
-        $objUser = \BackendUser::getInstance();
+        $user = \BackendUser::getInstance();
+
         if (strlen(\Input::get('tid')))
         {
-            $this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1));
-            \Controller::redirect($this->getReferer());
+            $this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1), (@func_get_arg(12) ?: null));
+            $this->redirect($this->getReferer());
         }
+
         // Check permissions AFTER checking the tid, so hacking attempts are logged
-        if (!$objUser->isAdmin && !$objUser->hasAccess('tl_news_list::published', 'alexf'))
+        if (!$user->hasAccess('tl_news_list::published', 'alexf'))
         {
             return '';
         }
-        $href .= '&amp;tid=' . $row['id'] . '&amp;state=' . ($row['published'] ? '' : 1);
+
+        $href .= '&amp;tid='.$row['id'].'&amp;state='.($row['published'] ? '' : 1);
+
         if (!$row['published'])
         {
-            $icon = 'invisible.gif';
+            $icon = 'invisible.svg';
         }
 
-        return '<a href="' . $this->addToUrl($href) . '" title="' . specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label) . '</a> ';
+        return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"').'</a> ';
     }
 
-    public function toggleVisibility($intId, $blnVisible)
+    public function toggleVisibility($intId, $blnVisible, \DataContainer $dc=null)
     {
-        $objUser     = \BackendUser::getInstance();
-        $objDatabase = \Database::getInstance();
-        // Check permissions to publish
-        if (!$objUser->isAdmin && !$objUser->hasAccess('tl_modal::published', 'alexf'))
-        {
-            \System::getContainer()->get('monolog.logger.contao')->log(
-                LogLevel::ERROR,
-                'Not enough permissions to publish/unpublish item ID "' . $intId . '"',
-                ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
-            );
+        $user = \BackendUser::getInstance();
+        $database = \Database::getInstance();
 
-            \Controller::redirect('contao/main.php?act=error');
-        }
-        $objVersions = new \Versions('tl_modal', $intId);
-        $objVersions->initialize();
-        // Trigger the save_callback
-        if (is_array($GLOBALS['TL_DCA']['tl_modal']['fields']['published']['save_callback']))
+        // Set the ID and action
+        \Input::setGet('id', $intId);
+        \Input::setGet('act', 'toggle');
+
+        if ($dc)
         {
-            foreach ($GLOBALS['TL_DCA']['tl_modal']['fields']['published']['save_callback'] as $callback)
+            $dc->id = $intId; // see #8043
+        }
+
+        // Trigger the onload_callback
+        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['config']['onload_callback']))
+        {
+            foreach ($GLOBALS['TL_DCA']['tl_news_list']['config']['onload_callback'] as $callback)
             {
-                $this->import($callback[0]);
-                $blnVisible = $this->{$callback[0]}->{$callback[1]}($blnVisible, $this);
+                if (is_array($callback))
+                {
+                    $this->import($callback[0]);
+                    $this->{$callback[0]}->{$callback[1]}($dc);
+                }
+                elseif (is_callable($callback))
+                {
+                    $callback($dc);
+                }
             }
         }
-        // Update the database
-        $objDatabase->prepare("UPDATE tl_news_list SET tstamp=" . time() . ", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")->execute($intId);
-        $objVersions->create();
 
-        \System::getContainer()->get('monolog.logger.contao')->log(
-            LogLevel::INFO,
-            'A new version of record "tl_news_list.id=' . $intId . '" has been created' . $this->getParentEntries(
-                'tl_modal',
-                $intId
-            ),
-            ['contao' => new ContaoContext(__METHOD__, TL_GENERAL)]
-        );
+        // Check the field access
+        if (!$user->hasAccess('tl_news_list::published', 'alexf'))
+        {
+            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish news_list item ID ' . $intId . '.');
+        }
+
+        // Set the current record
+        if ($dc)
+        {
+            $objRow = $database->prepare("SELECT * FROM tl_news_list WHERE id=?")
+                ->limit(1)
+                ->execute($intId);
+
+            if ($objRow->numRows)
+            {
+                $dc->activeRecord = $objRow;
+            }
+        }
+
+        $objVersions = new \Versions('tl_news_list', $intId);
+        $objVersions->initialize();
+
+        // Trigger the save_callback
+        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['fields']['published']['save_callback']))
+        {
+            foreach ($GLOBALS['TL_DCA']['tl_news_list']['fields']['published']['save_callback'] as $callback)
+            {
+                if (is_array($callback))
+                {
+                    $this->import($callback[0]);
+                    $blnVisible = $this->{$callback[0]}->{$callback[1]}($blnVisible, $dc);
+                }
+                elseif (is_callable($callback))
+                {
+                    $blnVisible = $callback($blnVisible, $dc);
+                }
+            }
+        }
+
+        $time = time();
+
+        // Update the database
+        $database->prepare("UPDATE tl_news_list SET tstamp=$time, published='" . ($blnVisible ? '1' : '') . "' WHERE id=?")
+            ->execute($intId);
+
+        if ($dc)
+        {
+            $dc->activeRecord->tstamp = $time;
+            $dc->activeRecord->published = ($blnVisible ? '1' : '');
+        }
+
+        // Trigger the onsubmit_callback
+        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['config']['onsubmit_callback']))
+        {
+            foreach ($GLOBALS['TL_DCA']['tl_news_list']['config']['onsubmit_callback'] as $callback)
+            {
+                if (is_array($callback))
+                {
+                    $this->import($callback[0]);
+                    $this->{$callback[0]}->{$callback[1]}($dc);
+                }
+                elseif (is_callable($callback))
+                {
+                    $callback($dc);
+                }
+            }
+        }
+
+        $objVersions->create();
     }
 
     public function copyList($row, $href, $label, $title, $icon, $attributes)

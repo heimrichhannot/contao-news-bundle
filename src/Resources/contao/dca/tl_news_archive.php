@@ -13,13 +13,11 @@ $dc = $GLOBALS['TL_DCA']['tl_news_archive'];
 /**
  * Add a global operation to tl_news_archive
  */
-array_insert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, array
-(
-    'lists' => array
-    (
-        'label'               => &$GLOBALS['TL_LANG']['tl_news_archive']['lists'],
-        'href'                => 'table=tl_news_list',
-        'icon'                => 'folderC.svg',
-        'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="c"'
-    )
-));
+array_insert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'], 1, [
+    'lists' => [
+        'label'      => &$GLOBALS['TL_LANG']['tl_news_archive']['lists'],
+        'href'       => 'table=tl_news_list_archive',
+        'icon'       => 'folderC.svg',
+        'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="c"'
+    ]
+]);
