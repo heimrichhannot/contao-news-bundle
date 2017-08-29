@@ -10,6 +10,7 @@ namespace HeimrichHannot\NewsBundle;
 
 
 use Codefog\TagsBundle\Model\TagModel;
+use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Dav\NewsBundle\Models\NewsTagsModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
@@ -77,6 +78,8 @@ class NewsArticle extends \ModuleNews
      */
     protected function addTags()
     {
+        $this->template->hasTags = false;
+
         if (!in_array('tags', $this->module->news_metaFields)) {
             return;
         }
@@ -98,10 +101,20 @@ class NewsArticle extends \ModuleNews
 
         $tags = [];
 
-        while ($models->next()) {
-            $tags[] = $models->row();
+        /**
+         * @var $model Tag
+         */
+        foreach ($models as $model) {
+            $tag = $model->getData();
+
+            // TODO: implement tags jumpTo based on module jumpTo and tag alias/type
+            $tag['href']      = '#';
+            $tag['linkValue'] = '#';
+
+            $tags[$tag['id']] = $tag;
         }
 
+        $this->template->hasTags       = true;
         $this->template->tags          = $tags;
         $this->template->hasMetaFields = true;
     }
@@ -111,6 +124,8 @@ class NewsArticle extends \ModuleNews
      */
     protected function addWriters()
     {
+        $this->template->hasWriters = false;
+
         if (!in_array('writers', $this->module->news_metaFields)) {
             return;
         }
@@ -152,6 +167,7 @@ class NewsArticle extends \ModuleNews
             return implode($delimiter, $names);
         };
 
+        $this->template->hasWriters    = true;
         $this->template->writers       = $writers;
         $this->template->hasMetaFields = true;
     }
