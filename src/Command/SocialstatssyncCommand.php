@@ -34,6 +34,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 {
     use FrameworkAwareTrait;
 
+    public $baseUrl;
+
     /**
      * @var $logger Logger
      */
@@ -73,13 +75,15 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     protected function executeLocked(InputInterface $input, OutputInterface $output)
     {
         $this->framework->initialize();
-        $this->output = $output;
+        $this->output  = $output;
+        $route         = System::getContainer()->get('router')->getContext();
+        $this->baseUrl = $route->getScheme() . $route->getHost();
+        $this->logger  = System::getContainer()->get('monolog.logger.contao');
 
-        $this->logger = System::getContainer()->get('monolog.logger.contao');
         $output->writeln('START updating social stats...');
         $this->logger->info('START updating social stats...', ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
         $config       = ['ssl.certificate_authority' => false];
-        $route        = System::getContainer()->get('router')->getContext();
+
         $this->config = [
             'base_url'     => $route->getScheme() . $route->getHost(),
             'social_stats' => System::getContainer()->getParameter('social_stats'),
@@ -88,57 +92,112 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 //        $this->items = NewsModel::getAllForSocialStatsUpdate(false);
         $this->items = NewsModel::findMultipleByIds([2026]);
 
-        
+
 //        $this->updateGoogleAnalytics();
 
         try {
             $this->httpClient = new Client($config);
 
-            // count all items
-//            $numItems  = NewsModel::getAllForSocialStatsUpdate(true);
-            $offset    = 0;
-            $chunkSize = (intval($this->config['social_stats']['chunksize']) > 0 ? intval($this->config['social_stats']['chunksize']) : 100);
-            $numChunks = intval(ceil($numItems / $chunkSize));
-
-            // chunking
-            for ($i = 1; $i <= $numChunks; $i++)
+            try
             {
-                $newsItems = NewsModel::getAllForSocialStatsUpdate(false, $offset, $chunkSize);
+                $this->updateStats($this->items, 'facebook', NewsModel::$TYPE_NEWS);
+            } catch (GuzzleException $e)
+            {
+                $this->logger->warning('facebook stats: ' . $e->getMessage());
+            };
 
-                try
+            $requests = [];
+            foreach ($this->items as $item)
+            {
+                $this->output->writeln('Updating news article '.$item->id.' ('.$item->headline.')');
+//                $urls = $item->getLegacyUrls($this->baseUrl);
+                $urls = $item->getLegacyUrls($this->baseUrl);
+                //Todo: remove
+                $count = 0;
+                foreach ($urls as $url)
                 {
-                    $this->updateStats($newsItems, 'facebook', NewsModel::$TYPE_NEWS);
-                } catch (GuzzleException $e)
-                {
-                    $this->logger->warning('facebook stats: ' . $e->getMessage());
-                };
-//
-//                try
-//                {
-//                    $this->updateStats($newsItems, 'twitter', NewsModel::$TYPE_NEWS);
-//                } catch (GuzzleException $e)
-//                {
-//                    $this->logger->warning('twitter stats: ' . $e->getMessage());
-//                };
-//
-//                try
-//                {
-//                    $this->updateStats($newsItems, 'googlePlus', NewsModel::$TYPE_NEWS);
-//                } catch (GuzzleException $e)
-//                {
-//                    $this->logger->warning('googlePlus stats: ' . $e->getMessage());
-//                };
-//
-//                try
-//                {
-//                    $this->updateStats($newsItems, 'disqus', NewsModel::$TYPE_NEWS);
-//                } catch (GuzzleException $e)
-//                {
-//                    $this->logger->warning('disqus stats: ' . $e->getMessage());
-//                };
-//
-                $offset = ($chunkSize * $i) + 1;
+
+                    $this->output->writeln('Url: '.$url);
+                    $request = [
+                        'method' => 'GET',
+                        'relative_url' => '?id='.urlencode($url)
+                    ];
+                    $requests[] = $request;
+//                    $count += $this->getFacebookCount($url);
+                }
+
+//                $this->output->writeln('Facebook count: '.$count);
+
             }
+            $this->output->writeln(json_encode($requests));
+            $response = $this->httpClient->request('POST', 'https://graph.facebook.com',[
+                'batch' => json_encode($requests)
+            ]);
+            if ($response->getStatusCode() == 200)
+            {
+                $this->output->writeln($response->getBody()->getContents());y
+//                $data = json_decode($response->getBody()->getContents(), true);
+
+//                foreach ($data as $entry)
+//                {
+//
+//                }
+//
+//                if ($data['id'] == $this->url)
+//                {
+//                    $count = intval($data['share']['share_count']);
+//                }
+            }
+
+
+
+
+
+//            // count all items
+////            $numItems  = NewsModel::getAllForSocialStatsUpdate(true);
+//            $offset    = 0;
+//            $chunkSize = (intval($this->config['social_stats']['chunksize']) > 0 ? intval($this->config['social_stats']['chunksize']) : 100);
+//            $numChunks = intval(ceil($numItems / $chunkSize));
+//
+//            // chunking
+//            for ($i = 1; $i <= $numChunks; $i++)
+//            {
+//                $newsItems = NewsModel::getAllForSocialStatsUpdate(false, $offset, $chunkSize);
+//
+//                try
+//                {
+//                    $this->updateStats($newsItems, 'facebook', NewsModel::$TYPE_NEWS);
+//                } catch (GuzzleException $e)
+//                {
+//                    $this->logger->warning('facebook stats: ' . $e->getMessage());
+//                };
+////
+////                try
+////                {
+////                    $this->updateStats($newsItems, 'twitter', NewsModel::$TYPE_NEWS);
+////                } catch (GuzzleException $e)
+////                {
+////                    $this->logger->warning('twitter stats: ' . $e->getMessage());
+////                };
+////
+////                try
+////                {
+////                    $this->updateStats($newsItems, 'googlePlus', NewsModel::$TYPE_NEWS);
+////                } catch (GuzzleException $e)
+////                {
+////                    $this->logger->warning('googlePlus stats: ' . $e->getMessage());
+////                };
+////
+////                try
+////                {
+////                    $this->updateStats($newsItems, 'disqus', NewsModel::$TYPE_NEWS);
+////                } catch (GuzzleException $e)
+////                {
+////                    $this->logger->warning('disqus stats: ' . $e->getMessage());
+////                };
+////
+//                $offset = ($chunkSize * $i) + 1;
+//            }
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
 
@@ -208,6 +267,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 //        }
     }
 
+    private function getFacebookCount($url)
+    {
+        $crawler = new FacebookCrawler($this->httpClient, $url);
+        $count = $crawler->getCount($url);
+    }
 
 
     /**
@@ -223,8 +287,9 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     {
         // all existing entries for update
         if (null === $items) {
-            $this->logger->info('No items to update for: ' . $provider);
-
+            $message = 'No items to update for: ' . $provider;
+            $this->logger->info($message);
+            $this->output->writeln($message);
             return 0;
         }
         /** @var $item NewsModel */

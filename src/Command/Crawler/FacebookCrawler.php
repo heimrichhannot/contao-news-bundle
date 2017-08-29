@@ -1,8 +1,15 @@
 <?php
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
+use GuzzleHttp\Client;
+
 class FacebookCrawler extends AbstractCrawler
 {
+    /**
+     * FacebookCrawler constructor.
+     * @param $client Client
+     * @param $url
+     */
     public function __construct($client, $url)
     {
         parent::__construct($client, $url);
@@ -22,7 +29,6 @@ class FacebookCrawler extends AbstractCrawler
                 $count = intval($data['share']['share_count']);
             }
         }
-
         return $count;
     }
 }
