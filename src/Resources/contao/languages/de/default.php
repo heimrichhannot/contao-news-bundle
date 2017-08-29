@@ -12,3 +12,4 @@ $GLOBALS['TL_LANG']['MSC']['moreNewsCategory'] = 'Artikel aus der Kategorie: %s'
 
 $GLOBALS['TL_LANG']['MSC']['writers'] = 'Verfasser';
 $GLOBALS['TL_LANG']['MSC']['tags']    = 'Schlagwörter';
+$GLOBALS['TL_LANG']['MSC']['topics']  = 'Themen';
