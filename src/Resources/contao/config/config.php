@@ -26,7 +26,9 @@ $GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list_archive';
 /**
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_news'] = '\HeimrichHannot\NewsBundle\NewsModel';
+$GLOBALS['TL_MODELS']['tl_news']              = '\HeimrichHannot\NewsBundle\NewsModel';
+$GLOBALS['TL_MODELS']['tl_news_list']         = '\HeimrichHannot\NewsBundle\Model\NewsListModel';
+$GLOBALS['TL_MODELS']['tl_news_list_archive'] = '\HeimrichHannot\NewsBundle\Model\NewsListArchiveModel';
 
 /**
  * Hooks
