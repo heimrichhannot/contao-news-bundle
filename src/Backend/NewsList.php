@@ -14,6 +14,14 @@ use HeimrichHannot\Haste\Dca\General;
 
 class NewsList extends \Contao\Backend
 {
+    const MODE_MANUAL = 'manual';
+    const MODE_AUTO_ITEM = 'auto_item';
+
+    const MODES = [
+        self::MODE_MANUAL,
+        self::MODE_AUTO_ITEM
+    ];
+
     public static function generateAlias($varValue, \DataContainer $objDc)
     {
         if (($objNewsList = \HeimrichHannot\NewsBundle\Model\NewsListModel::findByPk($objDc->id)) === null) {
