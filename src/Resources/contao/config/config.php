@@ -39,6 +39,8 @@ $GLOBALS['TL_HOOKS']['newsListCountItems']['heimrichhannot_news'] = ['HeimrichHa
 $GLOBALS['TL_HOOKS']['newsListFetchItems']['heimrichhannot_news'] = ['HeimrichHannot\NewsBundle\Hooks', 'newsListFetchItemsHook'];
 $GLOBALS['TL_HOOKS']['getPageLayout']['heimrichhannot_news']      = ['HeimrichHannot\NewsBundle\Hooks', 'getPageLayoutHook'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags']['heimrichhannot_news']  = ['heimrichhannot_news.listener.insert_tags', 'onReplaceInsertTags'];
+$GLOBALS['TL_HOOKS']['getSearchablePages']['heimrichhannot_news'] = ['HeimrichHannot\NewsBundle\Hooks', 'getSearchablePages'];
+
 /**
  * Ajax Actions
  */
