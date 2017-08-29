@@ -9,6 +9,7 @@
 namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\NewsModel;
 
 /**
@@ -26,8 +27,16 @@ class InsertTagsListener
     /**
      * @var array
      */
-    private $supportedTags = [
-        'news_info_box',
+    private $supportedNewsTags = [
+    ];
+
+    /**
+     * @var array
+     */
+    private $supportedNewsListTags = [
+        'news_list',
+        'news_list_url',
+        'news_list_title'
     ];
 
     /**
@@ -52,8 +61,12 @@ class InsertTagsListener
         $elements = explode('::', $tag);
         $key      = strtolower($elements[0]);
 
-        if (in_array($key, $this->supportedTags, true)) {
+        if (in_array($key, $this->supportedNewsTags, true)) {
             return $this->replaceNewsInsertTag($key, $elements[1]);
+        }
+
+        if (in_array($key, $this->supportedNewsListTags, true)) {
+            return $this->replaceNewsListInsertTag($key, $elements[1]);
         }
 
         return false;
@@ -79,7 +92,29 @@ class InsertTagsListener
             return '';
         }
 
-        return $this->generateReplacement($news, $insertTag);
+        return $this->generateNewsReplacement($news, $insertTag);
+    }
+
+    /**
+     * Replaces an news list-related insert tag.
+     *
+     * @param string $insertTag
+     * @param string $idOrAlias
+     *
+     * @return string
+     */
+    private function replaceNewsListInsertTag($insertTag, $idOrAlias)
+    {
+        $this->framework->initialize();
+
+        /** @var NewsListModel $adapter */
+        $adapter = $this->framework->getAdapter(NewsListModel::class);
+
+        if (null === ($newsList = $adapter->findByIdOrAlias($idOrAlias))) {
+            return '';
+        }
+
+        return $this->generateNewsListReplacement($newsList, $insertTag);
     }
 
     /**
@@ -92,12 +127,6 @@ class InsertTagsListener
      */
     private function generateReplacement(\Contao\NewsModel $news, $insertTag)
     {
-        switch ($insertTag) {
-
-            case 'news_info_box':
-                return '[[INFOBOX]]';
-        }
-
         return '';
     }
 }

@@ -9,13 +9,11 @@ $arrLang['tstamp'] = ['Änderungsdatum', ''];
 $arrLang['title']  = ['Titel', 'Geben Sie hier bitte den Titel ein.'];
 $arrLang['jumpTo'] = ['Weiterleitungsseite', 'Wählen Sie hier eine Weiterleitungsseite aus.'];
 
-
 /**
  * Legends
  */
 $arrLang['general_legend']  = 'Allgemeine Einstellungen';
 $arrLang['redirect_legend'] = 'Weiterleitung';
-
 
 /**
  * Buttons

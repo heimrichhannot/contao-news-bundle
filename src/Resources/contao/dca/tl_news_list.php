@@ -116,7 +116,9 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'sql' => "int(10) unsigned NOT NULL auto_increment",
         ],
         'pid'       => [
-            'sql' => "int(10) unsigned NOT NULL default '0'",
+            'foreignKey' => 'tl_news_list_archive.title',
+            'sql'        => "int(10) unsigned NOT NULL default '0'",
+            'relation'   => ['type' => 'belongsTo', 'load' => 'eager']
         ],
         'sorting'   => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
