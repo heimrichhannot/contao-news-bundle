@@ -31,6 +31,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('chunksize')
+                    ->defaultValue(0)
                 ->end()
                 ->scalarNode('google_sa_keyfile')
                 ->end()
@@ -47,6 +48,19 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('disqusPublicApiKey')
                 ->end()
                 ->scalarNode('disqusForumName')
+                ->end()
+                ->arrayNode('google_analytics')
+                    ->children()
+                        ->scalarNode('email')->end()
+                        ->scalarNode('key_id')->end()
+                        ->scalarNode('client_id')->end()
+                        ->scalarNode('client_key')->end()
+                        ->scalarNode('view_id')->end()
+                        ->scalarNode('api_key')->end()
+                        ->scalarNode('keyfile')
+                            ->defaultValue('files/newsbundle/socialstats/google_analytics/client_secret.json')
+                            ->end()
+                    ->end()
                 ->end()
             ->end();
 

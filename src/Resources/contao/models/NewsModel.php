@@ -528,6 +528,80 @@ class NewsModel extends Model
         return static::countBy($arrColumns, [$intFrom, $intTo], $arrOptions);
     }
 
+    /**
+     * Returns the typo3 urls
+     *
+     * @param $baseUrl
+     *
+     * @return array
+     */
+    public function getLegacyUrls($baseUrl)
+    {
+        $url_parts = [];
+        $title = 0;
+        if ($archive = \NewsArchiveModel::findByPk($this->pid))
+        {
+            $title = $archive->title;
+        }
+        if ($categories = deserialize($this->categories))
+        {
+            $categoryCollection = NewsCategoryModel::findPublishedByIds($categories);
+
+            if ($categoryCollection)
+            {
+                while ($categoryCollection->next())
+                {
+                    $url = [];
+                    if ($title)
+                    {
+                        $url[] = $title;
+                    }
+                    $url = array_merge($url, $this->getCategoryTree($categoryCollection->current()));
+                    $url[] = $this->id;
+                    $url[] = $this->alias;
+                    $url_parts[] = $url;
+                }
+            }
+        }
+
+        $urls = [];
+        foreach ($url_parts as $part)
+        {
+            $url = $baseUrl;
+            foreach ($part as $string) {
+                if ($string !== null) {
+                    $url .= '/'.urlencode(strtolower($string));
+                }
+            }
+            $urls[] = $url;
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Recursive function to generate url tree for categories.
+     * Going from current to parent until root is found.
+     * Call itself, if current category is not root.
+     * @param NewsCategoryModel $category
+     * @param array $url
+     *
+     * @return array
+     */
+    private function getCategoryTree($category, $url = [])
+    {
+        if ($category)
+        {
+            array_unshift($url, $category->alias);
+            if ($category->pid > 0)
+            {
+                return $this->getCategoryTree(NewsCategoryModel::findPublishedByIdOrAlias($category->pid), $url);
+            }
+        }
+        return $url;
+    }
+
+
     public function getUrl($baseUrl)
     {
         $urlString[] = \NewsArchiveModel::findByPk($this->pid) == null ? null : \NewsArchiveModel::findByPk($this->pid)->title;
@@ -552,20 +626,16 @@ class NewsModel extends Model
      */
     public static function getAllForSocialStatsUpdate($countOnly = false, $offset = false, $limit = false)
     {
+        $t     = static::$strTable;
         $arrOptions['order'] = 'date ASC';
         $tsPeriod            = time() - (60 * 60 * 24 * 180); // 180 days
 
-        $column = ['date>?', 'hidden=?'];
-        $value  = [$tsPeriod, 0];
+        $arrColumns = ["$t.date>$tsPeriod"];
 
-        if (false !== $offset) {
-            $arrOptions['offset'] = $offset;
-        }
-        if (false !== $limit) {
-            $arrOptions['limit'] = $limit;
-        }
+        $news = NewsModel::findPublished($arrColumns, $limit, $offset,$arrOptions);
 
         if ($countOnly) {
+
             $result = NewsModel::findBy($column, $value, $arrOptions)->count();
         } else {
             $result = NewsModel::findBy($column, $value, $arrOptions);
