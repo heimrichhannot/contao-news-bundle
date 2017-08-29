@@ -1,7 +1,7 @@
 {
     "name": "heimrichhannot/contao-news-bundle",
     "type": "contao-bundle",
-    "description": "Contao 4 news bundle",
+    "description": "This module contains enhancements for the contao news entity.",
     "license": "LGPL-3.0+",
     "require": {
         "php": "~5.4 || ~7.0",
