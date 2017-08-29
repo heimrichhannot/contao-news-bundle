@@ -20,13 +20,6 @@ class NewsListArchive extends \Contao\Backend
     {
         $user     = \BackendUser::getInstance();
         $database = \Database::getInstance();
-        $bundles  = \System::getContainer()->getParameter('kernel.bundles');
-
-        // HOOK: comments extension required
-        if (!isset($bundles['ContaoCommentsBundle']))
-        {
-            unset($GLOBALS['TL_DCA']['tl_news_list_archive']['fields']['allowComments']);
-        }
 
         if ($user->isAdmin)
         {

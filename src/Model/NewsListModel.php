@@ -8,11 +8,10 @@
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
-namespace HeimrichHannot\NewsBundle;
+namespace HeimrichHannot\NewsBundle\Model;
 
 
 class NewsListModel extends \Model
 {
     protected static $strTable = 'tl_news_list';
-
 }

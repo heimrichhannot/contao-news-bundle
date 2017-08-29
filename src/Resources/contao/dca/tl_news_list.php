@@ -104,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
     // Palettes
     'palettes'    => [
         '__selector__' => ['published'],
-        'default'      => '{general_legend},title,news;{publish_legend},published',
+        'default'      => '{general_legend},title,alias,news;{publish_legend},published',
     ],
     // Sub palettes
     'subpalettes' => [
@@ -140,6 +140,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
+        'alias'     => \HeimrichHannot\Haste\Dca\General::getAliasField(['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateAlias']),
         'news'      => [
             'label'        => &$GLOBALS['TL_LANG']['tl_news_list']['news'],
             'inputType'    => 'fieldpalette',
