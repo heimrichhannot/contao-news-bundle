@@ -220,8 +220,6 @@ class NewsList
                 $this->filterColumns[]        = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
                 $this->filterOptions['order'] = "FIELD($t.pid, " . implode(',', array_map('intval', $this->newsArchives)) . "), FIELD($t.id, " . implode(',', array_map('intval', $ids)) . ")";
             }
-
-            echo 1;
         }
     }
 
