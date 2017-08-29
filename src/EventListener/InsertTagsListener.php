@@ -72,7 +72,7 @@ class InsertTagsListener
     {
         $this->framework->initialize();
 
-        /** @var NewsModel $adapter */
+        /** @var \Contao\NewsModel $adapter */
         $adapter = $this->framework->getAdapter(NewsModel::class);
 
         if (null === ($news = $adapter->findByIdOrAlias($idOrAlias))) {
@@ -85,17 +85,17 @@ class InsertTagsListener
     /**
      * Generates the replacement string.
      *
-     * @param NewsModel $news
+     * @param \Contao\NewsModel $news
      * @param string $insertTag
      *
      * @return string
      */
-    private function generateReplacement(NewsModel $news, $insertTag)
+    private function generateReplacement(\Contao\NewsModel $news, $insertTag)
     {
         switch ($insertTag) {
 
             case 'news_info_box':
-                return '';
+                return '[[INFOBOX]]';
         }
 
         return '';

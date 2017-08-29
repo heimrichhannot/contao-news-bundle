@@ -27,7 +27,7 @@ $dca['palettes']['news_readers_survey_result'] =
     '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $dca['palettes']['news_info_box'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+    '{title_legend},name,headline,type;{config_legend},news_archives;{redirect_legend},jumpTo;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $dca['palettes']['newslist'] = str_replace('news_archives', 'news_archives,use_news_lists,skipPreviousNews', $dca['palettes']['newslist']);
 
@@ -35,6 +35,9 @@ $dca['palettes']['newslist'] = str_replace('{template_legend', '{news_related_le
 
 
 $dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes']['newslist']);
+
+$dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
+$dca['palettes']['newsreader'] = str_replace('{template_legend', '{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newsreader']);
 
 // update slick_newslist because already invoked
 $dca['palettes']['slick_newslist'] = $dca['palettes']['newslist'];
@@ -106,6 +109,13 @@ $fields = [
         'inputType' => 'checkbox',
         'eval'      => ['tl_class' => 'clr'],
         'sql'       => "char(1) NOT NULL default ''",
+    ],
+    'newsInfoBoxModule'          => [
+        'inputType'        => 'select',
+        'label'            => &$GLOBALS['TL_LANG']['tl_module']['newsInfoBoxModule'],
+        'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getNewsInfoBoxModules'],
+        'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true],
+        'sql'              => "int(1) NOT NULL default '0'",
     ],
 ];
 

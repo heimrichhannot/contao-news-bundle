@@ -12,18 +12,19 @@ $lang['add_related_news']           = ['Verwandte Nachrichten anzeigen', 'Zeige 
 $lang['related_news_module']        = ['Nachrichtenliste', 'Bitte wählen Sie das Nachrichtenlisten-Modul für die Anzeige der verwandten Beiträge.'];
 $lang['skipPreviousNews']           = ['Bereits angezeigte Nachrichten ausschließen', 'Schließen Sie bereits angezeigte Nachrichten aus.'];
 $lang['news_readers_survey_result'] = ['Leser-Umfrage-Ergebnis'];
-
+$lang['newsInfoBoxModule']          = ['Nachrichten Info-Box Modul', 'Definieren Sie ein Nachrichten Info-Box Modul.'];
 
 /**
  * Legends
  */
 $lang['news_readers_survey_result_legend'] = 'Leser-Umfrage-Ergebnis';
 $lang['news_related_legend']               = 'Verwandte Nachrichten-Einstellungen';
+$lang['news_info_box_legend']              = 'Infobox-Einstellungen';
 
 /**
  * Reference
  */
 $lang['reference']['newsBundle'] = [
-    \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL => 'Manuelle Auswahl',
+    \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL    => 'Manuelle Auswahl',
     \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_AUTO_ITEM => 'Auto-Item'
 ];

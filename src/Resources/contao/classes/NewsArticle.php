@@ -14,6 +14,7 @@ use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Dav\NewsBundle\Models\NewsTagsModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
+use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
@@ -42,6 +43,12 @@ class NewsArticle extends \ModuleNews
     protected $twig;
 
     /**
+     * Simple tokens
+     * @var array
+     */
+    protected $tokens = [];
+
+    /**
      * Initialize the object
      * @param \FrontendTemplate $template
      * @param array $article
@@ -57,6 +64,7 @@ class NewsArticle extends \ModuleNews
         parent::__construct($module->objModel);
 
         $this->generate();
+        $this->replaceTokens();
     }
 
     /**
@@ -70,8 +78,86 @@ class NewsArticle extends \ModuleNews
         $this->addRelatedNews();
         $this->addWriters();
         $this->addTags();
+        $this->addInfoBox();
     }
 
+    /**
+     * Replace tokens within teaser and text
+     */
+    protected function replaceTokens()
+    {
+        $id     = $this->article->id;
+        $tokens = $this->tokens;
+
+        if ($this->template->hasText) {
+            $this->template->text = function () use ($id, $tokens) {
+                $strText    = '';
+                $objElement = \ContentModel::findPublishedByPidAndTable($id, 'tl_news');
+
+                if ($objElement !== null) {
+                    while ($objElement->next()) {
+                        $strText .= $this->getContentElement($objElement->current());
+                    }
+                }
+
+                if (count($tokens) > 0) {
+                    $strText = \StringUtil::parseSimpleTokens($strText, $tokens);
+                }
+
+                return $strText;
+            };
+        }
+
+        if ($this->template->hasTeaser) {
+            $this->template->teaser = \StringUtil::parseSimpleTokens($this->template->teaser, $tokens);
+        }
+    }
+
+    /**
+     * Add info box
+     */
+    protected function addInfoBox()
+    {
+        $this->template->hasInfoBox = false;
+
+        if (!$this->module->newsInfoBoxModule) {
+            return;
+        }
+
+        if (($model = \ModuleModel::findByPk($this->module->newsInfoBoxModule)) === null) {
+            return;
+        }
+
+        $strClass = \Module::findClass($model->type);
+
+        // Return if the class does not exist
+        if (!class_exists($strClass)) {
+            $this->template->add_related_news = false;
+
+            \System::getContainer()->get('monolog.logger.contao')->log(
+                LogLevel::ERROR,
+                'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
+                ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
+            );
+
+            return;
+        }
+
+        $model->typePrefix = 'mod_';
+
+        /** @var ModuleNewsInfoBox $objModule */
+        $objModule = new $strClass($model);
+        $strBuffer = $objModule->generate();
+
+        // Disable indexing if protected
+        if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
+            $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
+        }
+
+        $this->template->hasInfoBox    = true;
+        $this->template->infoBox       = $strBuffer;
+        $this->tokens['news_info_box'] = $strBuffer; // support ##news_info_box## simple tokens (within tl_content for example)
+    }
 
     /**
      * Add news tags
