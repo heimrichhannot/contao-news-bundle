@@ -27,3 +27,6 @@ $fields = [
 $dc['fields'] = array_merge($dc['fields'], $fields);
 
 $dc['fields']['name']['sql']['length'] = 255;
+
+\HeimrichHannot\Haste\Dca\General::addAliasToDca('tl_cfg_tag', ['HeimrichHannot\NewsBundle\Backend\CfgTag', 'generateAlias'], 'name');
+\HeimrichHannot\Haste\Dca\General::addAliasButton('tl_cfg_tag');

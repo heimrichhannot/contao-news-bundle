@@ -13,6 +13,7 @@ $dca['config']['onload_callback']['huh.newsbundle'] = ['HeimrichHannot\NewsBundl
 $dca['palettes']['__selector__'][] = 'use_news_lists';
 $dca['palettes']['__selector__'][] = 'newsListMode';
 $dca['palettes']['__selector__'][] = 'add_related_news';
+$dca['palettes']['__selector__'][] = 'addNewsTagFilter';
 
 /**
  * Palettes
@@ -48,7 +49,7 @@ $dca['palettes']['slick_newslist'] = $dca['palettes']['newslist'];
 $dca['subpalettes']['use_news_lists']                                                           = 'newsListMode';
 $dca['subpalettes']['newsListMode_' . \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL] = 'news_lists';
 $dca['subpalettes']['add_related_news']                                                         = 'related_news_module';
-
+$dca['subpalettes']['addNewsTagFilter']                                                         = 'newsTagFilterJumpTo';
 
 /**
  * Fields
@@ -79,6 +80,22 @@ $fields = [
         'relation'   => ['type' => 'hasMany', 'load' => 'eager'],
         'eval'       => ['multiple' => true, 'mandatory' => true],
         'sql'        => "blob NULL",
+    ],
+    'addNewsTagFilter'               => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_module']['addNewsTagFilter'],
+        'exclude'   => true,
+        'inputType' => 'checkbox',
+        'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+        'sql'       => "char(1) NOT NULL default ''"
+    ],
+    'newsTagFilterJumpTo'        => [
+        'label'      => &$GLOBALS['TL_LANG']['tl_module']['newsTagFilterJumpTo'],
+        'exclude'    => true,
+        'inputType'  => 'pageTree',
+        'foreignKey' => 'tl_page.title',
+        'eval'       => ['fieldType' => 'radio'],
+        'sql'        => "int(10) unsigned NOT NULL default '0'",
+        'relation'   => ['type' => 'hasOne', 'load' => 'eager']
     ],
     'news_readers_survey_result' => [
         'label'            => &$GLOBALS['TL_LANG']['tl_module']['news_readers_survey_result'],
@@ -121,5 +138,6 @@ $fields = [
 
 $dca['fields']['news_metaFields']['options'][] = 'writers';
 $dca['fields']['news_metaFields']['options'][] = 'tags';
+$dca['fields']['news_metaFields']['eval']['submitOnChange'] = true;
 
 $dca['fields'] = array_merge($dca['fields'], $fields);

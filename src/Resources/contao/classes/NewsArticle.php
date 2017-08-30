@@ -13,6 +13,7 @@ use Codefog\TagsBundle\Model\TagModel;
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Dav\NewsBundle\Models\NewsTagsModel;
+use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
@@ -193,8 +194,12 @@ class NewsArticle extends \ModuleNews
         foreach ($models as $model) {
             $tag = $model->getData();
 
-            // TODO: implement tags jumpTo based on module jumpTo and tag alias/type
-            $tag['href']      = '#';
+            if (($url = Url::generateFrontendUrl($this->module->newsTagFilterJumpTo))) {
+                $tag['href'] = $url . '/' . $tag['alias'];
+            } else {
+                $tag['href'] = '#';
+            }
+
             $tag['linkValue'] = '#';
 
             $tags[$tag['id']] = $tag;
