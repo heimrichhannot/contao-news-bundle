@@ -10,6 +10,7 @@
 
 namespace HeimrichHannot\NewsBundle\Command;
 
+use Abraham\TwitterOAuth\TwitterOAuth;
 use Codeception\Module\Symfony;
 use Contao\CoreBundle\Command\AbstractLockedCommand;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
@@ -17,6 +18,7 @@ use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\System;
 use GuzzleHttp\Exception\RequestException;
+use HeimrichHannot\NewsBundle\Command\Crawler\AbstractCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\DisqusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\FacebookCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\GoogleAnalyticsCrawler;
@@ -24,6 +26,7 @@ use HeimrichHannot\NewsBundle\Command\Crawler\GooglePlusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\TwitterCrawler;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use HeimrichHannot\NewsBundle\News;
 use HeimrichHannot\NewsBundle\NewsModel;
 use Model\Collection;
 use Monolog\Logger;
@@ -66,7 +69,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     protected function configure()
     {
-        $this->setName('hh:news-socialstatssync')->setDescription('Synchronizes the social stats with the database.');
+        $this->setName('hh:news:socialstats')->setDescription('Updates the database with social stats.');
     }
 
     /**
@@ -79,128 +82,30 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $route         = System::getContainer()->get('router')->getContext();
         $this->baseUrl = $route->getScheme() . $route->getHost();
         $this->logger  = System::getContainer()->get('monolog.logger.contao');
+        $this->config = System::getContainer()->getParameter('social_stats');
 
-        $output->writeln('START updating social stats...');
-        $this->logger->info('START updating social stats...', ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
-        $config       = ['ssl.certificate_authority' => false];
+        $message = 'START updating social stats...';
+        $output->writeln($message);
+        $this->logger->info($message, ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
 
-        $this->config = [
+        $this->items = NewsModel::getAllForSocialStatsUpdate(false);
+        $this->items = NewsModel::findMultipleByIds([2114,1427,2026]);
+        $this->httpClient = new Client([
             'base_url'     => $route->getScheme() . $route->getHost(),
             'social_stats' => System::getContainer()->getParameter('social_stats'),
-        ];
-
-//        $this->items = NewsModel::getAllForSocialStatsUpdate(false);
-        $this->items = NewsModel::findMultipleByIds([2026]);
-
+            'ssl.certificate_authority' => false
+        ]);
 
 //        $this->updateGoogleAnalytics();
 
         try {
-            $this->httpClient = new Client($config);
-
-            try
-            {
-                $this->updateStats($this->items, 'facebook', NewsModel::$TYPE_NEWS);
-            } catch (GuzzleException $e)
-            {
-                $this->logger->warning('facebook stats: ' . $e->getMessage());
-            };
-
-            $requests = [];
-            foreach ($this->items as $item)
-            {
-                $this->output->writeln('Updating news article '.$item->id.' ('.$item->headline.')');
-//                $urls = $item->getLegacyUrls($this->baseUrl);
-                $urls = $item->getLegacyUrls($this->baseUrl);
-                //Todo: remove
-                $count = 0;
-                foreach ($urls as $url)
-                {
-
-                    $this->output->writeln('Url: '.$url);
-                    $request = [
-                        'method' => 'GET',
-                        'relative_url' => '?id='.urlencode($url)
-                    ];
-                    $requests[] = $request;
-//                    $count += $this->getFacebookCount($url);
-                }
-
-//                $this->output->writeln('Facebook count: '.$count);
-
-            }
-            $this->output->writeln(json_encode($requests));
-            $response = $this->httpClient->request('POST', 'https://graph.facebook.com',[
-                'batch' => json_encode($requests)
-            ]);
-            if ($response->getStatusCode() == 200)
-            {
-                $this->output->writeln($response->getBody()->getContents());y
-//                $data = json_decode($response->getBody()->getContents(), true);
-
-//                foreach ($data as $entry)
-//                {
-//
-//                }
-//
-//                if ($data['id'] == $this->url)
-//                {
-//                    $count = intval($data['share']['share_count']);
-//                }
-            }
-
-
-
-
-
-//            // count all items
-////            $numItems  = NewsModel::getAllForSocialStatsUpdate(true);
-//            $offset    = 0;
-//            $chunkSize = (intval($this->config['social_stats']['chunksize']) > 0 ? intval($this->config['social_stats']['chunksize']) : 100);
-//            $numChunks = intval(ceil($numItems / $chunkSize));
-//
-//            // chunking
-//            for ($i = 1; $i <= $numChunks; $i++)
-//            {
-//                $newsItems = NewsModel::getAllForSocialStatsUpdate(false, $offset, $chunkSize);
-//
-//                try
-//                {
-//                    $this->updateStats($newsItems, 'facebook', NewsModel::$TYPE_NEWS);
-//                } catch (GuzzleException $e)
-//                {
-//                    $this->logger->warning('facebook stats: ' . $e->getMessage());
-//                };
-////
-////                try
-////                {
-////                    $this->updateStats($newsItems, 'twitter', NewsModel::$TYPE_NEWS);
-////                } catch (GuzzleException $e)
-////                {
-////                    $this->logger->warning('twitter stats: ' . $e->getMessage());
-////                };
-////
-////                try
-////                {
-////                    $this->updateStats($newsItems, 'googlePlus', NewsModel::$TYPE_NEWS);
-////                } catch (GuzzleException $e)
-////                {
-////                    $this->logger->warning('googlePlus stats: ' . $e->getMessage());
-////                };
-////
-////                try
-////                {
-////                    $this->updateStats($newsItems, 'disqus', NewsModel::$TYPE_NEWS);
-////                } catch (GuzzleException $e)
-////                {
-////                    $this->logger->warning('disqus stats: ' . $e->getMessage());
-////                };
-////
-//                $offset = ($chunkSize * $i) + 1;
-//            }
+            $this->updateFacebookCount();
+            $this->updateTwitterCount();
+            $this->updateGooglePlusCount();
+            $this->updateDisqusCount();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-
+            $this->output->writeln('<fg=red>Error: '.$e->getMessage().'</>');
             return 1;
         }
 
@@ -244,7 +149,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $client           = new \Google_Client();
         $analyticsCrawler = new GoogleAnalyticsCrawler($client, $email, $keyId, $clientId, $clientKey, $viewId);
 
-        $items = NewsModel::findMultipleByIds([2026]);
+        $items = NewsModel::findMultipleByIds([1427,2026]);
 
         // update existing items
         /** @var  $item  NewsModel */
@@ -267,90 +172,88 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 //        }
     }
 
-    private function getFacebookCount($url)
+    /**
+     * Update Facebook stats
+     */
+    private function updateFacebookCount()
     {
-        $crawler = new FacebookCrawler($this->httpClient, $url);
-        $count = $crawler->getCount($url);
+        $items = NewsModel::getByFacebookCounterUpdateDate(20, 180);
+        $this->output->writeln("<fg=green;options=bold>Retriving Facebook counts</>");
+        $this->updateStats(
+            new FacebookCrawler($this->httpClient),
+            $items
+        );
     }
 
+    /**
+     * Update Twitter stats
+     */
+    private function updateTwitterCount()
+    {
+        if (!$this->config['twitter'])
+        {
+            $this->output->writeln('<bg=red>No Twitter config provided. Skipping...</>');
+            return;
+        }
+        $items = NewsModel::getByTwitterCounterUpdateDate();
+        $this->output->writeln("<fg=green;options=bold>Retriving Twitter counts</>");
+        $this->updateStats(
+            new TwitterCrawler($this->httpClient, null, $this->baseUrl, $this->config['twitter']),
+            $items
+        );
+    }
 
     /**
-     * Updates the stats for the given items of the given provider.
-     *
-     * @param array $items Collection of items to fetch stats for
-     * @param string $provider Identifier for social platform
-     * @param string $type Type of item
-     *
-     * @throws \Exception
+     * Update Google Plus stats
      */
-    private function updateStats($items, $provider, $type)
+    private function updateGooglePlusCount()
     {
-        // all existing entries for update
-        if (null === $items) {
-            $message = 'No items to update for: ' . $provider;
-            $this->logger->info($message);
-            $this->output->writeln($message);
-            return 0;
-        }
-        /** @var $item NewsModel */
-        foreach ($items as $item) {
-            try {
-                if ('facebook' == $provider) {
-                    if ($item) {
-                        $this->logger->debug('Updating fb stats for url: ' . $item->getUrl($this->config['base_url']));
-                        $fb                        = new FacebookCrawler($this->httpClient, $item->getUrl($this->config['base_url']));
-                        $item->facebook_updated_at = time();
-                        $item->faceook_counter     = $fb->getCount();
-                        $item->save();
-                    }
-                } else {
-                    if ('twitter' == $provider) {
-                        if ($item) {
-                            $this->logger->debug('Updating twitter stats for url: ' . $item->getUrl($this->config['base_url']));
-                            $tw                       = new TwitterCrawler($this->httpClient, $item->getUrl($this->config['base_url']));
-                            $item->twitter_count      = $tw->getCount();
-                            $item->twitter_updated_at = time();
-                            $item->save();
-                        }
-                    } else {
-                        if ('googlePlus' == $provider) {
-                            if ($item) {
-                                $this->logger->debug('Updating googleplus stats for url: ' . $item->getUrl($this->config['base_url']));
-                                $gp                           = new GooglePlusCrawler($this->httpClient, $item->getUrl($this->config['base_url']));
-                                $item->google_plus_updated_at = $gp->getCount();
-                                $item->google_plus_updated_at = time();
-                                $item->save();
-                            }
-                        } else {
-                            if ('disqus' == $provider) {
-                                if ($item) {
-                                    if ($type == NewsModel::$TYPE_NEWS) {
-                                        $identifier = 'news-id-' . $item->id;
-                                    } else {
-                                        $identifier = "";
-                                    }
+        $items = NewsModel::getByGooglePlusCounterUpdateDate();
+        $this->output->writeln("<fg=green;options=bold>Retriving Google Plus counts</>");
+        $this->updateStats(
+            new GooglePlusCrawler($this->httpClient),
+            $items
+        );
+    }
 
-                                    $this->logger->debug('Updating disqus stats for identifier: ' . $identifier);
-                                    $disqusPublicApiKey      = $this->config['social_stats']['disqusPublicApiKey'];
-                                    $disqusForumName         = $this->config['social_stats']['disqusForumName'];
-                                    $d                       = new DisqusCrawler(
-                                        $this->httpClient, $this->config['social_stats']['urlprefixFixed'] . $item->url, $disqusPublicApiKey, $disqusForumName, $identifier
-                                    );
-                                    $item->disqus_counter    = $d->getCount();
-                                    $item->disqus_updated_at = time();
-                                    $item->save();
-                                }
-                            } else {
-                                throw new \Exception('unknown provider: ' . $provider);
-                            }
-                        }
-                    }
-                }
-            } catch (RequestException $e) {
-                $message = $provider.' error: '.$e->getMessage();
-                $this->logger->notice($message);
-                $this->output->writeln($message);
-            };
+    /**
+     * Update Disqus stats
+     */
+    private function updateDisqusCount()
+    {
+        if (!$this->config['disqus'])
+        {
+            $this->output->writeln('<bg=red>No Disqus config provided. Skipping...</>');
+            return;
+        }
+        $items = NewsModel::getByDisqusCounterUpdateDate();
+        $this->output->writeln("<fg=green;options=bold>Retriving Disqus counts</>");
+        $this->updateStats(
+            new DisqusCrawler($this->httpClient, null, $this->baseUrl, $this->config['disqus']),
+            $items
+        );
+    }
+
+    /**
+     * @param AbstractCrawler $crawler
+     * @param NewsModel|Collection $items
+     */
+    private function updateStats($crawler, $items)
+    {
+        foreach ($items as $item)
+        {
+            $this->output->writeln('Updating news article '.$item->id.' ('.$item->headline.')');
+            $crawler->setItem($item);
+            $crawler->setBaseUrl($this->baseUrl);
+            $count = $crawler->getCount();
+            if (is_string($count))
+            {
+                $this->output->writeln('<bg=red>Error: '.$count.'</>');
+                $this->output->writeln('<fg=red>Stopping updating stats for current provider.</>');
+                break;
+            }
+            $crawler->updateItem();
+            $this->output->writeln('Found '.$count.' shares.');
         }
     }
 }
