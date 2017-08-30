@@ -237,7 +237,7 @@ class NewsList
             }
 
             /** @var $manager NewsTagManager */
-            $manager = \System::getContainer()->get('app.news_tags_manager');
+            $manager = \System::getContainer()->get('huh.news.news_tags_manager');
 
             if (($tag = $manager->findByAlias(\Input::get('news_tag'))) === null) {
                 \Controller::redirect('/');
@@ -246,9 +246,12 @@ class NewsList
             if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null)
             {
                 $ids = $newsTags->fetchEach('news_id');
+                $this->filterColumns[] = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
             }
-
-            $this->filterColumns[] = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
+            else
+            {
+                \Controller::redirect('/');
+            }
         }
     }
 

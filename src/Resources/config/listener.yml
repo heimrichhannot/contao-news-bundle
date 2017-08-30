@@ -13,3 +13,4 @@ services:
     class: HeimrichHannot\NewsBundle\EventListener\SearchablePagesListener
     arguments:
       - "@contao.framework"
+      - "@codefog_tags.listener.tag_manager"

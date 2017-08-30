@@ -30,4 +30,20 @@ class CfgTagModel extends \Model
     {
         return parent::findBy($column, $value, $arrOptions);
     }
+
+    public static function getSourcesAsOptions(\DataContainer $dc)
+    {
+        $options = [];
+        $tags = \Database::getInstance()->prepare('SELECT source FROM tl_cfg_tag GROUP BY source')->execute();
+
+        if ($tags !== null)
+        {
+            $options = $tags->fetchEach('source');
+
+            asort($options);
+
+        }
+
+        return $options;
+    }
 }

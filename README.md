@@ -8,7 +8,10 @@ This module contains enhancements for the contao news entity. It works with Cont
 
 ## Technical instructions
 
-...
+### Add tag filtered websites to sitemap and/or search index
+
+This feature is useful e.g. if you have a tag filtered list module on some website and want to have this site containing all tags as auto_item in the sitemap and/or search index.
+You can do this by setting a jumpTo page for the desired tag source in the global contao settings (tl_settings) in the tags section.
 
 ### Modules
 

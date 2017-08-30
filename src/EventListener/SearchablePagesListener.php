@@ -3,8 +3,13 @@
 namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\StringUtil;
+use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
+use HeimrichHannot\NewsBundle\Model\CfgTagModel;
 use HeimrichHannot\NewsBundle\Model\NewsListArchiveModel;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
+use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
+use Model\Collection;
 
 class SearchablePagesListener
 {
@@ -25,8 +30,10 @@ class SearchablePagesListener
 
     public function getSearchablePages($pages, $rootId = 0, $isSitemap = false)
     {
-        $this->getSearchableNewsListPages($pages, $rootId, $isSitemap);
-        $this->getSearchableNewsTagPages($pages, $rootId, $isSitemap);
+        $pages = $this->getSearchableNewsListPages($pages, $rootId, $isSitemap);
+        $pages = $this->getSearchableNewsTagPages($pages, $rootId, $isSitemap);
+
+        return $pages;
     }
 
     /**
@@ -82,7 +89,7 @@ class SearchablePagesListener
 
                 if (($newsList = NewsListModel::findBy(['pid=?', 'published=?'], [$archive->id, true])) !== null) {
                     while ($newsList->next()) {
-                        $pages[] = sprintf($url, $newsList->alias ?: $url->id);
+                        $pages[] = sprintf($url, $newsList->alias ?: $newsList->id);
                     }
                 }
             }
@@ -111,41 +118,44 @@ class SearchablePagesListener
         $processed = [];
         $time      = \Date::floorToMinute();
 
-        if (($archive = NewsListArchiveModel::findAll()) !== null) {
-            while ($archive->next()) {
-                if (!$archive->jumpTo || !empty($root) && !in_array($archive->jumpTo, $root)) {
+        foreach (StringUtil::deserialize(\Config::get('tagSourceJumpTos'), true) as $tagSource) {
+            $jumpTo = $tagSource['jumpTo'];
+            $source = $tagSource['source'];
+
+            if (!$jumpTo || !empty($root) && !in_array($jumpTo, $root)) {
+                continue;
+            }
+
+            if (!isset($processed[$jumpTo])) {
+                if (($parent = \PageModel::findWithDetails($jumpTo)) === null) {
                     continue;
                 }
 
-                if (!isset($processed[$archive->jumpTo])) {
-                    if (($parent = \PageModel::findWithDetails($archive->jumpTo)) === null) {
-                        continue;
-                    }
-
-                    if (!$parent->published || ($parent->start != '' && $parent->start > $time) || ($parent->stop != '' && $parent->stop <= ($time + 60))) {
-                        continue;
-                    }
-
-                    if ($isSitemap) {
-                        if ($parent->protected) {
-                            continue;
-                        }
-
-                        if ($parent->sitemap == 'map_never') {
-                            continue;
-                        }
-                    }
-
-                    // Generate the URL
-                    $processed[$archive->jumpTo] = $parent->getAbsoluteUrl(\Config::get('useAutoItem') ? '/%s' : '/items/%s');
+                if (!$parent->published || ($parent->start != '' && $parent->start > $time) || ($parent->stop != '' && $parent->stop <= ($time + 60))) {
+                    continue;
                 }
 
-                $url = $processed[$archive->jumpTo];
-
-                if (($newsList = NewsListModel::findBy(['pid=?', 'published=?'], [$archive->id, true])) !== null) {
-                    while ($newsList->next()) {
-                        $pages[] = sprintf($url, $newsList->alias ?: $url->id);
+                if ($isSitemap) {
+                    if ($parent->protected) {
+                        continue;
                     }
+
+                    if ($parent->sitemap == 'map_never') {
+                        continue;
+                    }
+                }
+
+                // Generate the URL
+                $processed[$jumpTo] = $parent->getAbsoluteUrl(\Config::get('useAutoItem') ? '/%s' : '/items/%s');
+            }
+
+            $url = $processed[$jumpTo];
+
+            /** @var Collection $tags */
+            if (($tags = CfgTagModel::findAllBySource($source)) !== null) {
+                foreach (array_combine($tags->fetchEach('id'), $tags->fetchEach('alias')) as $id => $tag)
+                {
+                    $pages[] = sprintf($url, $tag ?: $id);
                 }
             }
         }
