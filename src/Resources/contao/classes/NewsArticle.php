@@ -12,7 +12,6 @@ namespace HeimrichHannot\NewsBundle;
 use Codefog\TagsBundle\Model\TagModel;
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
-use Dav\NewsBundle\Models\NewsTagsModel;
 use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
@@ -177,9 +176,7 @@ class NewsArticle extends \ModuleNews
             return;
         }
 
-        /**
-         * @var $manager NewsTagManager
-         */
+        /** @var $manager NewsTagManager */
         $manager = \System::getContainer()->get('app.news_tags_manager');
 
         if (($models = $manager->findMultiple(['values' => $ids])) === null) {
@@ -188,9 +185,7 @@ class NewsArticle extends \ModuleNews
 
         $tags = [];
 
-        /**
-         * @var $model Tag
-         */
+        /** @var $model Tag */
         foreach ($models as $model) {
             $tag = $model->getData();
 

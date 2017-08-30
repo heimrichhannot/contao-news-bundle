@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_news_list_archive'] = [
     ],
     'palettes' => [
         '__selector__' => [],
-        'default'      => '{general_legend},title;{redirect_legend},jumpTo;'
+        'default'      => '{general_legend},title;'
     ],
     'fields'   => [
         'id'        => [
@@ -101,15 +101,6 @@ $GLOBALS['TL_DCA']['tl_news_list_archive'] = [
             'inputType' => 'text',
             'eval'      => ['mandatory' => true, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''"
-        ],
-        'jumpTo'    => [
-            'label'      => &$GLOBALS['TL_LANG']['tl_news_list_archive']['jumpTo'],
-            'exclude'    => true,
-            'inputType'  => 'pageTree',
-            'foreignKey' => 'tl_page.title',
-            'eval'       => ['fieldType' => 'radio'],
-            'sql'        => "int(10) unsigned NOT NULL default '0'",
-            'relation'   => ['type' => 'hasOne', 'load' => 'eager']
         ]
     ]
 ];
