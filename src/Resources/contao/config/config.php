@@ -21,20 +21,26 @@ array_insert(
  * Back end modules
  */
 $GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list';
+$GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list_archive';
 
 /**
  * Models
  */
-$GLOBALS['TL_MODELS']['tl_news'] = '\HeimrichHannot\NewsBundle\NewsModel';
+$GLOBALS['TL_MODELS']['tl_news']              = '\HeimrichHannot\NewsBundle\NewsModel';
+$GLOBALS['TL_MODELS']['tl_news_list']         = '\HeimrichHannot\NewsBundle\Model\NewsListModel';
+$GLOBALS['TL_MODELS']['tl_news_list_archive'] = '\HeimrichHannot\NewsBundle\Model\NewsListArchiveModel';
 
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['initializeSystem']['hh-news-bundle']   = ['HeimrichHannot\NewsBundle\Controller\FrontendController', 'xhrAction'];
-$GLOBALS['TL_HOOKS']['parseArticles']['hh-news-bundle']      = ['HeimrichHannot\NewsBundle\Hooks', 'parseArticleHook'];
-$GLOBALS['TL_HOOKS']['newsListCountItems']['hh-news-bundle'] = ['HeimrichHannot\NewsBundle\Hooks', 'newsListCountItemsHook'];
-$GLOBALS['TL_HOOKS']['newsListFetchItems']['hh-news-bundle'] = ['HeimrichHannot\NewsBundle\Hooks', 'newsListFetchItemsHook'];
-$GLOBALS['TL_HOOKS']['getPageLayout']['hh-news-bundle']      = ['HeimrichHannot\NewsBundle\Hooks', 'getPageLayoutHook'];
+$GLOBALS['TL_HOOKS']['initializeSystem']['heimrichhannot_news']   = ['HeimrichHannot\NewsBundle\Controller\FrontendController', 'xhrAction'];
+$GLOBALS['TL_HOOKS']['parseArticles']['heimrichhannot_news']      = ['HeimrichHannot\NewsBundle\Hooks', 'parseArticleHook'];
+$GLOBALS['TL_HOOKS']['newsListCountItems']['heimrichhannot_news'] = ['HeimrichHannot\NewsBundle\Hooks', 'newsListCountItemsHook'];
+$GLOBALS['TL_HOOKS']['newsListFetchItems']['heimrichhannot_news'] = ['HeimrichHannot\NewsBundle\Hooks', 'newsListFetchItemsHook'];
+$GLOBALS['TL_HOOKS']['getPageLayout']['heimrichhannot_news']      = ['HeimrichHannot\NewsBundle\Hooks', 'getPageLayoutHook'];
+$GLOBALS['TL_HOOKS']['replaceInsertTags']['heimrichhannot_news']  = ['heimrichhannot_news.listener.insert_tags', 'onReplaceInsertTags'];
+$GLOBALS['TL_HOOKS']['getSearchablePages']['heimrichhannot_news'] = ['HeimrichHannot\NewsBundle\Hooks', 'getSearchablePages'];
+
 /**
  * Ajax Actions
  */
@@ -49,3 +55,9 @@ $GLOBALS['AJAX'][\HeimrichHannot\NewsBundle\News::XHR_GROUP] = [
         ],
     ],
 ];
+
+/**
+ * Permissions
+ */
+$GLOBALS['TL_PERMISSIONS'][] = 'newslists';
+$GLOBALS['TL_PERMISSIONS'][] = 'newslistp';

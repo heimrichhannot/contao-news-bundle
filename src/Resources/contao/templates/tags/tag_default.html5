@@ -1,0 +1,5 @@
+<?php if ($this->href): ?>
+    <a href="<?= $this->href; ?>" title="<?= $this->linkTitle; ?>" class="tag tag-default"><?= $this->name; ?></a>
+<?php else: ?>
+    <span class="tag tag-default"><?= $this->name; ?></span>
+<?php endif; ?>

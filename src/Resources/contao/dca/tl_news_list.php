@@ -26,6 +26,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
     'config'      => [
         'label'             => $GLOBALS['TL_LANG']['tl_news_archive']['lists'][0],
         'dataContainer'     => 'Table',
+        'ptable'            => 'tl_news_list_archive',
         'enableVersioning'  => true,
         'onload_callback'   => [
             ['HeimrichHannot\NewsBundle\Backend\NewsList', 'checkPermission'],
@@ -90,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                 'label'           => &$GLOBALS['TL_LANG']['tl_news_list']['toggle'],
                 'icon'            => 'visible.svg',
                 'attributes'      => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-                'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'toggleList'],
+                'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'toggleIcon'],
             ],
             'show'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_news_list']['show'],
@@ -103,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
     // Palettes
     'palettes'    => [
         '__selector__' => ['published'],
-        'default'      => '{general_legend},title,news;{publish_legend},published',
+        'default'      => '{general_legend},title,alias,news;{publish_legend},published',
     ],
     // Sub palettes
     'subpalettes' => [
@@ -115,7 +116,9 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'sql' => "int(10) unsigned NOT NULL auto_increment",
         ],
         'pid'       => [
-            'sql' => "int(10) unsigned NOT NULL default '0'",
+            'foreignKey' => 'tl_news_list_archive.title',
+            'sql'        => "int(10) unsigned NOT NULL default '0'",
+            'relation'   => ['type' => 'belongsTo', 'load' => 'eager']
         ],
         'sorting'   => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
@@ -139,6 +142,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
+        'alias'     => \HeimrichHannot\Haste\Dca\General::getAliasField(['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateAlias']),
         'news'      => [
             'label'        => &$GLOBALS['TL_LANG']['tl_news_list']['news'],
             'inputType'    => 'fieldpalette',

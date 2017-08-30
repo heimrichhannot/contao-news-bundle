@@ -9,7 +9,12 @@
 namespace HeimrichHannot\NewsBundle;
 
 
+use Codefog\TagsBundle\Model\TagModel;
+use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Dav\NewsBundle\Models\NewsTagsModel;
+use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
+use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
@@ -37,6 +42,18 @@ class NewsArticle extends \ModuleNews
      */
     protected $twig;
 
+    /**
+     * Simple tokens
+     * @var array
+     */
+    protected $tokens = [];
+
+    /**
+     * Initialize the object
+     * @param \FrontendTemplate $template
+     * @param array $article
+     * @param \Module $module
+     */
     public function __construct(\FrontendTemplate $template, array $article, \Module $module)
     {
         $this->template = $template;
@@ -47,12 +64,198 @@ class NewsArticle extends \ModuleNews
         parent::__construct($module->objModel);
 
         $this->generate();
+        $this->replaceTokens();
     }
 
+    /**
+     * Compile the current element
+     */
     protected function compile()
     {
+        $this->module->news_metaFields = deserialize($this->module->news_metaFields, true);
+
         $this->setSeen();
         $this->addRelatedNews();
+        $this->addWriters();
+        $this->addTags();
+        $this->addInfoBox();
+    }
+
+    /**
+     * Replace tokens within teaser and text
+     */
+    protected function replaceTokens()
+    {
+        $id     = $this->article->id;
+        $tokens = $this->tokens;
+
+        if ($this->template->hasText) {
+            $this->template->text = function () use ($id, $tokens) {
+                $strText    = '';
+                $objElement = \ContentModel::findPublishedByPidAndTable($id, 'tl_news');
+
+                if ($objElement !== null) {
+                    while ($objElement->next()) {
+                        $strText .= $this->getContentElement($objElement->current());
+                    }
+                }
+
+                if (count($tokens) > 0) {
+                    $strText = \StringUtil::parseSimpleTokens($strText, $tokens);
+                }
+
+                return $strText;
+            };
+        }
+
+        if ($this->template->hasTeaser) {
+            $this->template->teaser = \StringUtil::parseSimpleTokens($this->template->teaser, $tokens);
+        }
+    }
+
+    /**
+     * Add info box
+     */
+    protected function addInfoBox()
+    {
+        $this->template->hasInfoBox = false;
+
+        if (!$this->module->newsInfoBoxModule) {
+            return;
+        }
+
+        if (($model = \ModuleModel::findByPk($this->module->newsInfoBoxModule)) === null) {
+            return;
+        }
+
+        $strClass = \Module::findClass($model->type);
+
+        // Return if the class does not exist
+        if (!class_exists($strClass)) {
+            $this->template->add_related_news = false;
+
+            \System::getContainer()->get('monolog.logger.contao')->log(
+                LogLevel::ERROR,
+                'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
+                ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
+            );
+
+            return;
+        }
+
+        $model->typePrefix = 'mod_';
+
+        /** @var ModuleNewsInfoBox $objModule */
+        $objModule = new $strClass($model);
+        $strBuffer = $objModule->generate();
+
+        // Disable indexing if protected
+        if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
+            $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
+        }
+
+        $this->template->hasInfoBox    = true;
+        $this->template->infoBox       = $strBuffer;
+        $this->tokens['news_info_box'] = $strBuffer; // support ##news_info_box## simple tokens (within tl_content for example)
+    }
+
+    /**
+     * Add news tags
+     */
+    protected function addTags()
+    {
+        $this->template->hasTags = false;
+
+        if (!in_array('tags', $this->module->news_metaFields)) {
+            return;
+        }
+
+        $ids = deserialize($this->article->tags, true);
+
+        if (empty($ids)) {
+            return;
+        }
+
+        /**
+         * @var $manager NewsTagManager
+         */
+        $manager = \System::getContainer()->get('app.news_tags_manager');
+
+        if (($models = $manager->findMultiple(['values' => $ids])) === null) {
+            return;
+        }
+
+        $tags = [];
+
+        /**
+         * @var $model Tag
+         */
+        foreach ($models as $model) {
+            $tag = $model->getData();
+
+            // TODO: implement tags jumpTo based on module jumpTo and tag alias/type
+            $tag['href']      = '#';
+            $tag['linkValue'] = '#';
+
+            $tags[$tag['id']] = $tag;
+        }
+
+        $this->template->hasTags       = true;
+        $this->template->tags          = $tags;
+        $this->template->hasMetaFields = true;
+    }
+
+    /**
+     * Add article writers from member table
+     */
+    protected function addWriters()
+    {
+        $this->template->hasWriters = false;
+
+        if (!in_array('writers', $this->module->news_metaFields)) {
+            return;
+        }
+
+        $ids = deserialize($this->article->writers, true);
+
+        if (empty($ids)) {
+            return;
+        }
+
+        if (($members = \MemberModel::findMultipleByIds($ids)) === null) {
+            return;
+        }
+
+        $writers = [];
+
+        while ($members->next()) {
+            $writers[] = $members->row();
+        }
+
+        /**
+         * Provide a helper function that returns the writer names separated with given delimiter
+         * @param string $delimiter The delimiter
+         * @param string|null $format The writer name format string (default: ##firstname## ##lastname##)
+         * @return string The writers separated by the delimiter string
+         */
+        $this->template->writerNames = function ($delimiter = ',', $format = null) use ($writers) {
+            if ($format === null) {
+                $format = '##firstname## ##lastname##';
+            }
+
+            $names = [];
+
+            foreach ($writers as $writer) {
+                $names[] = trim(\StringUtil::parseSimpleTokens($format, $writer));
+            }
+
+
+            return implode($delimiter, $names);
+        };
+
+        $this->template->hasWriters    = true;
+        $this->template->writers       = $writers;
+        $this->template->hasMetaFields = true;
     }
 
     /**
@@ -66,18 +269,21 @@ class NewsArticle extends \ModuleNews
     }
 
 
+    /**
+     * Add related news to article
+     */
     protected function addRelatedNews()
     {
         if (!$this->article->add_related_news || !$this->module->related_news_module) {
             $this->template->add_related_news = false;
 
-            return false;
+            return;
         }
 
         if (($model = \ModuleModel::findByPk($this->module->related_news_module)) === null) {
             $this->template->add_related_news = false;
 
-            return false;
+            return;
         }
 
         $strClass = \Module::findClass($model->type);
@@ -88,11 +294,11 @@ class NewsArticle extends \ModuleNews
 
             \System::getContainer()->get('monolog.logger.contao')->log(
                 LogLevel::ERROR,
-                'Module class "'.$strClass.'" (module "'.$model->type.'") does not exist',
+                'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
                 ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
             );
 
-            return false;
+            return;
         }
 
         $model->typePrefix = 'mod_';
@@ -102,16 +308,9 @@ class NewsArticle extends \ModuleNews
         $objModule->setNews($this->article->id);
         $strBuffer = $objModule->generate();
 
-        // HOOK: add custom logic
-        if (isset($GLOBALS['TL_HOOKS']['getFrontendModule']) && is_array($GLOBALS['TL_HOOKS']['getFrontendModule'])) {
-            foreach ($GLOBALS['TL_HOOKS']['getFrontendModule'] as $callback) {
-                $strBuffer = static::importStatic($callback[0])->{$callback[1]}($model, $strBuffer, $objModule);
-            }
-        }
-
         // Disable indexing if protected
         if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
-            $strBuffer = "\n<!-- indexer::stop -->".$strBuffer."<!-- indexer::continue -->\n";
+            $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
         }
 
         $this->template->related_news = $strBuffer;

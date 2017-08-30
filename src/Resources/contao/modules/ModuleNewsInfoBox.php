@@ -21,14 +21,19 @@ class ModuleNewsInfoBox extends \ModuleNews
     protected $strTemplate = 'mod_news_info_box';
 
     /**
+     * Current News
+     * @var \Contao\NewsModel|null
+     */
+    protected $article;
+
+    /**
      * Display a wildcard in the back end
      *
      * @return string
      */
     public function generate()
     {
-        if (TL_MODE == 'BE')
-        {
+        if (TL_MODE == 'BE') {
             /** @var \BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
@@ -42,22 +47,26 @@ class ModuleNewsInfoBox extends \ModuleNews
         }
 
         // Set the item from the auto_item parameter
-        if (!isset($_GET['items']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
-        {
+        if (!isset($_GET['items']) && \Config::get('useAutoItem') && isset($_GET['auto_item'])) {
             \Input::setGet('items', \Input::get('auto_item'));
         }
 
         // Do not index or cache the page if no news item has been specified
-        if (!\Input::get('items'))
-        {
+        if (!\Input::get('items')) {
             return '';
         }
 
         $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($this->news_archives));
 
         // Do not index or cache the page if there are no archives
-        if (!is_array($this->news_archives) || empty($this->news_archives))
-        {
+        if (!is_array($this->news_archives) || empty($this->news_archives)) {
+            return '';
+        }
+
+        // Get the news item
+        $this->article = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
+
+        if ($this->article === null || $this->article->info_box_none) {
             return '';
         }
 
@@ -66,49 +75,56 @@ class ModuleNewsInfoBox extends \ModuleNews
 
     protected function compile()
     {
-        // Get the news item
-        $objArticle = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
-        if ($objArticle === null || $objArticle->info_box_none)
-        {
-            return '';
-        }
         $infoBox = null;
 
-        if ($objArticle->info_box_selector === 'info_box_text')
-        {
-            $infoBox = $this->getInfoBoxText($objArticle);
+        switch ($this->article->info_box_selector) {
+            case 'info_box_text':
+                $infoBox = $this->getInfoBoxText();
+                break;
+            default:
+                $infoBox = $this->getInfoBoxCustom();
         }
-        if ($objArticle->info_box_selector === 'info_box_link')
-        {
-            $infoBox = $this->getInfoBoxLink($objArticle);
-        }
+
+        $this->Template->infoBox = $infoBox;
+    }
+
+    protected function getInfoBoxText()
+    {
+        $infoBox             = null;
+        $infoBox['header']   = $this->article->info_box_text_header;
+        $infoBox['text']     = $this->article->info_box_text_text;
+        $infoBox['link']     = $this->article->info_box_text_link == '' ? null : $this->article->info_box_text_link;
+        $infoBox['linkText'] = $this->article->info_box_text_link_text == '' ? null : $this->article->info_box_text_link_text;
+
         /**
          * @var \Twig_Environment $twig
          */
         $twig = \System::getContainer()->get('twig');
-        if ($infoBox !== null)
-        {
-            $this->Template->infoBox = $twig->render(
-                '@HeimrichHannotContaoNews/news/info_box.html.twig',
-                ['infoBox' => $infoBox]
-            );
+
+        return $twig->render(
+            '@HeimrichHannotContaoNews/news/info_box.html.twig',
+            ['infoBox' => $infoBox]
+        );
+    }
+
+    /**
+     * Custom info box hook
+     * @param $objArticle
+     * @return bool
+     */
+    protected function getInfoBoxCustom()
+    {
+        // HOOK: add custom logic
+        if (isset($GLOBALS['TL_HOOKS']['getCustomNewsInfoBox']) && is_array($GLOBALS['TL_HOOKS']['getCustomNewsInfoBox'])) {
+            foreach ($GLOBALS['TL_HOOKS']['getCustomNewsInfoBox'] as $callback) {
+                if (($infoBox = \System::importStatic($callback[0])->{$callback[1]}($this->article, $this)) === false) {
+                    continue;
+                }
+
+                return $infoBox;
+            }
         }
+
+        return false;
     }
-
-    protected function getInfoBoxText($objArticle)
-    {
-        $infoBox             = null;
-        $infoBox['header']   = $objArticle->info_box_text_header;
-        $infoBox['text']     = $objArticle->info_box_text_text;
-        $infoBox['link']     = $objArticle->info_box_text_link == '' ? null : $objArticle->info_box_text_link;
-        $infoBox['linkText'] = $objArticle->info_box_text_link_text == '' ? null : $objArticle->info_box_text_link_text;
-
-        return $infoBox;
-    }
-
-    protected function getInfoBoxLink($objArticle)
-    {
-        $module = \Controller::getFrontendModule($objArticle->info_box_link);
-    }
-
 }
