@@ -15,7 +15,7 @@ namespace HeimrichHannot\NewsBundle\EventListener;
 use Codefog\TagsBundle\Manager\DcaAwareInterface;
 use Codefog\TagsBundle\ManagerRegistry;
 use Contao\DataContainer;
-use HeimrichHannot\NewsBundle\NewsModel;
+use Contao\NewsModel;
 
 class TagManagerListener
 {

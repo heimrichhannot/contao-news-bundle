@@ -79,6 +79,36 @@ class NewsArticle extends \ModuleNews
         $this->addWriters();
         $this->addTags();
         $this->addInfoBox();
+        $this->addPageMeta();
+    }
+
+    protected function addPageMeta()
+    {
+        if (!$this->module instanceof \ModuleNewsReader) {
+            return;
+        }
+
+        global $objPage;
+
+        // Overwrite the page title
+        if ($this->article->pageTitle != '') {
+            $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($this->article->pageTitle));
+        } else if ($this->article->headline != '') {
+            $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($this->article->headline));
+        }
+
+        // Overwrite the page description
+        if ($this->article->metaDescription != '') {
+            $objPage->description = $this->prepareMetaDescription($this->article->metaDescription);
+        } else if ($this->article->teaser != '') {
+            $objPage->description = $this->prepareMetaDescription($this->article->teaser);
+        }
+
+        $keywords = deserialize($this->article->metaKeywords, true);
+
+        if (!empty($keywords)) {
+            $GLOBALS['TL_KEYWORDS'] = implode(',', $keywords);
+        }
     }
 
     /**

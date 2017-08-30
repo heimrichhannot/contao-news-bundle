@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace HeimrichHannot\NewsBundle;
+namespace Contao;
 
 use \Haste\Model\Model;
 use NewsCategories\NewsCategoryModel;
@@ -469,79 +469,6 @@ class NewsModel extends Model
         return static::countBy($arrColumns, [$intFrom, $intTo], $arrOptions);
     }
 
-    /**
-     * Returns the typo3 urls
-     *
-     * @param $baseUrl
-     *
-     * @return array
-     */
-    public function getLegacyUrls($baseUrl)
-    {
-        $url_parts = [];
-        $title = 0;
-        if ($archive = \NewsArchiveModel::findByPk($this->pid))
-        {
-            $title = $archive->title;
-        }
-        if ($categories = deserialize($this->categories))
-        {
-            $categoryCollection = NewsCategoryModel::findPublishedByIds($categories);
-
-            if ($categoryCollection)
-            {
-                while ($categoryCollection->next())
-                {
-                    $url = [];
-                    if ($title)
-                    {
-                        $url[] = $title;
-                    }
-                    $url = array_merge($url, $this->getCategoryTree($categoryCollection->current()));
-                    $url[] = $this->id;
-                    $url[] = $this->alias;
-                    $url_parts[] = $url;
-                }
-            }
-        }
-
-        $urls = [];
-        foreach ($url_parts as $part)
-        {
-            $url = $baseUrl;
-            foreach ($part as $string) {
-                if ($string !== null) {
-                    $url .= '/'.urlencode(strtolower($string));
-                }
-            }
-            $urls[] = $url.'/';
-        }
-
-        return $urls;
-    }
-
-    /**
-     * Recursive function to generate url tree for categories.
-     * Going from current to parent until root is found.
-     * Call itself, if current category is not root.
-     * @param NewsCategoryModel $category
-     * @param array $url
-     *
-     * @return array
-     */
-    private function getCategoryTree($category, $url = [])
-    {
-        if ($category)
-        {
-            array_unshift($url, $category->alias);
-            if ($category->pid > 0)
-            {
-                return $this->getCategoryTree(NewsCategoryModel::findPublishedByIdOrAlias($category->pid), $url);
-            }
-        }
-        return $url;
-    }
-
 
     public function getUrl($baseUrl)
     {
@@ -559,39 +486,16 @@ class NewsModel extends Model
     }
 
     /**
-     * @param bool $countOnly
-     * @param bool $offset
-     * @param bool $limit
-     *
-     * @return NewsModel|NewsModel[]|int|\Model\Collection|null
-     */
-    public static function getAllForSocialStatsUpdate($countOnly = false, $offset = false, $limit = false)
-    {
-        $t     = static::$strTable;
-        $arrOptions['order'] = 'date ASC';
-        $tsPeriod            = time() - (60 * 60 * 24 * 180); // 180 days
-
-        $arrColumns = ["$t.date>$tsPeriod"];
-
-        $news = NewsModel::findPublished($arrColumns, $limit, $offset,$arrOptions);
-
-        if ($countOnly) {
-            return $news->count();
-        }
-        return $news;
-    }
-
-    /**
      * Get by oldest Facebook counter update date
      * @param int $limit
      * @param int $days
      * @param array $options
      * @return NewsModel|NewsModel[]|\Model\Collection|null
      */
-    public static function getByFacebookCounterUpdateDate($limit = 20, $days = 180, $options=[])
+    public static function getByFacebookCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options=[])
     {
         $options['order'] = '`facebook_updated_at` ASC';
-        return static::getForSocialStats($limit, $days, $options);
+        return static::getForSocialStats($limit, $days, $pids, $options);
     }
 
     /**
@@ -601,10 +505,10 @@ class NewsModel extends Model
      * @param array $options
      * @return NewsModel|NewsModel[]|\Model\Collection|null
      */
-    public static function getByTwitterCounterUpdateDate($limit = 20, $days = 180, $options=[])
+    public static function getByTwitterCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options=[])
     {
         $options['order'] = '`twitter_updated_at` ASC';
-        return NewsModel::getForSocialStats($limit, $days, $options);
+        return NewsModel::getForSocialStats($limit, $days, $pids, $options);
     }
 
     /**
@@ -614,10 +518,10 @@ class NewsModel extends Model
      * @param array $options
      * @return NewsModel|NewsModel[]|\Model\Collection|null
      */
-    public static function getByGooglePlusCounterUpdateDate($limit = 20, $days = 180, $options=[])
+    public static function getByGooglePlusCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options=[])
     {
         $options['order'] = '`google_plus_updated_at` ASC';
-        return NewsModel::getForSocialStats($limit, $days, $options);
+        return NewsModel::getForSocialStats($limit, $days, $pids, $options);
     }
 
     /**
@@ -627,10 +531,10 @@ class NewsModel extends Model
      * @param array $options
      * @return NewsModel|NewsModel[]|\Model\Collection|null
      */
-    public static function getByDisqusCounterUpdateDate($limit = 20, $days = 180, $options=[])
+    public static function getByDisqusCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options=[])
     {
         $options['order'] = '`disqus_updated_at` ASC';
-        return NewsModel::getForSocialStats($limit, $days, $options);
+        return NewsModel::getForSocialStats($limit, $days, $pids, $options);
     }
 
     /**
@@ -640,10 +544,10 @@ class NewsModel extends Model
      * @param array $options
      * @return NewsModel|NewsModel[]|\Model\Collection|null
      */
-    public static function getByGoogleAnalyticsUpdateDate($limit = 20, $days = 180, $options=[])
+    public static function getByGoogleAnalyticsUpdateDate($limit = 20, $days = 180, $pids = [], $options=[])
     {
         $options['order'] = '`google_analytic_updated_at` ASC';
-        return NewsModel::getForSocialStats($limit, $days, $options);
+        return NewsModel::getForSocialStats($limit, $days, $pids, $options);
     }
 
     /**
@@ -653,11 +557,18 @@ class NewsModel extends Model
      * @param array $options
      * @return NewsModel|NewsModel[]|\Model\Collection|null
      */
-    public static function getForSocialStats($limit = 20, $days = 180, $options=[])
+    public static function getForSocialStats($limit = 20, $days = 180, $pids = [], $options=[])
     {
         $t = static::$strTable;
-        $period = time() - (60 * 60 * 24 * $days);
-        $arrColumns = ["$t.date > $period"];
+        if ($days > 0)
+        {
+            $period = time() - (60 * 60 * 24 * $days);
+            $arrColumns = ["$t.date > $period"];
+        }
+        if (!empty($pids))
+        {
+            $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $pids)).")"];
+        }
         $news = NewsModel::findPublished($arrColumns, $limit, 0, $options);
         return $news;
     }

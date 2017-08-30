@@ -14,7 +14,7 @@ use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Form\ReadersSurveyForm;
 use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\News;
-use HeimrichHannot\NewsBundle\NewsModel;
+use Contao\NewsModel;
 use Patchwork\Utf8;
 use Symfony\Component\Form\Forms;
 

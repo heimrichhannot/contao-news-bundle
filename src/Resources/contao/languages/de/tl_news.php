@@ -34,9 +34,9 @@ $arrLang['related_news']            = [
     'Verwandte Nachrichten',
     'Erhalten Sie eine Auswahl von verwandten Nachrichten indem Sie deren Überschriften in dieses Feld eingeben. (Nachrichten können per Drag & Drop in soriert werden)',
 ];
-$arrLang['page_title']              = ['Seitentitel', 'Vergeben Sie einen individuellen Seitentitel &lt;title&gt; für diese Nachricht. (Standard: Titel)'];
-$arrLang['meta_description']        = ['Meta-Description', 'Vergeben Sie eine individuellen &lt;meta name="description"&gt; für diese Nachricht. (Standard: Teasertext)'];
-$arrLang['meta_keywords']           = ['Meta-Keywords', 'Vergeben Sie individuelle &lt;meta type="keywords"&gt; für diese Nachricht. (Standard: Keine)'];
+$arrLang['pageTitle']               = ['Seitentitel', 'Vergeben Sie einen individuellen Seitentitel &lt;title&gt; für diese Nachricht. (Standard: Titel)'];
+$arrLang['metaDescription']         = ['Meta-Description', 'Vergeben Sie eine individuellen &lt;meta name="description"&gt; für diese Nachricht. (Standard: Teasertext)'];
+$arrLang['metaKeywords']            = ['Meta-Keywords', 'Vergeben Sie individuelle &lt;meta type="keywords"&gt; für diese Nachricht. (Standard: Keine)'];
 
 /**
  * Legends
@@ -53,3 +53,4 @@ $arrLang['meta_legend']           = 'Metadaten';
  * Placeholders
  */
 $arrLang['placeholders']['contact_box_members'] = 'E-Mail eingeben';
+$arrLang['placeholders']['metaKeywords'] = 'Keywords eingeben';

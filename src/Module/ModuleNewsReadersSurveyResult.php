@@ -10,11 +10,6 @@ namespace HeimrichHannot\NewsBundle\Module;
 
 
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
-use HeimrichHannot\NewsBundle\Form\ReadersSurveyForm;
-use HeimrichHannot\Haste\Util\Url;
-use HeimrichHannot\NewsBundle\NewsModel;
-use Patchwork\Utf8;
-use Symfony\Component\Form\Forms;
 
 class ModuleNewsReadersSurveyResult extends \ModuleNews
 {

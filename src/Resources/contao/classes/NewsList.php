@@ -17,6 +17,7 @@ use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
+use Contao\NewsModel;
 
 class NewsList
 {

@@ -10,7 +10,7 @@ namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
-use HeimrichHannot\NewsBundle\NewsModel;
+use Contao\NewsModel;
 
 /**
  * Handles insert tags for news.
@@ -85,7 +85,7 @@ class InsertTagsListener
     {
         $this->framework->initialize();
 
-        /** @var \Contao\NewsModel $adapter */
+        /** @var NewsModel $adapter */
         $adapter = $this->framework->getAdapter(NewsModel::class);
 
         if (null === ($news = $adapter->findByIdOrAlias($idOrAlias))) {
@@ -120,13 +120,39 @@ class InsertTagsListener
     /**
      * Generates the replacement string.
      *
-     * @param \Contao\NewsModel $news
+     * @param NewsModel $news
      * @param string $insertTag
      *
      * @return string
      */
-    private function generateReplacement(\Contao\NewsModel $news, $insertTag)
+    private function generateNewsReplacement(NewsModel $news, $insertTag)
     {
+        return '';
+    }
+
+    /**
+     * Generates the replacement string.
+     *
+     * @param NewsListModel $newsList
+     * @param string $insertTag
+     *
+     * @return string
+     */
+    private function generateNewsListReplacement(NewsListModel $newsList, $insertTag)
+    {
+        switch ($insertTag) {
+            case 'news_list':
+                $url = NewsListModel::generateNewsListUrl($newsList);
+                return sprintf('<a href="%s">%s</a>', $url, $newsList->title);
+                break;
+            case 'news_list_url':
+                return NewsListModel::generateNewsListUrl($newsList);
+                break;
+            case 'news_list_title':
+                return $newsList->title;
+                break;
+        }
+
         return '';
     }
 }

@@ -3,12 +3,15 @@ namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 
 use GuzzleHttp\Exception\ClientException;
+use HeimrichHannot\NewsBundle\NewsModel;
 
 class DisqusCrawler extends AbstractCrawler
 {
+    private $config;
     private $forum      = null;
     private $apikey     = null;
     private $identifier = "";
+
 
     /**
      * DisqusCrawler constructor.
@@ -20,6 +23,7 @@ class DisqusCrawler extends AbstractCrawler
     public function __construct($client, $item, $baseUrl, $config)
     {
         parent::__construct($client, $item, $baseUrl);
+        $this->config     = $config;
         $this->apikey     = $config['public_api_key'];
         $this->forum      = $config['forum_name'];
         $this->identifier = str_replace('{id}', $item->id, $config['identifier']);
@@ -32,30 +36,25 @@ class DisqusCrawler extends AbstractCrawler
     public function getCount($url = null)
     {
         $count = 0;
-        foreach ($this->getUrls() as $url)
+        try {
+            $response = $this->client->request(
+                'GET',
+                'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey
+                . '&forum=' . $this->forum . '&thread:ident=f' . $this->identifier
+            );
+        } catch (ClientException $e)
         {
-            $link = 'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey
-                    . '&forum=' . $this->forum . '&thread:ident=' . $this->identifier;
-            try {
-                $response = $this->client->request(
-                    'GET',
-                    'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey
-                    . '&forum=' . $this->forum . '&thread:ident=' . $this->identifier
-                );
-            } catch (ClientException $e)
-            {
-                $error = json_decode($e->getResponse()->getBody()->getContents());
-                return $error->response;
-            }
+            $error = json_decode($e->getResponse()->getBody()->getContents());
+            return $error->response;
+        }
 
-            if ($response && $response->getStatusCode() == 200)
-            {
-                $data = json_decode($response->getBody()->getContents(), true);
+        if ($response && $response->getStatusCode() == 200)
+        {
+            $data = json_decode($response->getBody()->getContents(), true);
 
-                if (isset($data['response']) && isset($data['response']['posts']))
-                {
-                    $count += intval($data['response']['posts']);
-                }
+            if (isset($data['response']) && isset($data['response']['posts']))
+            {
+                $count = intval($data['response']['posts']);
             }
         }
         $this->count = $count;
@@ -71,6 +70,17 @@ class DisqusCrawler extends AbstractCrawler
         $this->item->disqus_updated_at = time();
         $this->item->save();
     }
+
+    /**
+     * @param NewsModel $item
+     */
+    public function setItem(NewsModel $item)
+    {
+        parent::setItem($item);
+        $this->identifier = str_replace('{id}', $item->id, $this->config['identifier']);
+    }
+
+
 
 
 
