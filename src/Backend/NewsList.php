@@ -14,7 +14,7 @@ use HeimrichHannot\Haste\Dca\General;
 
 class NewsList extends \Contao\Backend
 {
-    const MODE_MANUAL = 'manual';
+    const MODE_MANUAL    = 'manual';
     const MODE_AUTO_ITEM = 'auto_item';
 
     const MODES = [
@@ -28,7 +28,7 @@ class NewsList extends \Contao\Backend
             return $varValue;
         }
 
-        return General::generateAlias($varValue, $objDc->id, 'tl_news_list', $objNewsList->title);
+        return General::generateAlias($varValue, $objDc->id, 'tl_news_list', $objNewsList->title, false);
     }
 
     public function checkPermission()

@@ -200,3 +200,5 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
         ],
     ],
 ];
+
+\HeimrichHannot\Haste\Dca\General::addAliasButton('tl_news_list');

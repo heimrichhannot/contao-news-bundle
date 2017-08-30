@@ -9,7 +9,11 @@ services:
         class: HeimrichHannot\NewsBundle\EventListener\InsertTagsListener
         arguments:
             - "@contao.framework"
+    heimrichhannot_news.listener.searchable_pages:
+        class: HeimrichHannot\NewsBundle\EventListener\SearchablePagesListener
+        arguments:
+            - "@contao.framework"
     heimrichhannot_news.listener.hooks:
-            class: HeimrichHannot\NewsBundle\EventListener\HookListener
-            arguments:
-                - "@contao.framework"
+    	class: HeimrichHannot\NewsBundle\EventListener\HookListener
+        arguments:
+            - "@contao.framework"
