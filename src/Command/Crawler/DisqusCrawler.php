@@ -2,80 +2,116 @@
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 
+use GuzzleHttp\Exception\ClientException;
+
 class DisqusCrawler extends AbstractCrawler
 {
     private $forum      = null;
     private $apikey     = null;
     private $identifier = "";
 
-    public function __construct($client, $url, $apikey, $forum, $identifier = "")
+    /**
+     * DisqusCrawler constructor.
+     * @param \GuzzleHttp\Client $client
+     * @param \HeimrichHannot\NewsBundle\NewsModel $item
+     * @param string $baseUrl
+     * @param array $config
+     */
+    public function __construct($client, $item, $baseUrl, $config)
     {
-        parent::__construct($client, $url);
-        $this->apikey     = $apikey;
-        $this->forum      = $forum;
-        $this->identifier = $identifier;
+        parent::__construct($client, $item, $baseUrl);
+        $this->apikey     = $config['public_api_key'];
+        $this->forum      = $config['forum_name'];
+        $this->identifier = str_replace('{id}', $item->id, $config['identifier']);
     }
 
+    /**
+     * @param null $url
+     * @return int
+     */
     public function getCount($url = null)
     {
-        $response = $this->client->request(
-            'GET',
-            'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey . '&forum=' . $this->forum . '&thread:ident=' . $this->identifier
-        );
-
         $count = 0;
-
-        if ($response->getStatusCode() == 200)
+        foreach ($this->getUrls() as $url)
         {
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            if (isset($data['response']) && isset($data['response']['posts']))
+            $link = 'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey
+                    . '&forum=' . $this->forum . '&thread:ident=' . $this->identifier;
+            try {
+                $response = $this->client->request(
+                    'GET',
+                    'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey
+                    . '&forum=' . $this->forum . '&thread:ident=' . $this->identifier
+                );
+            } catch (ClientException $e)
             {
-                $count = intval($data['response']['posts']);
+                $error = json_decode($e->getResponse()->getBody()->getContents());
+                return $error->response;
+            }
+
+            if ($response && $response->getStatusCode() == 200)
+            {
+                $data = json_decode($response->getBody()->getContents(), true);
+
+                if (isset($data['response']) && isset($data['response']['posts']))
+                {
+                    $count += intval($data['response']['posts']);
+                }
             }
         }
-
+        $this->count = $count;
         return $count;
     }
 
-    public function getCountMost($interval = '30d', $limit = 25)
+    /**
+     * Update the current item
+     */
+    public function updateItem()
     {
-        $response = $this->client->request(
-            'GET',
-            'https://disqus.com/api/3.0/threads/listPopular.json?api_key=' . $this->apikey . '&forum=' . $this->forum . '&interval=' . $interval . '&limit=' . $limit
-        );
-
-        $posts = [];
-
-        if ($response->getStatusCode() == 200)
-        {
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            if (!is_array())
-            {
-                return $posts;
-            }
-
-            foreach ($data['response'] as $thread)
-            {
-                $identifiers = $thread['identifiers'];
-                $identifier  = $identifiers[count($identifiers) - 1];
-                $parts       = explode("-", $identifier);
-                if (count($parts) == 3)
-                { // format: news-uid-12
-                    $uid         = intval($parts[2]);
-                    $posts[$uid] = intval($thread['posts']);
-                }
-                if (count($parts) == 2)
-                { // format: uid-12
-                    $uid         = intval($parts[1]);
-                    $posts[$uid] = intval($thread['posts']);
-                }
-            }
-        }
-
-        return $posts;
+        $this->item->disqus_counter = $this->count;
+        $this->item->disqus_updated_at = time();
+        $this->item->save();
     }
+
+
+
+//    public function getCountMost($interval = '30d', $limit = 25)
+//    {
+//        $response = $this->client->request(
+//            'GET',
+//            'https://disqus.com/api/3.0/threads/listPopular.json?api_key=' . $this->apikey . '&forum=' . $this->forum . '&interval=' . $interval . '&limit=' . $limit
+//        );
+//
+//        $posts = [];
+//
+//        if ($response->getStatusCode() == 200)
+//        {
+//            $data = json_decode($response->getBody()->getContents(), true);
+//
+//            if (!is_array())
+//            {
+//                return $posts;
+//            }
+//
+//            foreach ($data['response'] as $thread)
+//            {
+//                $identifiers = $thread['identifiers'];
+//                $identifier  = $identifiers[count($identifiers) - 1];
+//                $parts       = explode("-", $identifier);
+//                if (count($parts) == 3)
+//                { // format: news-uid-12
+//                    $uid         = intval($parts[2]);
+//                    $posts[$uid] = intval($thread['posts']);
+//                }
+//                if (count($parts) == 2)
+//                { // format: uid-12
+//                    $uid         = intval($parts[1]);
+//                    $posts[$uid] = intval($thread['posts']);
+//                }
+//            }
+//        }
+//
+//        return $posts;
+//    }
 }
 
 ?>

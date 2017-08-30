@@ -2,47 +2,70 @@
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 
+use Abraham\TwitterOAuth\TwitterOAuth;
+
 class TwitterCrawler extends AbstractCrawler
 {
-    public function __construct($client, $url)
+    /**
+     * @var TwitterOAuth
+     */
+    private $connection;
+
+    /**
+     * TwitterCrawler constructor.
+     * @param \GuzzleHttp\Client $client
+     * @param \HeimrichHannot\NewsBundle\NewsModel $item
+     * @param $baseUrl
+     * @param $config Must contain following keys: consumer_key, consumer_secret, access_token, access_token_secret
+     */
+    public function __construct($client, $item, $baseUrl, $config)
     {
-        parent::__construct($client, $url);
+        parent::__construct($client, $item, $baseUrl);
+        $this->connection = new TwitterOAuth(
+            $config['consumer_key'],
+            $config['consumer_secret'],
+            $config['access_token'],
+            $config['access_token_secret']
+        );
     }
 
     /**
-     * @deprecated Twitter share count api has been shut down
-     *
-     * @param null $url
+     * Return share count or error message.
+     * Twitter allows only search within the last seven day,
+     * so share count only includes shares from the last seven days.
      *
      * @return int
      */
-    public function getCount($url = null)
+    public function getCount()
     {
-//        return 0;
-
-        $this->url = 'https://anwaltauskunft.de/magazin/beruf/bildung-ausbildung/2113/bewerbung-bei-der-polizei-wer-darf-ordnungshueter-werden/';
-
-//        $response = $this->client->request('GET', 'http://urls.api.twitter.com/1/urls/count.json?url=' . $this->url);
-        $response = $this->client->request(
-            'GET',
-            'https://api.twitter.com/1.1/search/tweets.json?q=https://anwaltauskunft.de/magazin/beruf/bildung-ausbildung/2113/bewerbung-bei-der-polizei-wer-darf-ordnungshueter-werden/'
-        );
-
         $count = 0;
-
-        if ($response->getStatusCode() == 200)
+        foreach ($this->getUrls() as $url)
         {
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            if (isset($data['count']))
+            $response = $this->connection->get("search/tweets", [
+                "q" => 'url:'.$url,
+                "count" => 100
+            ]);
+            if ($errors = $response->errors)
             {
-                $count = intval($data['count']);
+                return $errors[0]->message;
+            } else
+            {
+                $count += count($response->statuses);
             }
         }
-
+        $this->count = $count;
         return $count;
     }
 
+    /**
+     * Update the current item
+     */
+    public function updateItem()
+    {
+        $this->item->twitter_counter = $this->count;
+        $this->item->twitter_updated_at = time();
+        $this->item->save();
+    }
 }
 
 ?>
