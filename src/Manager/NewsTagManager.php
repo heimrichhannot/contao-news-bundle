@@ -11,6 +11,7 @@
 namespace HeimrichHannot\NewsBundle\Manager;
 
 
+use Codefog\TagsBundle\Collection\CollectionInterface;
 use Codefog\TagsBundle\Manager\DefaultManager;
 use Codefog\TagsBundle\Model\TagModel;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;

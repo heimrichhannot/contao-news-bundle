@@ -207,7 +207,7 @@ class NewsArticle extends \ModuleNews
         }
 
         /** @var $manager NewsTagManager */
-        $manager = \System::getContainer()->get('app.news_tags_manager');
+        $manager = \System::getContainer()->get('huh.news.news_tags_manager');
 
         if (($models = $manager->findMultiple(['values' => $ids])) === null) {
             return;
