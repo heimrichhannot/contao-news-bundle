@@ -14,6 +14,6 @@ services:
         arguments:
             - "@contao.framework"
     heimrichhannot_news.listener.hooks:
-    	class: HeimrichHannot\NewsBundle\EventListener\HookListener
+        class: HeimrichHannot\NewsBundle\EventListener\HookListener
         arguments:
             - "@contao.framework"
