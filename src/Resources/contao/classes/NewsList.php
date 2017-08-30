@@ -12,7 +12,9 @@ namespace HeimrichHannot\NewsBundle;
 
 
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
+use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
+use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
 
@@ -119,6 +121,7 @@ class NewsList
         $this->addNewsListFilter();
         $this->addSkipPreviousNewsFilter();
         $this->addCategoryFilter();
+        $this->addTagFilter();
     }
 
     /**
@@ -160,6 +163,7 @@ class NewsList
         $this->addNewsListFilter();
         $this->addSkipPreviousNewsFilter();
         $this->addCategoryFilter();
+        $this->addTagFilter();
     }
 
     private function addSkipPreviousNewsFilter()
@@ -175,8 +179,7 @@ class NewsList
         if ($this->module->use_news_lists) {
             $t = static::$table;
 
-            switch ($this->module->newsListMode)
-            {
+            switch ($this->module->newsListMode) {
                 case \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL:
                     $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news');
 
@@ -189,21 +192,17 @@ class NewsList
                     break;
                 case \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_AUTO_ITEM:
                     // Set the item from the auto_item parameter
-                    if (!isset($_GET['news_list']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
-                    {
+                    if (!isset($_GET['news_list']) && \Config::get('useAutoItem') && isset($_GET['auto_item'])) {
                         $alias = \Input::get('auto_item');
 
                         \Input::setGet('news_list', $alias);
                     }
 
-                    // Do not index or cache the page if no event has been specified
-                    if (!\Input::get('news_list'))
-                    {
+                    if (!\Input::get('news_list')) {
                         \Controller::redirect('/');
                     }
 
-                    if (($objNewsList = NewsListModel::findBy(['alias=?', 'published=?'], [\Input::get('news_list'), true])) !== null)
-                    {
+                    if (($objNewsList = NewsListModel::findBy(['alias=?', 'published=?'], [\Input::get('news_list'), true])) !== null) {
                         $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField([$objNewsList->id], 'tl_news_list', 'news');
 
                         if ($relations === null) {
@@ -215,11 +214,41 @@ class NewsList
                     break;
             }
 
-            if (!empty($ids))
-            {
+            if (!empty($ids)) {
                 $this->filterColumns[]        = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
                 $this->filterOptions['order'] = "FIELD($t.pid, " . implode(',', array_map('intval', $this->newsArchives)) . "), FIELD($t.id, " . implode(',', array_map('intval', $ids)) . ")";
             }
+        }
+    }
+
+    private function addTagFilter()
+    {
+        if ($this->module->addNewsTagFilter) {
+            $t = static::$table;
+
+            if (!isset($_GET['news_tag']) && \Config::get('useAutoItem') && isset($_GET['auto_item'])) {
+                $alias = \Input::get('auto_item');
+
+                \Input::setGet('news_tag', $alias);
+            }
+
+            if (!\Input::get('news_tag')) {
+                \Controller::redirect('/');
+            }
+
+            /** @var $manager NewsTagManager */
+            $manager = \System::getContainer()->get('app.news_tags_manager');
+
+            if (($tag = $manager->findByAlias(\Input::get('news_tag'))) === null) {
+                \Controller::redirect('/');
+            }
+
+            if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null)
+            {
+                $ids = $newsTags->fetchEach('news_id');
+            }
+
+            $this->filterColumns[] = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
         }
     }
 
