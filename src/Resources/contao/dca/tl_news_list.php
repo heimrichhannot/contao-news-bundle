@@ -104,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
     // Palettes
     'palettes'    => [
         '__selector__' => ['published'],
-        'default'      => '{general_legend},title,news;{publish_legend},published',
+        'default'      => '{general_legend},title,alias,news;{publish_legend},published',
     ],
     // Sub palettes
     'subpalettes' => [
@@ -116,7 +116,9 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'sql' => "int(10) unsigned NOT NULL auto_increment",
         ],
         'pid'       => [
-            'sql' => "int(10) unsigned NOT NULL default '0'",
+            'foreignKey' => 'tl_news_list_archive.title',
+            'sql'        => "int(10) unsigned NOT NULL default '0'",
+            'relation'   => ['type' => 'belongsTo', 'load' => 'eager']
         ],
         'sorting'   => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
@@ -140,6 +142,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
+        'alias'     => \HeimrichHannot\Haste\Dca\General::getAliasField(['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateAlias']),
         'news'      => [
             'label'        => &$GLOBALS['TL_LANG']['tl_news_list']['news'],
             'inputType'    => 'fieldpalette',
@@ -197,3 +200,5 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
         ],
     ],
 ];
+
+\HeimrichHannot\Haste\Dca\General::addAliasButton('tl_news_list');

@@ -10,60 +10,60 @@
 
 namespace HeimrichHannot\NewsBundle\Backend;
 
-use Contao\CoreBundle\Monolog\ContaoContext;
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
-use Psr\Log\LogLevel;
+use HeimrichHannot\Haste\Dca\General;
 
 class NewsList extends \Contao\Backend
 {
-    public function checkPermission()
-    {
-        $user = \BackendUser::getInstance();
-        $database = \Database::getInstance();
-        $bundles = \System::getContainer()->getParameter('kernel.bundles');
+    const MODE_MANUAL    = 'manual';
+    const MODE_AUTO_ITEM = 'auto_item';
 
-        // HOOK: comments extension required
-        if (!isset($bundles['ContaoCommentsBundle']))
-        {
-            $key = array_search('allowComments', $GLOBALS['TL_DCA']['tl_news_list']['list']['sorting']['headerFields']);
-            unset($GLOBALS['TL_DCA']['tl_news_list']['list']['sorting']['headerFields'][$key]);
+    const MODES = [
+        self::MODE_MANUAL,
+        self::MODE_AUTO_ITEM
+    ];
+
+    public static function generateAlias($varValue, \DataContainer $objDc)
+    {
+        if (($objNewsList = \HeimrichHannot\NewsBundle\Model\NewsListModel::findByPk($objDc->id)) === null) {
+            return $varValue;
         }
 
-        if ($user->isAdmin)
-        {
+        return General::generateAlias($varValue, $objDc->id, 'tl_news_list', $objNewsList->title, false);
+    }
+
+    public function checkPermission()
+    {
+        $user     = \BackendUser::getInstance();
+        $database = \Database::getInstance();
+
+        if ($user->isAdmin) {
             return;
         }
 
         // Set the root IDs
-        if (!is_array($user->newslists) || empty($user->newslists))
-        {
+        if (!is_array($user->newslists) || empty($user->newslists)) {
             $root = [0];
-        }
-        else
-        {
+        } else {
             $root = $user->newslists;
         }
 
         $id = strlen(\Input::get('id')) ? \Input::get('id') : CURRENT_ID;
 
         // Check current action
-        switch (\Input::get('act'))
-        {
+        switch (\Input::get('act')) {
             case 'paste':
                 // Allow
                 break;
 
             case 'create':
-                if (!strlen(\Input::get('pid')) || !in_array(\Input::get('pid'), $root))
-                {
+                if (!strlen(\Input::get('pid')) || !in_array(\Input::get('pid'), $root)) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to create news_list items in news_list archive ID ' . \Input::get('pid') . '.');
                 }
                 break;
 
             case 'cut':
             case 'copy':
-                if (!in_array(\Input::get('pid'), $root))
-                {
+                if (!in_array(\Input::get('pid'), $root)) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list item ID ' . $id . ' to news_list archive ID ' . \Input::get('pid') . '.');
                 }
             // NO BREAK STATEMENT HERE
@@ -77,13 +77,11 @@ class NewsList extends \Contao\Backend
                     ->limit(1)
                     ->execute($id);
 
-                if ($objArchive->numRows < 1)
-                {
+                if ($objArchive->numRows < 1) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list item ID ' . $id . '.');
                 }
 
-                if (!in_array($objArchive->pid, $root))
-                {
+                if (!in_array($objArchive->pid, $root)) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list item ID ' . $id . ' of news_list archive ID ' . $objArchive->pid . '.');
                 }
                 break;
@@ -94,34 +92,29 @@ class NewsList extends \Contao\Backend
             case 'overrideAll':
             case 'cutAll':
             case 'copyAll':
-                if (!in_array($id, $root))
-                {
+                if (!in_array($id, $root)) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID ' . $id . '.');
                 }
 
                 $objArchive = $database->prepare("SELECT id FROM tl_news_list WHERE pid=?")
                     ->execute($id);
 
-                if ($objArchive->numRows < 1)
-                {
+                if ($objArchive->numRows < 1) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list archive ID ' . $id . '.');
                 }
 
-                /** @var Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+                /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
                 $session = \System::getContainer()->get('session');
 
-                $session = $session->all();
+                $session                   = $session->all();
                 $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objArchive->fetchEach('id'));
                 $session->replace($session);
                 break;
 
             default:
-                if (strlen(\Input::get('act')))
-                {
+                if (strlen(\Input::get('act'))) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "' . \Input::get('act') . '".');
-                }
-                elseif (!in_array($id, $root))
-                {
+                } elseif (!in_array($id, $root)) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID ' . $id . '.');
                 }
                 break;
@@ -132,74 +125,62 @@ class NewsList extends \Contao\Backend
     {
         $user = \BackendUser::getInstance();
 
-        if (strlen(\Input::get('tid')))
-        {
+        if (strlen(\Input::get('tid'))) {
             $this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1), (@func_get_arg(12) ?: null));
             $this->redirect($this->getReferer());
         }
 
         // Check permissions AFTER checking the tid, so hacking attempts are logged
-        if (!$user->hasAccess('tl_news_list::published', 'alexf'))
-        {
+        if (!$user->hasAccess('tl_news_list::published', 'alexf')) {
             return '';
         }
 
-        $href .= '&amp;tid='.$row['id'].'&amp;state='.($row['published'] ? '' : 1);
+        $href .= '&amp;tid=' . $row['id'] . '&amp;state=' . ($row['published'] ? '' : 1);
 
-        if (!$row['published'])
-        {
+        if (!$row['published']) {
             $icon = 'invisible.svg';
         }
 
-        return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"').'</a> ';
+        return '<a href="' . $this->addToUrl($href) . '" title="' . \StringUtil::specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"') . '</a> ';
     }
 
-    public function toggleVisibility($intId, $blnVisible, \DataContainer $dc=null)
+    public function toggleVisibility($intId, $blnVisible, \DataContainer $dc = null)
     {
-        $user = \BackendUser::getInstance();
+        $user     = \BackendUser::getInstance();
         $database = \Database::getInstance();
 
         // Set the ID and action
         \Input::setGet('id', $intId);
         \Input::setGet('act', 'toggle');
 
-        if ($dc)
-        {
+        if ($dc) {
             $dc->id = $intId; // see #8043
         }
 
         // Trigger the onload_callback
-        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['config']['onload_callback']))
-        {
-            foreach ($GLOBALS['TL_DCA']['tl_news_list']['config']['onload_callback'] as $callback)
-            {
-                if (is_array($callback))
-                {
+        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['config']['onload_callback'])) {
+            foreach ($GLOBALS['TL_DCA']['tl_news_list']['config']['onload_callback'] as $callback) {
+                if (is_array($callback)) {
                     $this->import($callback[0]);
                     $this->{$callback[0]}->{$callback[1]}($dc);
-                }
-                elseif (is_callable($callback))
-                {
+                } elseif (is_callable($callback)) {
                     $callback($dc);
                 }
             }
         }
 
         // Check the field access
-        if (!$user->hasAccess('tl_news_list::published', 'alexf'))
-        {
+        if (!$user->hasAccess('tl_news_list::published', 'alexf')) {
             throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish news_list item ID ' . $intId . '.');
         }
 
         // Set the current record
-        if ($dc)
-        {
+        if ($dc) {
             $objRow = $database->prepare("SELECT * FROM tl_news_list WHERE id=?")
                 ->limit(1)
                 ->execute($intId);
 
-            if ($objRow->numRows)
-            {
+            if ($objRow->numRows) {
                 $dc->activeRecord = $objRow;
             }
         }
@@ -208,17 +189,12 @@ class NewsList extends \Contao\Backend
         $objVersions->initialize();
 
         // Trigger the save_callback
-        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['fields']['published']['save_callback']))
-        {
-            foreach ($GLOBALS['TL_DCA']['tl_news_list']['fields']['published']['save_callback'] as $callback)
-            {
-                if (is_array($callback))
-                {
+        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['fields']['published']['save_callback'])) {
+            foreach ($GLOBALS['TL_DCA']['tl_news_list']['fields']['published']['save_callback'] as $callback) {
+                if (is_array($callback)) {
                     $this->import($callback[0]);
                     $blnVisible = $this->{$callback[0]}->{$callback[1]}($blnVisible, $dc);
-                }
-                elseif (is_callable($callback))
-                {
+                } elseif (is_callable($callback)) {
                     $blnVisible = $callback($blnVisible, $dc);
                 }
             }
@@ -230,24 +206,18 @@ class NewsList extends \Contao\Backend
         $database->prepare("UPDATE tl_news_list SET tstamp=$time, published='" . ($blnVisible ? '1' : '') . "' WHERE id=?")
             ->execute($intId);
 
-        if ($dc)
-        {
-            $dc->activeRecord->tstamp = $time;
+        if ($dc) {
+            $dc->activeRecord->tstamp    = $time;
             $dc->activeRecord->published = ($blnVisible ? '1' : '');
         }
 
         // Trigger the onsubmit_callback
-        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['config']['onsubmit_callback']))
-        {
-            foreach ($GLOBALS['TL_DCA']['tl_news_list']['config']['onsubmit_callback'] as $callback)
-            {
-                if (is_array($callback))
-                {
+        if (is_array($GLOBALS['TL_DCA']['tl_news_list']['config']['onsubmit_callback'])) {
+            foreach ($GLOBALS['TL_DCA']['tl_news_list']['config']['onsubmit_callback'] as $callback) {
+                if (is_array($callback)) {
                     $this->import($callback[0]);
                     $this->{$callback[0]}->{$callback[1]}($dc);
-                }
-                elseif (is_callable($callback))
-                {
+                } elseif (is_callable($callback)) {
                     $callback($dc);
                 }
             }
@@ -260,7 +230,7 @@ class NewsList extends \Contao\Backend
     {
         return \BackendUser::getInstance()->hasAccess('create', 'newslistp')
             ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label)
-              . '</a> '
+            . '</a> '
             : \Image::getHtml(
                 preg_replace('/\.svg/i', '_.svg', $icon)
             ) . ' ';
@@ -270,7 +240,7 @@ class NewsList extends \Contao\Backend
     {
         return \BackendUser::getInstance()->hasAccess('delete', 'newslistp')
             ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label)
-              . '</a> '
+            . '</a> '
             : \Image::getHtml(
                 preg_replace('/\.svg/i', '_.svg', $icon)
             ) . ' ';
@@ -282,15 +252,12 @@ class NewsList extends \Contao\Backend
 
         $objNews = \NewsModel::findAll(['order' => 'time DESC']);
 
-        if ($objNews === null)
-        {
+        if ($objNews === null) {
             return $options;
         }
 
-        while ($objNews->next())
-        {
-            if (($objArchive = $objNews->getRelated('pid')) === null)
-            {
+        while ($objNews->next()) {
+            if (($objArchive = $objNews->getRelated('pid')) === null) {
                 continue;
             }
 
@@ -312,15 +279,13 @@ class NewsList extends \Contao\Backend
     {
         $objNews = \NewsModel::findByPk($arrRow['news_list_news']);
 
-        if($objNews === null)
-        {
+        if ($objNews === null) {
             return $strLabel;
         }
 
-        $strLabel = $objNews->headline . ' [ID: ' .  $objNews->id . ']';
+        $strLabel = $objNews->headline . ' [ID: ' . $objNews->id . ']';
 
-        if(($objArchive = $objNews->getRelated('pid')) !== null)
-        {
+        if (($objArchive = $objNews->getRelated('pid')) !== null) {
             $strLabel .= ' - ' . $objArchive->title;
         }
 

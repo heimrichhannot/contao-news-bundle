@@ -27,7 +27,7 @@ $dc['palettes']['default'] = str_replace(
     $dc['palettes']['default']
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},page_title,meta_description,meta_keywords;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;', $dc['palettes']['default']);
 
 /**
  * Subpalettes
@@ -420,27 +420,27 @@ $fields = [
             ],
         ],
     ],
-    'page_title'                 => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['page_title'],
+    'pageTitle'                 => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['pageTitle'],
         'exclude'   => true,
         'search'    => true,
         'inputType' => 'text',
         'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
         'sql'       => "varchar(255) NOT NULL default ''",
     ],
-    'meta_description'           => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['meta_description'],
+    'metaDescription'           => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['metaDescription'],
         'exclude'   => true,
         'search'    => true,
         'inputType' => 'textarea',
         'eval'      => ['tl_class' => 'clr'],
         'sql'       => "text NULL",
     ],
-    'meta_keywords'              => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['meta_keywords'],
+    'metaKeywords'              => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['metaKeywords'],
         'inputType' => 'tagsinput',
         'eval'      => [
-            'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['meta_keywords'],
+            'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['metaKeywords'],
             'freeInput'   => true,
             'multiple'    => true,
         ],

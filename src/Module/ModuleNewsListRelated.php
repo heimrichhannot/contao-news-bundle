@@ -11,7 +11,7 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
-use HeimrichHannot\NewsBundle\NewsModel;
+use Contao\NewsModel;
 
 class ModuleNewsListRelated extends \ModuleNewsList
 {

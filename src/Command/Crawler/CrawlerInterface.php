@@ -10,5 +10,9 @@ namespace  HeimrichHannot\NewsBundle\Command\Crawler;
  */
 interface CrawlerInterface
 {
-    public function getCount($url);
+    /**
+     * Return share count or error message
+     * @return integer|string
+     */
+    public function getCount();
 }
