@@ -9,3 +9,7 @@ services:
         class: HeimrichHannot\NewsBundle\EventListener\InsertTagsListener
         arguments:
             - "@contao.framework"
+    heimrichhannot_news.listener.hooks:
+            class: HeimrichHannot\NewsBundle\EventListener\HookListener
+            arguments:
+                - "@contao.framework"

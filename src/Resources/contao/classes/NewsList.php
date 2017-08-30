@@ -15,6 +15,7 @@ use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
+use Contao\NewsModel;
 
 class NewsList
 {

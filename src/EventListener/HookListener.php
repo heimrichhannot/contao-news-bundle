@@ -1,37 +1,60 @@
 <?php
+/**
+ * Copyright (c) 2017 Heimrich & Hannot GmbH
+ * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
+ * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+ */
 
-namespace HeimrichHannot\NewsBundle;
+namespace HeimrichHannot\NewsBundle\EventListener;
 
-
+use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use HeimrichHannot\NewsBundle\Model\NewsListArchiveModel;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
+use HeimrichHannot\NewsBundle\NewsArticle;
+use HeimrichHannot\NewsBundle\NewsList;
 
-class Hooks
+class HookListener
 {
+
+    /**
+     * @var ContaoFrameworkInterface
+     */
+    private $framework;
+
+    /**
+     * Constructor.
+     *
+     * @param ContaoFrameworkInterface $framework
+     */
+    public function __construct(ContaoFrameworkInterface $framework)
+    {
+        $this->framework = $framework;
+    }
+
     /**
      * Modify the page or layout object
      *
-     * @param \PageModel $objPage
-     * @param \LayoutModel $objLayout
-     * @param \PageRegular $objPageRegular
+     * @param \PageModel $page
+     * @param \LayoutModel $layout
+     * @param \PageRegular $pageRegular
      */
-    public function getPageLayoutHook(\PageModel $objPage, \LayoutModel $objLayout, \PageRegular $objPageRegular)
+    public function getPageLayout(\PageModel $page, \LayoutModel $layout, \PageRegular $pageRegular)
     {
-        NewsList::resetSeen($objPage->id); // reset seen news articles on request
+        NewsList::resetSeen($page->id); // reset seen news articles on request
     }
 
     /**
      * Extend the news list count all items
      *
      * @param array $newsArchives
-     * @param bool|null $blnFeatured
-     * @param \Module $objModule
+     * @param bool|null $featured
+     * @param \Module $module
      *
      * @return int|boolean Return the number of total items or false if next hook should be triggered
      */
-    public function newsListCountItemsHook(array $newsArchives, $blnFeatured, \Module $objModule)
+    public function newsListCountItems(array $newsArchives, $featured, \Module $module)
     {
-        $objNewsList = new NewsList($newsArchives, $blnFeatured, $objModule);
+        $objNewsList = new NewsList($newsArchives, $featured, $module);
 
         return $objNewsList->count();
     }
@@ -41,16 +64,16 @@ class Hooks
      * Extend fetch matching of news list items
      *
      * @param  array $newsArchives
-     * @param  boolean|null $blnFeatured
+     * @param  boolean|null $featured
      * @param  integer $limit
      * @param  integer $offset
-     * @param \Module $objModule
+     * @param \Module $module
      *
-     * @return \Model\Collection|NewsModel|null|false Return a collection of items or false if next hook should be triggered
+     * @return \Model\Collection|\NewsModel|null|false Return a collection of items or false if next hook should be triggered
      */
-    public function newsListFetchItemsHook(array $newsArchives, $blnFeatured, $limit, $offset, \Module $objModule)
+    public function newsListFetchItems(array $newsArchives, $featured, $limit, $offset, \Module $module)
     {
-        $objNewsList = new NewsList($newsArchives, $blnFeatured, $objModule);
+        $objNewsList = new NewsList($newsArchives, $featured, $module);
 
         return $objNewsList->fetch($limit, $offset);
     }
@@ -63,7 +86,7 @@ class Hooks
      * @param array $article
      * @param \Module $module
      */
-    public function parseArticleHook(\FrontendTemplate $template, array $article, \Module $module)
+    public function parseArticles(\FrontendTemplate $template, array $article, \Module $module)
     {
         $objArticle = new NewsArticle($template, $article, $module);
         $template   = $objArticle->getNewsTemplate();
@@ -130,5 +153,4 @@ class Hooks
 
         return $pages;
     }
-
 }

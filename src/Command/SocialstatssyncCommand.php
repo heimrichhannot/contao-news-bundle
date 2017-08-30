@@ -10,7 +10,6 @@
 
 namespace HeimrichHannot\NewsBundle\Command;
 
-use Codeception\Module\Symfony;
 use Contao\CoreBundle\Command\AbstractLockedCommand;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
@@ -24,7 +23,7 @@ use HeimrichHannot\NewsBundle\Command\Crawler\GooglePlusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\TwitterCrawler;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use HeimrichHannot\NewsBundle\NewsModel;
+use Contao\NewsModel;
 use Monolog\Logger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -71,18 +70,15 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             'base_url'     => $route->getScheme() . $route->getHost(),
             'social_stats' => System::getContainer()->getParameter('social_stats'),
         ];
-        try
-        {
+        try {
             $this->httpClient = new Client($config);
 
-            try
-            {
+            try {
                 // update google analytics
                 $newsItems = NewsModel::getAllForSocialStatsUpdate(false);
 //                $newsItems = NewsModel::findAll();
                 $this->updatePageViews($newsItems);
-            } catch (\Exception $e)
-            {
+            } catch (\Exception $e) {
                 $this->logger->warning('ga pageviews: ' . $e->getMessage(), ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
             };
 
@@ -93,8 +89,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $numChunks = intval(ceil($numItems / $chunkSize));
 
             // chunking
-            for ($i = 1; $i <= $numChunks; $i++)
-            {
+            for ($i = 1; $i <= $numChunks; $i++) {
                 $newsItems = NewsModel::getAllForSocialStatsUpdate(false, $offset, $chunkSize);
 
 //                try
@@ -105,34 +100,27 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 //                    $this->logger->warning('facebook stats: ' . $e->getMessage());
 //                };
 
-                try
-                {
+                try {
                     $this->updateStats($newsItems, 'twitter', NewsModel::$TYPE_NEWS);
-                } catch (GuzzleException $e)
-                {
+                } catch (GuzzleException $e) {
                     $this->logger->warning('twitter stats: ' . $e->getMessage());
                 };
 
-                try
-                {
+                try {
                     $this->updateStats($newsItems, 'googlePlus', NewsModel::$TYPE_NEWS);
-                } catch (GuzzleException $e)
-                {
+                } catch (GuzzleException $e) {
                     $this->logger->warning('googlePlus stats: ' . $e->getMessage());
                 };
 
-                try
-                {
+                try {
                     $this->updateStats($newsItems, 'disqus', NewsModel::$TYPE_NEWS);
-                } catch (GuzzleException $e)
-                {
+                } catch (GuzzleException $e) {
                     $this->logger->warning('disqus stats: ' . $e->getMessage());
                 };
 
                 $offset = ($chunkSize * $i) + 1;
             }
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
 
             return 1;
@@ -144,8 +132,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     private function updatePageViews($items)
     {
         // all existing entries for update
-        if (null === $items)
-        {
+        if (null === $items) {
             $this->logger->info('No items to update for google analytics ');
 
             return 0;
@@ -161,14 +148,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 
         // update existing items
         /** @var  $item  NewsModel */
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             $url = $item->getUrl($this->config['base_url']);
             $this->logger->debug('Updating google analytics stats for url: ' . $url);
             $gaCount = $ga->getCount($url);
             $this->logger->debug('Received google analytics count for url: ' . $url . ':' . intval($gaCount));
-            if ($gaCount > 0)
-            {
+            if ($gaCount > 0) {
                 $item->google_analytic_counter    = $gaCount;
                 $item->google_analytic_updated_at = time();
                 $item->save();
@@ -179,69 +164,52 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     /**
      * Updates the stats for the given items of the given provider.
      *
-     * @param array  $items    Collection of items to fetch stats for
+     * @param array $items Collection of items to fetch stats for
      * @param string $provider Identifier for social platform
-     * @param string $type     Type of item
+     * @param string $type Type of item
      *
      * @throws \Exception
      */
     private function updateStats($items, $provider, $type)
     {
         // all existing entries for update
-        if (null === $items)
-        {
+        if (null === $items) {
             $this->logger->info('No items to update for: ' . $provider);
 
             return 0;
         }
         /** @var $item NewsModel */
-        foreach ($items as $item)
-        {
-            try
-            {
-                if ('facebook' == $provider)
-                {
-                    if ($item)
-                    {
+        foreach ($items as $item) {
+            try {
+                if ('facebook' == $provider) {
+                    if ($item) {
                         $this->logger->debug('Updating fb stats for url: ' . $item->getUrl($this->config['base_url']));
                         $fb                        = new FacebookCrawler($this->httpClient, $item->getUrl($this->config['base_url']));
                         $item->facebook_updated_at = time();
                         $item->faceook_counter     = $fb->getCount();
                         $item->save();
                     }
-                }
-                else if ('twitter' == $provider)
-                {
-                    if ($item)
-                    {
+                } else if ('twitter' == $provider) {
+                    if ($item) {
                         $this->logger->debug('Updating twitter stats for url: ' . $item->getUrl($this->config['base_url']));
                         $tw                       = new TwitterCrawler($this->httpClient, $item->getUrl($this->config['base_url']));
                         $item->twitter_count      = $tw->getCount();
                         $item->twitter_updated_at = time();
                         $item->save();
                     }
-                }
-                else if ('googlePlus' == $provider)
-                {
-                    if ($item)
-                    {
+                } else if ('googlePlus' == $provider) {
+                    if ($item) {
                         $this->logger->debug('Updating googleplus stats for url: ' . $item->getUrl($this->config['base_url']));
                         $gp                           = new GooglePlusCrawler($this->httpClient, $item->getUrl($this->config['base_url']));
                         $item->google_plus_updated_at = $gp->getCount();
                         $item->google_plus_updated_at = time();
                         $item->save();
                     }
-                }
-                else if ('disqus' == $provider)
-                {
-                    if ($item)
-                    {
-                        if ($type == NewsModel::$TYPE_NEWS)
-                        {
+                } else if ('disqus' == $provider) {
+                    if ($item) {
+                        if ($type == NewsModel::$TYPE_NEWS) {
                             $identifier = 'news-id-' . $item->id;
-                        }
-                        else
-                        {
+                        } else {
                             $identifier = "";
                         }
 
@@ -255,13 +223,10 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
                         $item->disqus_updated_at = time();
                         $item->save();
                     }
-                }
-                else
-                {
+                } else {
                     throw new \Exception('unknown provider: ' . $provider);
                 }
-            } catch (RequestException $e)
-            {
+            } catch (RequestException $e) {
                 $this->logger->notice($e->getMessage());
             };
         }

@@ -8,7 +8,7 @@
  * @license LGPL-3.0+
  */
 
-namespace HeimrichHannot\NewsBundle;
+namespace Contao;
 
 use \Haste\Model\Model;
 use NewsCategories\NewsCategoryModel;
