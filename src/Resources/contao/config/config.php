@@ -3,25 +3,22 @@
 /**
  * Front end modules
  */
-array_insert(
-    $GLOBALS['FE_MOD'],
-    2,
-    [
-        'news' => [
-            'news_contact_box'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsContactBox',
-            'news_readers_survey'        => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurvey',
-            'news_readers_survey_result' => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurveyResult',
-            'news_info_box'              => 'HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox',
-            'newslist_related'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated',
-        ],
-    ]
-);
+array_insert($GLOBALS['FE_MOD'], 2, [
+    'news' => [
+        'news_contact_box'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsContactBox',
+        'news_readers_survey'        => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurvey',
+        'news_readers_survey_result' => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurveyResult',
+        'news_info_box'              => 'HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox',
+        'newslist_related'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated',
+        'news_suggestions'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsSuggestions',
+    ],
+]);
 
 /**
  * Back end modules
  */
-$GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list';
-$GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list_archive';
+$GLOBALS['BE_MOD']['content']['news']['tables'][]  = 'tl_news_list';
+$GLOBALS['BE_MOD']['conteFnt']['news']['tables'][] = 'tl_news_list_archive';
 
 /**
  * Models

@@ -1,0 +1,15 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('headline'); ?>
+<?php if ($this->headline): ?>
+    <div class="news-suggestion-headline">
+        <?= $this->headline ?>
+    </div>
+<?php endif; ?>
+<?php $this->endblock(); ?>
+
+<?php $this->block('content'); ?>
+
+<?= $this->suggestions ?>
+
+<?php $this->endblock(); ?>

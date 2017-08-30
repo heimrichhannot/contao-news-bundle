@@ -1,0 +1,28 @@
+{% if suggestions is not null %}
+    <div class="news-suggestions-container">
+        <div id="accordion" role="tablist" aria-multiselectable="true">
+            {% for suggestion in suggestions %}
+                <div class="card news-suggest-cards">
+                    <div class="card-header news-suggest-card-header" role="tab">
+                        <a class="news-suggest-collapse-header" data-toggle="collapse" data-parent="#accordion" href="#{{ suggestion.collapse }}" aria-expanded="false" aria-controls="collapseOne">
+                            {{ suggestion.label }}
+                        </a>
+                    </div>
+                    <div id="{{ suggestion.collapse }}" class="collapse" role="tabpanel" aria-labelledby="{{ suggestion.collapse }}">
+                        <div class="card-block">
+                            {% for article in suggestion.news %}
+                                <div class="news-suggest-item">
+                                    <img class="news-suggest-item-image" src="{{ article.image }}">
+                                    <div class="news-suggest-item-headlines">
+                                        <span class="news-suggest-item-subheadline">{{ article.subheadline }}</span>
+                                        <a class="news-suggest-item-headline" href="{{ article.link }}">{{ article.headline }}</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

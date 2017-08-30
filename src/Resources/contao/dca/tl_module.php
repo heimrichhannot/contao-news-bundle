@@ -12,21 +12,19 @@ $dc['config']['onload_callback']['huh.newsbundle'] = ['HeimrichHannot\NewsBundle
  */
 $dc['palettes']['__selector__'][] = 'use_news_lists';
 $dc['palettes']['__selector__'][] = 'add_related_news';
+$dc['palettes']['__selector__'][] = 'news_slick_box_selector';
+
 
 /**
  * Palettes
  */
-$dc['palettes']['news_contact_box'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dc['palettes']['news_contact_box'] = '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dc['palettes']['news_readers_survey'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{news_readers_survey_result_legend},news_readers_survey_result;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dc['palettes']['news_readers_survey'] = '{title_legend},name,headline,type;{config_legend},news_archives;{news_readers_survey_result_legend},news_readers_survey_result;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dc['palettes']['news_readers_survey_result'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dc['palettes']['news_readers_survey_result'] = '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dc['palettes']['news_info_box'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dc['palettes']['news_info_box'] = '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $dc['palettes']['newslist'] = str_replace('news_archives', 'news_archives,use_news_lists,skipPreviousNews', $dc['palettes']['newslist']);
 
@@ -37,6 +35,8 @@ $dc['palettes']['newslist_related'] = str_replace('{news_related_legend},add_rel
 
 // update slick_newslist because already invoked
 $dc['palettes']['slick_newslist'] = $dc['palettes']['newslist'];
+
+$dc['palettes']['news_suggestions'] = '{title_legend},name,headline,type;{config_legend},news_archives,perPage;{news_suggestion_legend},news_suggestion;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 /**
  * Subpalettes
@@ -94,6 +94,33 @@ $arrFields = [
         'inputType' => 'checkbox',
         'eval'      => ['tl_class' => 'clr'],
         'sql'       => "char(1) NOT NULL default ''",
+    ],
+    'news_suggestion'            => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_module']['news_suggestion'],
+        'inputType' => 'multiColumnEditor',
+        'eval'      => [
+            'multiColumnEditor' => [
+                'sortable'    => true,
+                // set to 0 if it should also be possible to have *no* row (default: 1)
+                'class'       => 'news_suggestion',
+                'minRowCount' => 2,
+                // set to 0 if an infinite number of rows should be possible (default: 0)
+                'maxRowCount' => 0,
+                'fields'      => [
+                    'suggestion_label'        => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_module']['suggestion_label'],
+                        'inputType' => 'text',
+                        'eval'      => ['groupStyle' => 'width:250px', 'mandatory' => true],
+                    ],
+                    'suggestion_order_column' => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_module']['suggestion_order_column'],
+                        'inputType' => 'text',
+                        'eval'      => ['groupStyle' => 'width:250px', 'mandatory' => true],
+                    ],
+                ],
+            ],
+        ],
+        'sql'       => "blob NULL",
     ],
 ];
 
