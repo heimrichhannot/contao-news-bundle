@@ -30,9 +30,13 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('chunksize')
-                    ->defaultValue(0)
+                ->scalarNode('chunksize')->defaultValue(20)->end()
+                ->scalarNode('days')->defaultValue(180)->end()
+                ->arrayNode('archives')
+                    ->prototype('scalar')->end()
                 ->end()
+                ->scalarNode('facebook')->end()
+                ->scalarNode('google_plus')->end()
                 ->arrayNode('google_analytics')
                     ->children()
                         ->scalarNode('email')->end()

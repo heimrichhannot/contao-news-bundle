@@ -10,14 +10,11 @@
 
 namespace HeimrichHannot\NewsBundle\Command;
 
-use Abraham\TwitterOAuth\TwitterOAuth;
-use Codeception\Module\Symfony;
 use Contao\CoreBundle\Command\AbstractLockedCommand;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\System;
-use GuzzleHttp\Exception\RequestException;
 use HeimrichHannot\NewsBundle\Command\Crawler\AbstractCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\DisqusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\FacebookCrawler;
@@ -25,8 +22,6 @@ use HeimrichHannot\NewsBundle\Command\Crawler\GoogleAnalyticsCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\GooglePlusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\TwitterCrawler;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use HeimrichHannot\NewsBundle\News;
 use HeimrichHannot\NewsBundle\NewsModel;
 use Model\Collection;
 use Monolog\Logger;
@@ -69,7 +64,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     protected function configure()
     {
-        $this->setName('hh:news:socialstats')->setDescription('Updates the database with social stats.');
+        $this->setName('hundh:news:socialstats')->setDescription('Updates the database with social stats.');
     }
 
     /**
@@ -88,7 +83,6 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $output->writeln($message);
         $this->logger->info($message, ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
 
-        $this->items = NewsModel::getAllForSocialStatsUpdate(false);
         $this->items = NewsModel::findMultipleByIds([2114,1427,2026]);
         $this->httpClient = new Client([
             'base_url'     => $route->getScheme() . $route->getHost(),
@@ -177,7 +171,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateFacebookCount()
     {
-        $items = NewsModel::getByFacebookCounterUpdateDate(20, 180);
+        if (!array_key_exists('facebook', $this->config))
+        {
+            $this->output->writeln('<bg=red>No Facebook config provided. Skipping...</>');
+            return;
+        }
+        $items = NewsModel::getByFacebookCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Facebook counts</>");
         $this->updateStats(
             new FacebookCrawler($this->httpClient),
@@ -195,7 +194,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->output->writeln('<bg=red>No Twitter config provided. Skipping...</>');
             return;
         }
-        $items = NewsModel::getByTwitterCounterUpdateDate();
+        $items = NewsModel::getByTwitterCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Twitter counts</>");
         $this->updateStats(
             new TwitterCrawler($this->httpClient, null, $this->baseUrl, $this->config['twitter']),
@@ -208,7 +207,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateGooglePlusCount()
     {
-        $items = NewsModel::getByGooglePlusCounterUpdateDate();
+        if (!array_key_exists('google_plus', $this->config))
+        {
+            $this->output->writeln('<bg=red>No Google Plus config provided. Skipping...</>');
+            return;
+        }
+        $items = NewsModel::getByGooglePlusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Google Plus counts</>");
         $this->updateStats(
             new GooglePlusCrawler($this->httpClient),
@@ -226,7 +230,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->output->writeln('<bg=red>No Disqus config provided. Skipping...</>');
             return;
         }
-        $items = NewsModel::getByDisqusCounterUpdateDate();
+        $items = NewsModel::getByDisqusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Disqus counts</>");
         $this->updateStats(
             new DisqusCrawler($this->httpClient, null, $this->baseUrl, $this->config['disqus']),

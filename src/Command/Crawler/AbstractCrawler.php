@@ -8,7 +8,8 @@
 
 namespace HeimrichHannot\NewsBundle\Command\Crawler;
 
-
+use Contao\CoreBundle\Framework\FrameworkAwareInterface;
+use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use GuzzleHttp\Client;
 use HeimrichHannot\NewsBundle\NewsModel;
 
@@ -51,21 +52,19 @@ abstract class AbstractCrawler implements CrawlerInterface
      */
     public function getUrls()
     {
-        $urls = [];
+        \System::getContainer()->get('contao.framework')->initialize();
+        $urls   = [];
         $urls[] = $this->item->getUrl($this->baseUrl);
         if (isset($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])
-            && is_array($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats']))
-        {
-            foreach ($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'] as $callback)
-            {
-                $this->import($callback[0]);
-                $urls = array_merge(
-                    $this->$callback[0]->$callback[1]($this->item),
+            && is_array($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])) {
+            foreach ($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'] as $callback) {
+                $addUrls = \System::importStatic($callback[0])->{$callback[1]}($this->item, $this->baseUrl);
+                $urls    = array_merge(
+                    $addUrls,
                     $urls
                 );
             }
         }
-        $urls = $this->item->getLegacyUrls($this->baseUrl);
         return $urls;
     }
 
