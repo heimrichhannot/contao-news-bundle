@@ -9,7 +9,7 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
-use HeimrichHannot\NewsBundle\NewsModel;
+use Contao\NewsModel;
 use Patchwork\Utf8;
 
 class ModuleNewsSuggestions extends \ModuleNews
@@ -67,7 +67,7 @@ class ModuleNewsSuggestions extends \ModuleNews
 
     protected function getNews($order)
     {
-        $news = NewsModel::findPublishedByPid($this->news_archives, $this->perPage, ['order' => $order . ' DESC']);
+        $news = \Contao\NewsModel::findPublishedByPid($this->news_archives, $this->perPage, ['order' => $order . ' DESC']);
         if ($news == null) {
             return null;
         }
