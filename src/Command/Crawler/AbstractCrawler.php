@@ -64,7 +64,6 @@ abstract class AbstractCrawler implements CrawlerInterface
     {
         \System::getContainer()->get('contao.framework')->initialize();
         $urls   = [];
-        $urls[] = $this->item->getUrl($this->baseUrl);
         if (isset($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])
             && is_array($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])) {
             foreach ($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'] as $callback) {
@@ -128,6 +127,16 @@ abstract class AbstractCrawler implements CrawlerInterface
         $this->error['message'] = $message;
         return $this->error;
     }
+
+    /**
+     * @return array
+     */
+    public function getError(): array
+    {
+        return $this->error;
+    }
+
+
 
 
 }

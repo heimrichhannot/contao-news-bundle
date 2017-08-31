@@ -16,6 +16,7 @@ use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\NewsModel;
 use Contao\System;
+use GuzzleHttp\Exception\ClientException;
 use HeimrichHannot\NewsBundle\Command\Crawler\AbstractCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\DisqusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\FacebookCrawler;
@@ -90,9 +91,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             'ssl.certificate_authority' => false
         ]);
 
-//        $this->updateGoogleAnalytics();
-
         try {
+            $this->updateGoogleAnalyticsCount();
             $this->updateFacebookCount();
             $this->updateTwitterCount();
             $this->updateGooglePlusCount();
@@ -106,64 +106,22 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         return 0;
     }
 
-
-    private function updateGoogleAnalytics()
+    /**
+     *
+     */
+    private function updateGoogleAnalyticsCount()
     {
-        try {
-            $this->output->writeln('Updating Google Analytics pageviews');
-            $analyticsCrawler = new GoogleAnalyticsCrawler($this->config['social_stats']['google_analytics']);
+        if (!array_key_exists('google_analytics', $this->config))
+        {
+            $this->output->writeln('<bg=red>No Google Analytics config provided. Skipping...</>');
+            return;
         }
-        catch (\Exception $e) {
-            $message = 'Google Analytics pageviews: ' . $e->getMessage();
-            $this->output->writeln($message);
-            $this->logger->warning($message, [
-                'contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)
-            ]);
-        };
-    }
-
-
-    private function updatePageViews($items)
-    {
-        // all existing entries for update
-        if (null === $items) {
-            $message = 'No items to update for google analytics ';
-            $this->output->writeln($message);
-            $this->logger->info($message);
-
-            return 0;
-        }
-        $config = $this->config['social_stats']['google_analytics'];
-
-        $email            = $config['email'];
-        $keyId            = $config['key_id'];
-        $clientId         = $config['client_id'];
-        $clientKey        = $config['client_key'];
-        $viewId           = $config['view_id'];
-        $client           = new \Google_Client();
-        $analyticsCrawler = new GoogleAnalyticsCrawler($client, $email, $keyId, $clientId, $clientKey, $viewId);
-
-        $items = NewsModel::findMultipleByIds([1427,2026]);
-
-        // update existing items
-        /** @var  $item  NewsModel */
-//        foreach ($items as $item) {
-//            $urls    = $item->getLegacyUrls($this->config['base_url']);
-//            $message = 'Updating Google Analytics stats for url: ' . $url;
-//            $this->output->writeln($message);
-//            foreach ($urls as $url) {
-//                $gaCount = $analyticsCrawler->getCount($url);
-//                $message = 'Found ' . intval($gaCount) . ' pageviews.';
-//                $this->logger->debug($message);
-//                $this->output->writeln($message);
-//                if ($gaCount > 0)
-//                {
-//                    $item->google_analytic_counter    = $gaCount;
-//                    $item->google_analytic_updated_at = time();
-//                    $item->save();
-//                }
-//            }
-//        }
+        $items = NewsModel::getByGoogleAnalyticsUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
+        $this->output->writeln("<fg=green;options=bold>Retriving Google Analytics counts</>");
+        $this->updateStats(
+            new GoogleAnalyticsCrawler($this->httpClient, null, '', $this->config['google_analytics']),
+            $items
+        );
     }
 
     /**

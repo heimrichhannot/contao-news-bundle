@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('view_id')->end()
                         ->scalarNode('api_key')->end()
                         ->scalarNode('keyfile')
-                            ->defaultValue('files/newsbundle/socialstats/google_analytics/client_secret.json')
+                            ->defaultValue('files/newsbundle/socialstats/google_analytics/privatekey.json')
                             ->end()
                     ->end()
                 ->end()

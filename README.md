@@ -37,6 +37,7 @@ social_stats:
     client_key: ABCD1234 # oauth client key
     view_id: ga:12345678 # view id
     api_key: MYAPIKEY
+    keyfile: files/newsbundle/socialstats/google_analytics/privatekey.json # relative path to keyfile from project root, default is the given value
   twitter:
     consumer_key: MYCONSUMERKEY
     consumer_secret: myConsumerSecret

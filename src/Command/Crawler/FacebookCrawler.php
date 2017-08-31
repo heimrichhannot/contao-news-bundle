@@ -14,7 +14,7 @@ class FacebookCrawler extends AbstractCrawler
      */
     public function __construct($client, $item = null, $baseUrl = '')
     {
-        parent::__construct($client, $item, $baseUrl);
+        parent::__construct($client, $item, '');
     }
 
     /**
@@ -55,6 +55,8 @@ class FacebookCrawler extends AbstractCrawler
         $this->item->facebook_updated_at = time();
         $this->item->save();
     }
+
+
 }
 
 ?>

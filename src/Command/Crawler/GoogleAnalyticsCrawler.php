@@ -1,29 +1,31 @@
 <?php
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
+use Contao\NewsModel;
 use Contao\System;
+use Google_Client;
+use Google_Service_Analytics;
 use Google_Service_AnalyticsReporting;
 use Google_Service_AnalyticsReporting_GetReportsRequest;
 use Google_Service_AnalyticsReporting_Metric;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class GoogleAnalyticsCrawler
  *
  * @package HeimrichHannot\NewsBundle\Command\Crawler
  */
-class GoogleAnalyticsCrawler implements CrawlerInterface
+class GoogleAnalyticsCrawler extends AbstractCrawler
 {
-
-    private $email;
-    private $keyId;
-    private $clientId;
-    private $clientKey;
+    /**
+     * @var string
+     */
     private $viewId;
-    private $keyFile;
+
     /**
      * @var \Google_Client
      */
-    private $client;
+    protected $client;
     /**
      * @var \Google_Service_Analytics
      */
@@ -31,68 +33,100 @@ class GoogleAnalyticsCrawler implements CrawlerInterface
 
     /**
      * GoogleAnalyticsCrawler constructor.
-     * @param $config array
+     * @param \GuzzleHttp\Client $client
+     * @param  NewsModel $item
+     * @param string $baseUrl
+     * @param $config
      */
-    public function __construct($config)
+    public function __construct($client, $item = null, $baseUrl = '', $config)
     {
-        $this->email = $config['email'];
-        $this->keyId = $config['key_id'];
-        $this->clientId = $config['client_id'];
-        $this->clientKey = $config['client_key'];
-        $this->viewId = $config['view_id'];
-        $this->keyFile = $config['keyfile'];
-        $this->client = new \Google_Client();
-        $this->init();
-        $this->fetchData();
-    }
+        parent::__construct($client, $item, $baseUrl);
 
-    public function init ()
-    {
         $keyFile = System::getContainer()->getParameter('kernel.root_dir').'/..';
-        $keyFile .= '/'.$this->keyFile;
+        $keyFile .= '/'.$config['keyfile'];
         if (!file_exists($keyFile))
         {
             return false;
         }
-        $privateKey = file_get_contents($keyFile);
-        $this->client->setApplicationName('Social Stats'); // name of your app
-        $credentials = new \Google_Auth_AssertionCredentials(
-            $this->email,
-            ['https://www.googleapis.com/auth/analytics.readonly'],
-            $privateKey);
-        $this->client->setAssertionCredentials($credentials);
-        $this->client->setClientId($this->clientId);
-        $this->analytics = new \Google_Service_Analytics($this->client);
+        $client = new Google_Client();
+        $client->setApplicationName('Anwaltauskunft Social Stats');
+        $client->setAuthConfig($keyFile);
+        $client->addScope(['https://www.googleapis.com/auth/analytics.readonly']);
+        $analytics = new Google_Service_AnalyticsReporting($client);
+
+        $this->client = $client;
+        $this->analytics = $analytics;
+        $this->viewId = $config['view_id'];
     }
 
-    public function getCount($url)
+    /**
+     * Returns the unique visitors count or error.
+     * @return array|int
+     */
+    public function getCount()
     {
-        if (!array_key_exists($url, $this->results))
+        $count = 0;
+        if (empty($urls = $this->getUrls()))
         {
-            return 0;
+            return $count;
         }
+//        $url = '/magazin/leben/freizeit-alltag/2115/tierquaelerei-wie-zeugen-helfen-koennen/';
+        foreach ($urls as $url)
+        {
 
-        return $this->results[$url];
+            $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
+            $body->setReportRequests( array( $this->prepareRequest($url)) );
+
+            try {
+                $responce = $this->analytics->reports->batchGet($body);
+            } catch (\Google_Service_Exception $e)
+            {
+                $this->setErrorCode(static::ERROR_BREAKING);
+                $this->setErrorMessage($e->getMessage());
+                return $this->getError();
+            }
+
+            $report = $responce[0];
+            $rows = $report->getData()->getRows();
+            for ( $rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
+                $row        = $rows[$rowIndex];
+                $metrics    = $row->getMetrics();
+                $values = $metrics[0]->getValues();
+                $count += $values[0];
+            }
+        }
+        $this->count = $count;
+        return $count;
     }
 
-    public function fetchData()
+    public function prepareRequest($url)
     {
-//        $dataRange = new \Google_Service_AnalyticsReporting_DateRange();
-//        $dataRange->setStartDate('2005-01-01');
-//        $dataRange->setEndDate(date("Y-m-d"));
-//
-//        $pageViews = new Google_Service_AnalyticsReporting_Metric();
-//        $pageViews->setExpression("ga:pageviews");
-//        $pageViews->setAlias("pageviews");
-//
-//        $request = new \Google_Service_AnalyticsReporting_ReportRequest();
-//        $request->setViewId($this->viewId);
-//        $request->setDateRanges($dataRange);
-//        $request->setMetrics([$pageViews]);
-//
-//        $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
-//        $body->setReportRequests( array( $request) );
-//        $responce = $this->analytics->reports->batchGet($body);
+        $dataRange = new \Google_Service_AnalyticsReporting_DateRange();
+        $dataRange->setStartDate('2005-01-01');
+        $dataRange->setEndDate(date("Y-m-d"));
+
+        $metric = new Google_Service_AnalyticsReporting_Metric();
+        $metric->setExpression("ga:uniquePageviews");
+
+        $dimension = new \Google_Service_AnalyticsReporting_Dimension();
+        $dimension->setName('ga:pagePath');
+
+        $dimensionFilter = new \Google_Service_AnalyticsReporting_DimensionFilter();
+        $dimensionFilter->setDimensionName('ga:pagePath');
+        $dimensionFilter->setExpressions([$url]);
+
+        $dimensionFilterClause = new \Google_Service_AnalyticsReporting_DimensionFilterClause();
+        $dimensionFilterClause->setFilters([$dimensionFilter]);
+
+        $request = new \Google_Service_AnalyticsReporting_ReportRequest();
+        $request->setViewId($this->viewId);
+        $request->setDateRanges($dataRange);
+        $request->setMetrics([$metric]);
+        $request->setDimensions($dimension);
+        $request->setDimensionFilterClauses($dimensionFilterClause);
+        return $request;
+
+
 
 
 
@@ -118,6 +152,26 @@ class GoogleAnalyticsCrawler implements CrawlerInterface
 //            $this->results[$url] = $row[2];
 //        }
     }
+
+    /**
+     * Update the current item
+     */
+    public function updateItem()
+    {
+        $this->item->google_analytic_counter = $this->count;
+        $this->item->google_analytic_updated_at = time();
+        $this->item->save();
+    }
+
+    /**
+     * @param string $baseUrl
+     */
+    public function setBaseUrl(string $baseUrl)
+    {
+        parent::setBaseUrl('');
+    }
+
+
 }
 
 ?>
