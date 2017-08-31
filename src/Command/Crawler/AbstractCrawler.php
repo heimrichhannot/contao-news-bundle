@@ -8,13 +8,15 @@
 
 namespace HeimrichHannot\NewsBundle\Command\Crawler;
 
-use Contao\CoreBundle\Framework\FrameworkAwareInterface;
-use Contao\CoreBundle\Framework\FrameworkAwareTrait;
+use Contao\NewsModel;
 use GuzzleHttp\Client;
-use HeimrichHannot\NewsBundle\NewsModel;
 
 abstract class AbstractCrawler implements CrawlerInterface
 {
+    const ERROR_NO_ERROR = 0;
+    const ERROR_BREAKING = 1;
+    const ERROR_NOTICE = 2;
+
     /**
      * @var Client
      */
@@ -32,6 +34,14 @@ abstract class AbstractCrawler implements CrawlerInterface
      * @var integer
      */
     protected $count;
+
+    /**
+     * @var array
+     */
+    protected $error = [
+        'code' => 1,
+        'message' => 'No error specified'
+    ];
 
     /**
      * AbstractCrawler constructor.
@@ -105,6 +115,18 @@ abstract class AbstractCrawler implements CrawlerInterface
     public function setBaseUrl(string $baseUrl)
     {
         $this->baseUrl = $baseUrl;
+    }
+
+    public function setErrorCode ($code)
+    {
+        $this->error['code'] = $code;
+        return $this->error;
+    }
+
+    public function setErrorMessage ($message)
+    {
+        $this->error['message'] = $message;
+        return $this->error;
     }
 
 

@@ -1,6 +1,8 @@
 <?php
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
+use GuzzleHttp\Exception\ClientException;
+
 class GooglePlusCrawler extends AbstractCrawler
 {
 
@@ -17,7 +19,7 @@ class GooglePlusCrawler extends AbstractCrawler
 
     /**
      * Return share count or error message
-     * @return int|string
+     * @return int|array
      */
     public function getCount()
     {
@@ -25,7 +27,15 @@ class GooglePlusCrawler extends AbstractCrawler
         foreach ($this->getUrls() as $url)
         {
             $body = '[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"' . $url . '","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"2.0","key":"p","apiVersion":"v1"}]';
-            $response = $this->client->request('POST', 'https://clients6.google.com/rpc', ['body' => $body]);
+            try {
+                $response = $this->client->request('POST', 'https://clients6.google.com/rpc', ['body' => $body]);
+            } catch (ClientException $e)
+            {
+                $this->setErrorCode(static::ERROR_BREAKING);
+                $this->setErrorMessage($e->getResponse()->getBody()->getContents());
+                return $this->error;
+            }
+
             if($response->getStatusCode() == 200)
             {
                 $data = json_decode($response->getBody()->getContents(), true);

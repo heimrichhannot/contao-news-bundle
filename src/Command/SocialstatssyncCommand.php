@@ -14,6 +14,7 @@ use Contao\CoreBundle\Command\AbstractLockedCommand;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\NewsModel;
 use Contao\System;
 use HeimrichHannot\NewsBundle\Command\Crawler\AbstractCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\DisqusCrawler;
@@ -22,7 +23,6 @@ use HeimrichHannot\NewsBundle\Command\Crawler\GoogleAnalyticsCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\GooglePlusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\TwitterCrawler;
 use GuzzleHttp\Client;
-use Contao\NewsModel;
 use Model\Collection;
 use Monolog\Logger;
 use Symfony\Component\Console\Input\InputInterface;
@@ -250,11 +250,17 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $crawler->setItem($item);
             $crawler->setBaseUrl($this->baseUrl);
             $count = $crawler->getCount();
-            if (is_string($count))
+            if (is_array($count))
             {
-                $this->output->writeln('<bg=red>Error: '.$count.'</>');
-                $this->output->writeln('<fg=red>Stopping updating stats for current provider.</>');
-                break;
+                $this->output->writeln('<bg=red>Error: '.$count['message'].'</>');
+                if ($count['code'] == AbstractCrawler::ERROR_BREAKING)
+                {
+                    $this->output->writeln('<fg=red>Stopping updating stats for current provider.</>');
+                    break;
+                }
+                else {
+                    continue;
+                }
             }
             $crawler->updateItem();
             $this->output->writeln('Found '.$count.' shares.');
