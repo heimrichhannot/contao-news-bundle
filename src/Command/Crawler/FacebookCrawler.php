@@ -19,10 +19,9 @@ class FacebookCrawler extends AbstractCrawler
 
     /**
      * Return share count or error message
-     * @param null $url
-     * @return int|string
+     * @return int|array
      */
-    public function getCount($url = null)
+    public function getCount()
     {
         $count = 0;
         foreach ($this->getUrls() as $url)
@@ -31,18 +30,16 @@ class FacebookCrawler extends AbstractCrawler
                 $response = $this->client->request('GET', 'https://graph.facebook.com/?id=' . $url);
             } catch (ClientException $e)
             {
+                $this->setErrorCode(static::ERROR_BREAKING);
                 $error = json_decode($e->getResponse()->getBody()->getContents());
-                return $error->error->message;
+                $this->setErrorMessage($error->error->message);
+                return $this->error;
             }
 
             if ($response && $response->getStatusCode() == 200)
             {
                 $data = json_decode($response->getBody()->getContents(), true);
-
-                if ($data['id'] == $url)
-                {
-                    $count += intval($data['share']['share_count']);
-                }
+                $count += intval($data['share']['share_count']);
             }
         }
         $this->count = $count;

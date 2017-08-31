@@ -2,8 +2,8 @@
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 
+use Contao\NewsModel;
 use GuzzleHttp\Exception\ClientException;
-use HeimrichHannot\NewsBundle\NewsModel;
 
 class DisqusCrawler extends AbstractCrawler
 {
@@ -30,22 +30,27 @@ class DisqusCrawler extends AbstractCrawler
     }
 
     /**
-     * @param null $url
-     * @return int
+     * Return comment count or error
+     * @return int|array
      */
-    public function getCount($url = null)
+    public function getCount()
     {
         $count = 0;
         try {
             $response = $this->client->request(
                 'GET',
                 'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey
-                . '&forum=' . $this->forum . '&thread:ident=f' . $this->identifier
+                . '&forum=' . $this->forum . '&thread:ident=' . $this->identifier
             );
         } catch (ClientException $e)
         {
             $error = json_decode($e->getResponse()->getBody()->getContents());
-            return $error->response;
+            $this->setErrorMessage($error->response);
+            if ($error->code == 2)
+            {
+                $this->setErrorCode(AbstractCrawler::ERROR_NOTICE);
+            }
+            return $this->error;
         }
 
         if ($response && $response->getStatusCode() == 200)
