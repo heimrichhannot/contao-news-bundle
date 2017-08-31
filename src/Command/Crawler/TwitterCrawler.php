@@ -30,11 +30,11 @@ class TwitterCrawler extends AbstractCrawler
     }
 
     /**
-     * Return share count or error message.
+     * Return share count or error.
      * Twitter allows only search within the last seven day,
      * so share count only includes shares from the last seven days.
      *
-     * @return int
+     * @return int|array
      */
     public function getCount()
     {
@@ -47,7 +47,9 @@ class TwitterCrawler extends AbstractCrawler
             ]);
             if ($errors = $response->errors)
             {
-                return $errors[0]->message;
+                $this->setErrorCode(static::ERROR_BREAKING);
+                $this->setErrorMessage($errors[0]->message);
+                return $this->error;
             } else
             {
                 $count += count($response->statuses);

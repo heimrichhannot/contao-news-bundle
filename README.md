@@ -5,9 +5,13 @@ This module contains enhancements for the contao news entity. It works with Cont
 ## Features
 
 - define "news lists" for filtering the news to be displayed in the ordinary NewsList module
-- read social share counts (social stats) for news articles
 
 ## Technical instructions
+
+### Add tag filtered websites to sitemap and/or search index
+
+This feature is useful e.g. if you have a tag filtered list module on some website and want to have this site containing all tags as auto_item in the sitemap and/or search index.
+You can do this by setting a jumpTo page for the desired tag source in the global contao settings (tl_settings) in the tags section.
 
 ### Social stats
 
@@ -61,13 +65,3 @@ Name | Description | Arguments | Example
 news_list | prints the link to a certain news list | id or alias of a news list | {{news_list::1}}
 news_list_url | prints the url to a certain news list | id or alias of a news list | {{news_list_url::1}}
 news_list_title | prints the title of a certain news list | id or alias of a news list | {{news_list_title::1}}
-
-### Hooks
-Name | Arguments | Expected return value | Description
------|-----------|-----------------------|------------
-addNewsArticleUrlsToSocialStats|NewsModel $item, string $baseUrl|array|Add additional urls to search for counts (for example legacy urls)
-
-### Commands
-Name | Arguments | Description 
------|-----------|-------------
-hundh:news:socialstats| | Updates share counts of news articles

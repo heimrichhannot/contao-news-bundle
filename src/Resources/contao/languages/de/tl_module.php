@@ -12,6 +12,10 @@ $lang['add_related_news']           = ['Verwandte Nachrichten anzeigen', 'Zeige 
 $lang['related_news_module']        = ['Nachrichtenliste', 'Bitte wählen Sie das Nachrichtenlisten-Modul für die Anzeige der verwandten Beiträge.'];
 $lang['skipPreviousNews']           = ['Bereits angezeigte Nachrichten ausschließen', 'Schließen Sie bereits angezeigte Nachrichten aus.'];
 $lang['news_readers_survey_result'] = ['Leser-Umfrage-Ergebnis'];
+$lang['news_suggestion']            = ['Nachrichtenvorschläge'];
+$lang['suggestion_label']           = ['Vorschläge-Label'];
+$lang['suggestion_order_column']    = ['Vorschläge geordnet nach der Spalte', 'Geben Sie die Spalte an, nach der die Nachrichten sortiert und ausgegeben werden soll (z.B. nach Datum)'];
+$lang['news_slick_box_selector']    = ['Typ auswählen'];
 $lang['newsInfoBoxModule']          = ['Nachrichten Info-Box Modul', 'Definieren Sie ein Nachrichten Info-Box Modul.'];
 $lang['addNewsTagFilter']           = ['Filterung durch Schlagworte erlauben', 'Wählen Sie diese Option, wenn die Liste nach Schlagworten filterbar sein soll.'];
 $lang['newsTagFilterJumpTo']        = ['Weiterleitungsseite für Schlagwort-Links', 'Wählen Sie hier eine Seite aus, zu der beim Anklicken von Schlagwort-Links weitergeleitet werden soll.'];
@@ -23,6 +27,7 @@ $lang['news_readers_survey_result_legend'] = 'Leser-Umfrage-Ergebnis';
 $lang['news_related_legend']               = 'Verwandte Nachrichten-Einstellungen';
 $lang['tags_legend']                       = 'Schlagwort-Einstellungen';
 $lang['news_info_box_legend']              = 'Infobox-Einstellungen';
+$lang['news_suggestion_legend']            = 'Nachrichtenvorschläge';
 
 /**
  * Reference
