@@ -77,9 +77,9 @@ class NewsList
     /**
      * NewsList constructor.
      *
-     * @param array $newsArchives
+     * @param array     $newsArchives
      * @param bool|null $featured
-     * @param \Module $module
+     * @param \Module   $module
      */
     public function __construct(array $newsArchives, $featured, \Module $module)
     {
@@ -101,9 +101,9 @@ class NewsList
     /**
      * Extend count news items statement
      *
-     * @param array $columns
+     * @param array      $columns
      * @param array|null $values
-     * @param array $options
+     * @param array      $options
      */
     public function extendCount(array &$columns, &$values, array &$options)
     {
@@ -124,12 +124,14 @@ class NewsList
         $this->addSkipPreviousNewsFilter();
         $this->addCategoryFilter();
         $this->addTagFilter();
+        $this->addSortFilter();
+
     }
 
     /**
      * Fetch news items
      *
-     * @param integer $limit Current limit from pagination
+     * @param integer $limit  Current limit from pagination
      * @param integer $offset Current offset from pagination
      *
      * @return \Model\Collection|NewsModel|null|boolean Return a collection it news items of false for the default fetch behavior
@@ -143,9 +145,9 @@ class NewsList
     /**
      * Extend fetch news items statement
      *
-     * @param array $columns
+     * @param array      $columns
      * @param array|null $values
-     * @param array $options
+     * @param array      $options
      */
     public function extendFetch(array &$columns, &$values, array &$options)
     {
@@ -166,6 +168,7 @@ class NewsList
         $this->addSkipPreviousNewsFilter();
         $this->addCategoryFilter();
         $this->addTagFilter();
+        $this->addSortFilter();
     }
 
     private function addSkipPreviousNewsFilter()
@@ -246,11 +249,9 @@ class NewsList
             }
 
             if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null) {
-                $ids = $newsTags->fetchEach('news_id');
+                $ids                   = $newsTags->fetchEach('news_id');
                 $this->filterColumns[] = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
-            }
-            else
-            {
+            } else {
                 \Controller::redirect('/');
             }
         }
@@ -325,7 +326,7 @@ class NewsList
     /**
      * Add news to list of already seen for current page
      *
-     * @param integer $id News id
+     * @param integer $id     News id
      * @param integer $pageId Page id
      */
     public static function addSeen($id, $pageId = null)
@@ -387,6 +388,18 @@ class NewsList
         if (is_array($pages) && isset($pages[$pageId])) {
             unset($pages[$pageId]);
             \Session::getInstance()->set(static::SESSION_SEEN_NEWS, $pages);
+        }
+    }
+
+    /**
+     * overwrites the order by clause by the given value
+     */
+    protected function addSortFilter()
+    {
+        if ($this->module->addCustomSort) {
+            if (!empty($this->module->sortClaue)) {
+                $this->filterOptions['order'] = $this->module->sortClause;
+            }
         }
     }
 }
