@@ -113,14 +113,17 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     {
         if (!array_key_exists('google_analytics', $this->config))
         {
-            $this->output->writeln('<bg=red>No Google Analytics config provided. Skipping...</>');
+            $message = "No Google Analytics config provided. Skipping...";
+            $this->output->writeln('<bg=red>'.$message.'</>');
+            $this->logger->addNotice($message);
             return;
         }
         $items = NewsModel::getByGoogleAnalyticsUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Google Analytics counts</>");
         $this->updateStats(
             new GoogleAnalyticsCrawler($this->httpClient, null, '', $this->config['google_analytics']),
-            $items
+            $items,
+            'Google Analytics'
         );
     }
 
@@ -132,13 +135,15 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         if (!array_key_exists('facebook', $this->config))
         {
             $this->output->writeln('<bg=red>No Facebook config provided. Skipping...</>');
+            $this->logger->addNotice('No Facebook config provided. Skipping...');
             return;
         }
         $items = NewsModel::getByFacebookCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Facebook counts</>");
         $this->updateStats(
             new FacebookCrawler($this->httpClient),
-            $items
+            $items,
+            'Facebook'
         );
     }
 
@@ -150,13 +155,15 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         if (!$this->config['twitter'])
         {
             $this->output->writeln('<bg=red>No Twitter config provided. Skipping...</>');
+            $this->logger->addNotice('No Twitter config provided. Skipping...');
             return;
         }
         $items = NewsModel::getByTwitterCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Twitter counts</>");
         $this->updateStats(
             new TwitterCrawler($this->httpClient, null, $this->baseUrl, $this->config['twitter']),
-            $items
+            $items,
+            'Twitter'
         );
     }
 
@@ -168,13 +175,15 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         if (!array_key_exists('google_plus', $this->config))
         {
             $this->output->writeln('<bg=red>No Google Plus config provided. Skipping...</>');
+            $this->logger->addNotice('No Google Plus config provided. Skipping...');
             return;
         }
         $items = NewsModel::getByGooglePlusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Google Plus counts</>");
         $this->updateStats(
             new GooglePlusCrawler($this->httpClient),
-            $items
+            $items,
+            'Google Plus'
         );
     }
 
@@ -186,13 +195,15 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         if (!$this->config['disqus'])
         {
             $this->output->writeln('<bg=red>No Disqus config provided. Skipping...</>');
+            $this->logger->addNotice('No Disqus config provided. Skipping...');
             return;
         }
         $items = NewsModel::getByDisqusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Disqus counts</>");
         $this->updateStats(
             new DisqusCrawler($this->httpClient, null, $this->baseUrl, $this->config['disqus']),
-            $items
+            $items,
+            'Disqus'
         );
     }
 
@@ -200,7 +211,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      * @param AbstractCrawler $crawler
      * @param NewsModel|Collection $items
      */
-    private function updateStats($crawler, $items)
+    private function updateStats($crawler, $items, $provider)
     {
         foreach ($items as $item)
         {
@@ -211,6 +222,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             if (is_array($count))
             {
                 $this->output->writeln('<bg=red>Error: '.$count['message'].'</>');
+                $this->logger->addError($provider.': '.$count['message']);
                 if ($count['code'] == AbstractCrawler::ERROR_BREAKING)
                 {
                     $this->output->writeln('<fg=red>Stopping updating stats for current provider.</>');
@@ -221,7 +233,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
                 }
             }
             $crawler->updateItem();
-            $this->output->writeln('Found '.$count.' shares.');
+            $this->output->writeln('Found '.$count.' shares for '.$provider.'.');
+            $this->logger->addInfo('Found '.$count.' shares for '.$provider.'.');
         }
     }
 }
