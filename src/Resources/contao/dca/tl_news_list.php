@@ -162,7 +162,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                     ],
                 ],
                 'palettes' => [
-                    'default' => 'news_list_news',
+                    'default' => 'news_list_news,news_fields',
                 ],
                 'fields'   => [
                     'news_list_news' => [
@@ -174,6 +174,35 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                         'options_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'getNewsOptions'],
                         'eval'             => ['mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
                         'sql'              => "int(10) unsigned NOT NULL default '0'",
+                    ],
+                    'news_fields'       => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_fields'],
+                        'inputType' => 'multiColumnEditor',
+                        'eval'      => [
+                            'multiColumnEditor' => [
+                                'fields' => [
+                                    'field' => [
+                                        'label'                   => &$GLOBALS['TL_LANG']['tl_']['field'],
+                                        'exclude'                 => true,
+                                        'filter'                  => true,
+                                        'inputType'               => 'select',
+                                        'options' => [],
+//                                        'options_callback' => ['HeimrichHannot\Namespace\Class', 'method'],
+                                        'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true],
+                                        'sql'                     => "varchar(64) NOT NULL default ''"
+                                    ],
+                                    'value' => [
+                                        'label'                   => &$GLOBALS['TL_LANG']['tl_']['value'],
+                                        'exclude'                 => true,
+                                        'search'                  => true,
+                                        'inputType'               => 'text',
+                                        'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+                                        'sql'                     => "varchar(255) NOT NULL default ''"
+                                    ],
+                                ]
+                            ],
+                        ],
+                        'sql'       => "blob NULL",
                     ],
                 ],
             ],
