@@ -1,0 +1,24 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+<div class="news-suggestions-container">
+    <div id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="card news-suggest-cards">
+            <div class="card-header news-suggest-card-header" role="tab">
+                <a class="news-suggest-collapse-header" data-toggle="collapse" data-parent="#accordion" href="#<?= str_replace(' ', '', $this->headline) ?>" aria-expanded="false" aria-controls="collapseOne">
+                    <?= $this->headline ?>
+                </a>
+            </div>
+            <div id="<?= str_replace(' ', '', $this->headline) ?>" class="collapse" role="tabpanel" aria-labelledby="<?= str_replace(' ', '', $this->headline) ?>">
+                <div class="card-block">
+                    <?php if (empty($this->articles)): ?>
+                        <p class="empty"><?= $this->empty ?></p>
+                    <?php else: ?>
+                        <?= implode('', $this->articles) ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $this->endblock(); ?>
