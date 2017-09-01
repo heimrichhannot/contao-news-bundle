@@ -112,28 +112,28 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
     ],
     // Fields
     'fields'      => [
-        'id'        => [
+        'id'            => [
             'sql' => "int(10) unsigned NOT NULL auto_increment",
         ],
-        'pid'       => [
+        'pid'           => [
             'foreignKey' => 'tl_news_list_archive.title',
             'sql'        => "int(10) unsigned NOT NULL default '0'",
-            'relation'   => ['type' => 'belongsTo', 'load' => 'eager']
+            'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
         ],
-        'sorting'   => [
+        'sorting'       => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-        'tstamp'    => [
+        'tstamp'        => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-        'dateAdded' => [
+        'dateAdded'     => [
             'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
             'sorting' => true,
             'flag'    => 6,
             'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
             'sql'     => "int(10) unsigned NOT NULL default '0'",
         ],
-        'title'     => [
+        'title'         => [
             'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['title'],
             'exclude'   => true,
             'search'    => true,
@@ -142,8 +142,8 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
-        'alias'     => \HeimrichHannot\Haste\Dca\General::getAliasField(['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateAlias']),
-        'news'      => [
+        'alias'         => \HeimrichHannot\Haste\Dca\General::getAliasField(['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateAlias']),
+        'news'          => [
             'label'        => &$GLOBALS['TL_LANG']['tl_news_list']['news'],
             'inputType'    => 'fieldpalette',
             'foreignKey'   => 'tl_fieldpalette.id',
@@ -178,20 +178,20 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                 ],
             ],
         ],
-        'published' => [
+        'published'     => [
             'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['published'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'sql'       => "char(1) NOT NULL default ''",
         ],
-        'start'     => [
+        'start'         => [
             'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['start'],
             'exclude'   => true,
             'inputType' => 'text',
             'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql'       => "varchar(10) NOT NULL default ''",
         ],
-        'stop'      => [
+        'stop'          => [
             'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['stop'],
             'exclude'   => true,
             'inputType' => 'text',

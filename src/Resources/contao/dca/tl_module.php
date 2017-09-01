@@ -14,27 +14,25 @@ $dca['palettes']['__selector__'][] = 'use_news_lists';
 $dca['palettes']['__selector__'][] = 'newsListMode';
 $dca['palettes']['__selector__'][] = 'add_related_news';
 $dca['palettes']['__selector__'][] = 'addNewsTagFilter';
-$dc['palettes']['__selector__'][] = 'news_slick_box_selector';
+$dca['palettes']['__selector__'][] = 'addCustomSort';
+
 
 /**
  * Palettes
  */
-$dca['palettes']['news_contact_box'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dca['palettes']['news_contact_box'] = '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dca['palettes']['news_readers_survey'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{news_readers_survey_result_legend},news_readers_survey_result;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dca['palettes']['news_readers_survey'] = '{title_legend},name,headline,type;{config_legend},news_archives;{news_readers_survey_result_legend},news_readers_survey_result;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dca['palettes']['news_readers_survey_result'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dca['palettes']['news_readers_survey_result'] = '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dca['palettes']['news_info_box'] =
-    '{title_legend},name,headline,type;{config_legend},news_archives;{redirect_legend},jumpTo;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dca['palettes']['news_info_box'] = '{title_legend},name,headline,type;{config_legend},news_archives;{redirect_legend},jumpTo;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $dca['palettes']['newslist'] = str_replace('news_archives', 'news_archives,use_news_lists,skipPreviousNews', $dca['palettes']['newslist']);
 
 $dca['palettes']['newslist'] = str_replace('{template_legend', '{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newslist']);
 
+$dca['palettes']['newslist'] = str_replace('{config_legend}', '{config_legend},news_archives,addCustomSort,', $dca['palettes']['newslist']);
 
 $dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes']['newslist']);
 
@@ -44,8 +42,6 @@ $dca['palettes']['newsreader'] = str_replace('{template_legend', '{news_related_
 // update slick_newslist because already invoked
 $dca['palettes']['slick_newslist'] = $dca['palettes']['newslist'];
 
-$dc['palettes']['news_suggestions'] = '{title_legend},name,headline,type;{config_legend},news_archives,perPage;{news_suggestion_legend},news_suggestion;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-
 /**
  * Subpalettes
  */
@@ -53,6 +49,8 @@ $dca['subpalettes']['use_news_lists']                                           
 $dca['subpalettes']['newsListMode_' . \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL] = 'news_lists';
 $dca['subpalettes']['add_related_news']                                                         = 'related_news_module';
 $dca['subpalettes']['addNewsTagFilter']                                                         = 'newsTagFilterJumpTo';
+$dca['subpalettes']['addCustomSort']                                                            = 'sortClause';
+
 
 /**
  * Fields
@@ -73,7 +71,7 @@ $fields = [
         'options'   => \HeimrichHannot\NewsBundle\Backend\NewsList::MODES,
         'reference' => &$GLOBALS['TL_LANG']['tl_module']['reference']['newsBundle'],
         'eval'      => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true],
-        'sql'       => "varchar(64) NOT NULL default '" . \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL . "'"
+        'sql'       => "varchar(64) NOT NULL default '" . \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL . "'",
     ],
     'news_lists'                 => [
         'label'      => &$GLOBALS['TL_LANG']['tl_module']['news_lists'],
@@ -84,12 +82,12 @@ $fields = [
         'eval'       => ['multiple' => true, 'mandatory' => true],
         'sql'        => "blob NULL",
     ],
-    'addNewsTagFilter'               => [
+    'addNewsTagFilter'           => [
         'label'     => &$GLOBALS['TL_LANG']['tl_module']['addNewsTagFilter'],
         'exclude'   => true,
         'inputType' => 'checkbox',
         'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
-        'sql'       => "char(1) NOT NULL default ''"
+        'sql'       => "char(1) NOT NULL default ''",
     ],
     'newsTagFilterJumpTo'        => [
         'label'      => &$GLOBALS['TL_LANG']['tl_module']['newsTagFilterJumpTo'],
@@ -98,7 +96,7 @@ $fields = [
         'foreignKey' => 'tl_page.title',
         'eval'       => ['fieldType' => 'radio'],
         'sql'        => "int(10) unsigned NOT NULL default '0'",
-        'relation'   => ['type' => 'hasOne', 'load' => 'eager']
+        'relation'   => ['type' => 'hasOne', 'load' => 'eager'],
     ],
     'news_readers_survey_result' => [
         'label'            => &$GLOBALS['TL_LANG']['tl_module']['news_readers_survey_result'],
@@ -137,37 +135,25 @@ $fields = [
         'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true],
         'sql'              => "int(1) NOT NULL default '0'",
     ],
-    'news_suggestion'            => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_module']['news_suggestion'],
-        'inputType' => 'multiColumnEditor',
-        'eval'      => [
-            'multiColumnEditor' => [
-                'sortable'    => true,
-                // set to 0 if it should also be possible to have *no* row (default: 1)
-                'class'       => 'news_suggestion',
-                'minRowCount' => 2,
-                // set to 0 if an infinite number of rows should be possible (default: 0)
-                'maxRowCount' => 0,
-                'fields'      => [
-                    'suggestion_label'        => [
-                        'label'     => &$GLOBALS['TL_LANG']['tl_module']['suggestion_label'],
-                        'inputType' => 'text',
-                        'eval'      => ['groupStyle' => 'width:250px', 'mandatory' => true],
-                    ],
-                    'suggestion_order_column' => [
-                        'label'     => &$GLOBALS['TL_LANG']['tl_module']['suggestion_order_column'],
-                        'inputType' => 'text',
-                        'eval'      => ['groupStyle' => 'width:250px', 'mandatory' => true],
-                    ],
-                ],
-            ],
-        ],
-        'sql'       => "blob NULL",
+    'addCustomSort'              => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_module']['addCustomSort'],
+        'exclude'   => true,
+        'inputType' => 'checkbox',
+        'eval'      => ['tl_class' => 'clr', 'submitOnChange' => true],
+        'sql'       => "char(1) NOT NULL default ''",
+    ],
+    'sortClause'                 => [
+        'label'       => &$GLOBALS['TL_LANG']['tl_module']['sortClause'],
+        'inputType'   => 'textarea',
+        'exclude'     => true,
+        'eval'        => ['class' => 'monospace', 'rte' => 'ace', 'tl_class' => 'clr long'],
+        'explanation' => 'insertTags',
+        'sql'         => "text NULL",
     ],
 ];
 
-$dca['fields']['news_metaFields']['options'][] = 'writers';
-$dca['fields']['news_metaFields']['options'][] = 'tags';
+$dca['fields']['news_metaFields']['options'][]              = 'writers';
+$dca['fields']['news_metaFields']['options'][]              = 'tags';
 $dca['fields']['news_metaFields']['eval']['submitOnChange'] = true;
 
 $dca['fields'] = array_merge($dca['fields'], $fields);

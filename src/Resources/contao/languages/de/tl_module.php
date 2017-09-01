@@ -19,6 +19,8 @@ $lang['news_slick_box_selector']    = ['Typ auswählen'];
 $lang['newsInfoBoxModule']          = ['Nachrichten Info-Box Modul', 'Definieren Sie ein Nachrichten Info-Box Modul.'];
 $lang['addNewsTagFilter']           = ['Filterung durch Schlagworte erlauben', 'Wählen Sie diese Option, wenn die Liste nach Schlagworten filterbar sein soll.'];
 $lang['newsTagFilterJumpTo']        = ['Weiterleitungsseite für Schlagwort-Links', 'Wählen Sie hier eine Seite aus, zu der beim Anklicken von Schlagwort-Links weitergeleitet werden soll.'];
+$lang['addCustomSort']              = ['Benutzerdefinierte Sortierung hinzufügen'];
+$lang['sortClause']                 = ['WHERE-Bedingung für das Sortieren', 'Geben Sie hier die SQL-Bedingung, mit "AND ORDER BY date DESC" ein'];
 
 /**
  * Legends
@@ -34,5 +36,5 @@ $lang['news_suggestion_legend']            = 'Nachrichtenvorschläge';
  */
 $lang['reference']['newsBundle'] = [
     \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL    => 'Manuelle Auswahl',
-    \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_AUTO_ITEM => 'Auto-Item'
+    \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_AUTO_ITEM => 'Auto-Item',
 ];
