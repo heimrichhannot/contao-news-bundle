@@ -469,7 +469,11 @@ class NewsModel extends Model
         return static::countBy($arrColumns, [$intFrom, $intTo], $arrOptions);
     }
 
-
+    /**
+     * Return the url for the current article
+     * @param $baseUrl
+     * @return string
+     */
     public function getUrl($baseUrl)
     {
         $urlString[] = \NewsArchiveModel::findByPk($this->pid) == null ? null : \NewsArchiveModel::findByPk($this->pid)->title;
@@ -478,11 +482,11 @@ class NewsModel extends Model
         $url         = $baseUrl;
         foreach ($urlString as $string) {
             if ($string !== null) {
-                $url .= '/'.strtolower($string);
+                $url .= '/'.urlencode($string);
             }
         }
 
-        return urlencode($url);
+        return $url;
     }
 
     /**

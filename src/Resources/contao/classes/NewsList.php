@@ -15,6 +15,7 @@ use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
+use NewsCategories\CategoryHelper;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
 use Contao\NewsModel;
@@ -244,8 +245,7 @@ class NewsList
                 \Controller::redirect('/');
             }
 
-            if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null)
-            {
+            if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null) {
                 $ids = $newsTags->fetchEach('news_id');
                 $this->filterColumns[] = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
             }
@@ -267,8 +267,18 @@ class NewsList
             if (!empty($arrCategories)) {
                 $arrIds = [];
 
+                $filterCategories = $GLOBALS['NEWS_FILTER_DEFAULT'];
+
+                if ($GLOBALS['NEWS_FILTER_STOP_LEVEL'] > 0) {
+                    foreach ($GLOBALS['NEWS_FILTER_DEFAULT'] as $category) {
+                        $filterCategories = array_merge($filterCategories, CategoryHelper::getCategoryIdTree($category, $GLOBALS['NEWS_FILTER_STOP_LEVEL'], true));
+                    }
+                }
+
+                $filterCategories = array_unique($filterCategories);
+
                 // Get the news IDs for particular categories
-                foreach ($GLOBALS['NEWS_FILTER_DEFAULT'] as $category) {
+                foreach ($filterCategories as $category) {
                     if (isset($arrCategories[$category])) {
                         $arrIds = array_merge($arrCategories[$category], $arrIds);
                     }
@@ -284,7 +294,7 @@ class NewsList
                 $strQuery = "$t.id IN (" . implode(',', (empty($arrIds) ? [0] : array_unique($arrIds))) . ")";
 
                 if ($GLOBALS['NEWS_FILTER_PRIMARY']) {
-                    $strQuery .= " AND $t.primaryCategory IN (" . implode(',', $GLOBALS['NEWS_FILTER_DEFAULT']) . ")";
+                    $strQuery .= " AND $t.primaryCategory IN (" . implode(',', $filterCategories) . ")";
                 }
 
                 $this->filterColumns[$strKey] = $strQuery;
