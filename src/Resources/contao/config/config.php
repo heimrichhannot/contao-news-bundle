@@ -10,7 +10,6 @@ array_insert($GLOBALS['FE_MOD'], 2, [
         'news_readers_survey_result' => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurveyResult',
         'news_info_box'              => 'HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox',
         'newslist_related'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated',
-        'news_suggestions'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsSuggestions',
     ],
 ]);
 
