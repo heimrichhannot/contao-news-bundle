@@ -28,11 +28,9 @@ $dca['palettes']['news_readers_survey_result'] = '{title_legend},name,headline,t
 
 $dca['palettes']['news_info_box'] = '{title_legend},name,headline,type;{config_legend},news_archives;{redirect_legend},jumpTo;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dca['palettes']['newslist'] = str_replace('news_archives', 'news_archives,use_news_lists,skipPreviousNews', $dca['palettes']['newslist']);
+$dca['palettes']['newslist'] = str_replace('news_archives', 'news_archives,use_news_lists,skipPreviousNews,addCustomSort', $dca['palettes']['newslist']);
 
 $dca['palettes']['newslist'] = str_replace('{template_legend', '{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newslist']);
-
-$dca['palettes']['newslist'] = str_replace('{config_legend}', '{config_legend},news_archives,addCustomSort,', $dca['palettes']['newslist']);
 
 $dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes']['newslist']);
 

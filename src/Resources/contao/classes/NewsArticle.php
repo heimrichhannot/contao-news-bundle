@@ -12,8 +12,10 @@ namespace HeimrichHannot\NewsBundle;
 use Codefog\TagsBundle\Model\TagModel;
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
+use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
 use NewsCategories\NewsCategories;
@@ -80,8 +82,31 @@ class NewsArticle extends \ModuleNews
         $this->addTags();
         $this->addInfoBox();
         $this->addPageMeta();
+        $this->addNewsListFieldOverwrite();
     }
 
+    /**
+     * Add custom fields from news list article relation
+     */
+    protected function addNewsListFieldOverwrite()
+    {
+        if (!$this->module->use_news_lists) {
+            return;
+        }
+
+        $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news', ['limit' => 1], ['tl_fieldpalette.news_list_news = ?'], [$this->article->id]);
+
+        if($relations === null)
+        {
+            return;
+        }
+
+    }
+
+
+    /**
+     * Add page meta information
+     */
     protected function addPageMeta()
     {
         if (!$this->module instanceof \ModuleNewsReader) {

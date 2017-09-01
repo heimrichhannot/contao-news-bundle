@@ -20,7 +20,7 @@ $GLOBALS['FE_MOD']['news']['newsreader'] = 'HeimrichHannot\NewsBundle\Module\Mod
  * Back end modules
  */
 $GLOBALS['BE_MOD']['content']['news']['tables'][]  = 'tl_news_list';
-$GLOBALS['BE_MOD']['conteFnt']['news']['tables'][] = 'tl_news_list_archive';
+$GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list_archive';
 
 /**
  * Models
