@@ -14,9 +14,8 @@ use Contao\CoreBundle\Command\AbstractLockedCommand;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use Contao\CoreBundle\Monolog\ContaoContext;
-use Contao\NewsModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 use Contao\System;
-use GuzzleHttp\Exception\ClientException;
 use HeimrichHannot\NewsBundle\Command\Crawler\AbstractCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\DisqusCrawler;
 use HeimrichHannot\NewsBundle\Command\Crawler\FacebookCrawler;
@@ -78,16 +77,16 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $route         = System::getContainer()->get('router')->getContext();
         $this->baseUrl = $route->getScheme() . $route->getHost();
         $this->logger  = System::getContainer()->get('monolog.logger.contao');
-        $this->config = System::getContainer()->getParameter('social_stats');
+        $this->config  = System::getContainer()->getParameter('social_stats');
 
         $message = 'START updating social stats...';
         $output->writeln($message);
         $this->logger->info($message, ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
 
-        $this->items = NewsModel::findMultipleByIds([2114,1427,2026]);
+        $this->items      = NewsModel::findMultipleByIds([2114, 1427, 2026]);
         $this->httpClient = new Client([
-            'base_url'     => $route->getScheme() . $route->getHost(),
-            'social_stats' => System::getContainer()->getParameter('social_stats'),
+            'base_url'                  => $route->getScheme() . $route->getHost(),
+            'social_stats'              => System::getContainer()->getParameter('social_stats'),
             'ssl.certificate_authority' => false
         ]);
 
@@ -99,7 +98,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->updateDisqusCount();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->output->writeln('<fg=red>Error: '.$e->getMessage().'</>');
+            $this->output->writeln('<fg=red>Error: ' . $e->getMessage() . '</>');
             return 1;
         }
 
@@ -111,10 +110,9 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateGoogleAnalyticsCount()
     {
-        if (!array_key_exists('google_analytics', $this->config))
-        {
+        if (!array_key_exists('google_analytics', $this->config)) {
             $message = "No Google Analytics config provided. Skipping...";
-            $this->output->writeln('<bg=red>'.$message.'</>');
+            $this->output->writeln('<bg=red>' . $message . '</>');
             $this->logger->addNotice($message);
             return;
         }
@@ -132,8 +130,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateFacebookCount()
     {
-        if (!array_key_exists('facebook', $this->config))
-        {
+        if (!array_key_exists('facebook', $this->config)) {
             $this->output->writeln('<bg=red>No Facebook config provided. Skipping...</>');
             $this->logger->addNotice('No Facebook config provided. Skipping...');
             return;
@@ -152,8 +149,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateTwitterCount()
     {
-        if (!$this->config['twitter'])
-        {
+        if (!$this->config['twitter']) {
             $this->output->writeln('<bg=red>No Twitter config provided. Skipping...</>');
             $this->logger->addNotice('No Twitter config provided. Skipping...');
             return;
@@ -172,8 +168,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateGooglePlusCount()
     {
-        if (!array_key_exists('google_plus', $this->config))
-        {
+        if (!array_key_exists('google_plus', $this->config)) {
             $this->output->writeln('<bg=red>No Google Plus config provided. Skipping...</>');
             $this->logger->addNotice('No Google Plus config provided. Skipping...');
             return;
@@ -192,8 +187,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateDisqusCount()
     {
-        if (!$this->config['disqus'])
-        {
+        if (!$this->config['disqus']) {
             $this->output->writeln('<bg=red>No Disqus config provided. Skipping...</>');
             $this->logger->addNotice('No Disqus config provided. Skipping...');
             return;
@@ -213,28 +207,24 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateStats($crawler, $items, $provider)
     {
-        foreach ($items as $item)
-        {
-            $this->output->writeln('Updating news article '.$item->id.' ('.$item->headline.')');
+        foreach ($items as $item) {
+            $this->output->writeln('Updating news article ' . $item->id . ' (' . $item->headline . ')');
             $crawler->setItem($item);
             $crawler->setBaseUrl($this->baseUrl);
             $count = $crawler->getCount();
-            if (is_array($count))
-            {
-                $this->output->writeln('<bg=red>Error: '.$count['message'].'</>');
-                $this->logger->addError($provider.': '.$count['message']);
-                if ($count['code'] == AbstractCrawler::ERROR_BREAKING)
-                {
+            if (is_array($count)) {
+                $this->output->writeln('<bg=red>Error: ' . $count['message'] . '</>');
+                $this->logger->addError($provider . ': ' . $count['message']);
+                if ($count['code'] == AbstractCrawler::ERROR_BREAKING) {
                     $this->output->writeln('<fg=red>Stopping updating stats for current provider.</>');
                     break;
-                }
-                else {
+                } else {
                     continue;
                 }
             }
             $crawler->updateItem();
-            $this->output->writeln('Found '.$count.' shares for '.$provider.'.');
-            $this->logger->addInfo('Found '.$count.' shares for '.$provider.'.');
+            $this->output->writeln('Found ' . $count . ' shares for ' . $provider . '.');
+            $this->logger->addInfo('Found ' . $count . ' shares for ' . $provider . '.');
         }
     }
 }

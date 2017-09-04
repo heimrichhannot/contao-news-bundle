@@ -9,8 +9,6 @@
 namespace HeimrichHannot\NewsBundle\Backend;
 
 
-use HeimrichHannot\NewsBundle\NewsModel;
-
 class Module extends \Backend
 {
     /**

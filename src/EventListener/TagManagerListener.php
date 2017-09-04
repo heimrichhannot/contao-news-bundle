@@ -15,7 +15,7 @@ namespace HeimrichHannot\NewsBundle\EventListener;
 use Codefog\TagsBundle\Manager\DcaAwareInterface;
 use Codefog\TagsBundle\ManagerRegistry;
 use Contao\DataContainer;
-use Contao\NewsModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 class TagManagerListener
 {
@@ -37,7 +37,7 @@ class TagManagerListener
     /**
      * On the field save.
      *
-     * @param string        $value
+     * @param string $value
      * @param DataContainer $dc
      *
      * @return string
@@ -46,8 +46,7 @@ class TagManagerListener
     {
         $manager = $this->registry->get($GLOBALS['TL_DCA'][$dc->table]['fields'][$dc->field]['eval']['tagsManager']);
 
-        if ($manager instanceof DcaAwareInterface)
-        {
+        if ($manager instanceof DcaAwareInterface) {
             $value = $manager->saveDcaField($value, $dc);
         }
 

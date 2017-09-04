@@ -14,7 +14,7 @@ class TwitterCrawler extends AbstractCrawler
     /**
      * TwitterCrawler constructor.
      * @param \GuzzleHttp\Client $client
-     * @param \HeimrichHannot\NewsBundle\NewsModel $item
+     * @param \HeimrichHannot\NewsBundle\Model\NewsModel $item
      * @param $baseUrl
      * @param $config Must contain following keys: consumer_key, consumer_secret, access_token, access_token_secret
      */
@@ -39,19 +39,16 @@ class TwitterCrawler extends AbstractCrawler
     public function getCount()
     {
         $count = 0;
-        foreach ($this->getUrls() as $url)
-        {
+        foreach ($this->getUrls() as $url) {
             $response = $this->connection->get("search/tweets", [
-                "q" => 'url:'.$url,
+                "q"     => 'url:' . $url,
                 "count" => 100
             ]);
-            if ($errors = $response->errors)
-            {
+            if ($errors = $response->errors) {
                 $this->setErrorCode(static::ERROR_BREAKING);
                 $this->setErrorMessage($errors[0]->message);
                 return $this->error;
-            } else
-            {
+            } else {
                 $count += count($response->statuses);
             }
         }
@@ -64,7 +61,7 @@ class TwitterCrawler extends AbstractCrawler
      */
     public function updateItem()
     {
-        $this->item->twitter_counter = $this->count;
+        $this->item->twitter_counter    = $this->count;
         $this->item->twitter_updated_at = time();
         $this->item->save();
     }

@@ -14,11 +14,11 @@ namespace HeimrichHannot\NewsBundle;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
 use NewsCategories\CategoryHelper;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
-use Contao\NewsModel;
 
 class NewsList
 {

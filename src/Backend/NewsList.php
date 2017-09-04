@@ -11,6 +11,7 @@
 namespace HeimrichHannot\NewsBundle\Backend;
 
 use HeimrichHannot\Haste\Dca\General;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 class NewsList extends \Contao\Backend
 {
@@ -250,7 +251,7 @@ class NewsList extends \Contao\Backend
     {
         $options = [];
 
-        $objNews = \NewsModel::findAll(['order' => 'time DESC']);
+        $objNews = NewsModel::findAll(['order' => 'time DESC']);
 
         if ($objNews === null) {
             return $options;
@@ -277,7 +278,7 @@ class NewsList extends \Contao\Backend
      */
     public function generateNewsItemLabel($arrRow, $strLabel, $objDca, $strAttributes)
     {
-        $objNews = \NewsModel::findByPk($arrRow['news_list_news']);
+        $objNews = NewsModel::findByPk($arrRow['news_list_news']);
 
         if ($objNews === null) {
             return $strLabel;

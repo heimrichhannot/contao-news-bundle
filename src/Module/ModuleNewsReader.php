@@ -9,6 +9,7 @@ namespace HeimrichHannot\NewsBundle\Module;
 
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 class ModuleNewsReader extends \ModuleNewsReader
 {
@@ -22,7 +23,7 @@ class ModuleNewsReader extends \ModuleNewsReader
         $this->Template->back     = $GLOBALS['TL_LANG']['MSC']['goBack'];
 
         // Get the news item
-        $objArticle = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
+        $objArticle = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
 
         if (null === $objArticle) {
             throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));

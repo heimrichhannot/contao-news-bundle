@@ -9,7 +9,7 @@ class GooglePlusCrawler extends AbstractCrawler
     /**
      * GooglePlusCrawler constructor.
      * @param \GuzzleHttp\Client $client
-     * @param \HeimrichHannot\NewsBundle\NewsModel $item
+     * @param \HeimrichHannot\NewsBundle\Model\NewsModel $item
      * @param $baseUrl
      */
     public function __construct($client, $item = null, $baseUrl = '')

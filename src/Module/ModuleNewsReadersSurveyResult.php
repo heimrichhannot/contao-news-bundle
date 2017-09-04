@@ -10,6 +10,7 @@ namespace HeimrichHannot\NewsBundle\Module;
 
 
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 class ModuleNewsReadersSurveyResult extends \ModuleNews
 {
@@ -41,7 +42,7 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
     protected function compile()
     {
         // Get the news item
-        $objArticle = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
+        $objArticle = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
         if ($objArticle === null || !$objArticle->add_readers_survey)
         {
             return '';

@@ -2,21 +2,21 @@
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 
-use Contao\NewsModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 use GuzzleHttp\Exception\ClientException;
 
 class DisqusCrawler extends AbstractCrawler
 {
     private $config;
-    private $forum      = null;
-    private $apikey     = null;
+    private $forum = null;
+    private $apikey = null;
     private $identifier = "";
 
 
     /**
      * DisqusCrawler constructor.
      * @param \GuzzleHttp\Client $client
-     * @param \HeimrichHannot\NewsBundle\NewsModel $item
+     * @param \HeimrichHannot\NewsBundle\Model\NewsModel $item
      * @param string $baseUrl
      * @param array $config
      */
@@ -42,23 +42,19 @@ class DisqusCrawler extends AbstractCrawler
                 'https://disqus.com/api/3.0/threads/details.json?api_key=' . $this->apikey
                 . '&forum=' . $this->forum . '&thread:ident=' . $this->identifier
             );
-        } catch (ClientException $e)
-        {
+        } catch (ClientException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents());
             $this->setErrorMessage($error->response);
-            if ($error->code == 2)
-            {
+            if ($error->code == 2) {
                 $this->setErrorCode(AbstractCrawler::ERROR_NOTICE);
             }
             return $this->error;
         }
 
-        if ($response && $response->getStatusCode() == 200)
-        {
+        if ($response && $response->getStatusCode() == 200) {
             $data = json_decode($response->getBody()->getContents(), true);
 
-            if (isset($data['response']) && isset($data['response']['posts']))
-            {
+            if (isset($data['response']) && isset($data['response']['posts'])) {
                 $count = intval($data['response']['posts']);
             }
         }
@@ -71,7 +67,7 @@ class DisqusCrawler extends AbstractCrawler
      */
     public function updateItem()
     {
-        $this->item->disqus_counter = $this->count;
+        $this->item->disqus_counter    = $this->count;
         $this->item->disqus_updated_at = time();
         $this->item->save();
     }

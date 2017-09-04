@@ -10,8 +10,7 @@
 
 namespace HeimrichHannot\NewsBundle\Module;
 
-
-use Contao\NewsModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 class ModuleNewsListRelated extends \ModuleNewsList
 {
@@ -40,7 +39,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
     /**
      * Count the total matching items
      *
-     * @param array   $newsArchives
+     * @param array $newsArchives
      * @param boolean $blnFeatured
      *
      * @return integer
@@ -60,7 +59,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
             }
         }
 
-        $options = ['order' => "FIELD(tl_news.id, ".implode(',', array_map('intval', $this->news->related_news)).")"];
+        $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
 
         return NewsModel::countPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $options);
     }
@@ -69,7 +68,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
     /**
      * Fetch the matching items
      *
-     * @param  array   $newsArchives
+     * @param  array $newsArchives
      * @param  boolean $blnFeatured
      * @param  integer $limit
      * @param  integer $offset
@@ -91,7 +90,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
             }
         }
 
-        $options = ['order' => "FIELD(tl_news.id, ".implode(',', array_map('intval', $this->news->related_news)).")"];
+        $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
 
         return NewsModel::findPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $limit, $offset, $options);
     }
@@ -113,7 +112,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
      */
     public function setNews(int $news)
     {
-        if (($model = \NewsModel::findByPk($news)) !== null) {
+        if (($model = NewsModel::findByPk($news)) !== null) {
             $this->news = $model;
         }
     }

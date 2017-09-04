@@ -1,14 +1,12 @@
 <?php
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
-use Contao\NewsModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 use Contao\System;
 use Google_Client;
-use Google_Service_Analytics;
 use Google_Service_AnalyticsReporting;
 use Google_Service_AnalyticsReporting_GetReportsRequest;
 use Google_Service_AnalyticsReporting_Metric;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class GoogleAnalyticsCrawler
@@ -42,10 +40,9 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
     {
         parent::__construct($client, $item, $baseUrl);
 
-        $keyFile = System::getContainer()->getParameter('kernel.root_dir').'/..';
-        $keyFile .= '/'.$config['keyfile'];
-        if (!file_exists($keyFile))
-        {
+        $keyFile = System::getContainer()->getParameter('kernel.root_dir') . '/..';
+        $keyFile .= '/' . $config['keyfile'];
+        if (!file_exists($keyFile)) {
             return false;
         }
         $client = new Google_Client();
@@ -54,9 +51,9 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
         $client->addScope(['https://www.googleapis.com/auth/analytics.readonly']);
         $analytics = new Google_Service_AnalyticsReporting($client);
 
-        $this->client = $client;
+        $this->client    = $client;
         $this->analytics = $analytics;
-        $this->viewId = $config['view_id'];
+        $this->viewId    = $config['view_id'];
     }
 
     /**
@@ -66,33 +63,30 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
     public function getCount()
     {
         $count = 0;
-        if (empty($urls = $this->getUrls()))
-        {
+        if (empty($urls = $this->getUrls())) {
             return $count;
         }
 //        $url = '/magazin/leben/freizeit-alltag/2115/tierquaelerei-wie-zeugen-helfen-koennen/';
-        foreach ($urls as $url)
-        {
+        foreach ($urls as $url) {
 
             $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
-            $body->setReportRequests( array( $this->prepareRequest($url)) );
+            $body->setReportRequests([$this->prepareRequest($url)]);
 
             try {
                 $responce = $this->analytics->reports->batchGet($body);
-            } catch (\Google_Service_Exception $e)
-            {
+            } catch (\Google_Service_Exception $e) {
                 $this->setErrorCode(static::ERROR_BREAKING);
                 $this->setErrorMessage($e->getMessage());
                 return $this->getError();
             }
 
             $report = $responce[0];
-            $rows = $report->getData()->getRows();
-            for ( $rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
-                $row        = $rows[$rowIndex];
-                $metrics    = $row->getMetrics();
-                $values = $metrics[0]->getValues();
-                $count += $values[0];
+            $rows   = $report->getData()->getRows();
+            for ($rowIndex = 0; $rowIndex < count($rows); $rowIndex++) {
+                $row     = $rows[$rowIndex];
+                $metrics = $row->getMetrics();
+                $values  = $metrics[0]->getValues();
+                $count   += $values[0];
             }
         }
         $this->count = $count;
@@ -127,9 +121,6 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
         return $request;
 
 
-
-
-
 //        $startdate  = '2005-01-01'; // Startdate of ga profile
 //        $maxResults = 10000;
 //        $result     = $this->service->data_ga->get(
@@ -158,7 +149,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
      */
     public function updateItem()
     {
-        $this->item->google_analytic_counter = $this->count;
+        $this->item->google_analytic_counter    = $this->count;
         $this->item->google_analytic_updated_at = time();
         $this->item->save();
     }

@@ -9,6 +9,7 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 use Patchwork\Utf8;
 
 class ModuleNewsContactBox extends \ModuleNews
@@ -67,7 +68,7 @@ class ModuleNewsContactBox extends \ModuleNews
     protected function compile()
     {
         // Get the news item
-        $objArticle = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
+        $objArticle = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
 
         if ($objArticle === null || !$objArticle->add_contact_box)
         {

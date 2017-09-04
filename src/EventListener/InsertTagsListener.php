@@ -10,7 +10,7 @@ namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
-use Contao\NewsModel;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 /**
  * Handles insert tags for news.

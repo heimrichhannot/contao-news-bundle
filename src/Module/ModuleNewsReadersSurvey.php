@@ -12,9 +12,8 @@ namespace HeimrichHannot\NewsBundle\Module;
 use HeimrichHannot\Ajax\AjaxAction;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Form\ReadersSurveyForm;
-use HeimrichHannot\Haste\Util\Url;
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\News;
-use Contao\NewsModel;
 use Patchwork\Utf8;
 use Symfony\Component\Form\Forms;
 
@@ -74,7 +73,7 @@ class ModuleNewsReadersSurvey extends \ModuleNews
     protected function compile()
     {
         // Get the news item
-        $objArticle = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
+        $objArticle = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
         $factory    = Forms::createFormFactoryBuilder()->addExtensions([])->getFormFactory();
         if ($objArticle === null || !$objArticle->add_readers_survey)
         {

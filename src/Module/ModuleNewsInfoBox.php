@@ -9,6 +9,7 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
+use HeimrichHannot\NewsBundle\Model\NewsModel;
 use Patchwork\Utf8;
 
 class ModuleNewsInfoBox extends \ModuleNews
@@ -64,7 +65,7 @@ class ModuleNewsInfoBox extends \ModuleNews
         }
 
         // Get the news item
-        $this->article = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
+        $this->article = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
 
         if ($this->article === null || $this->article->info_box_none) {
             return '';
