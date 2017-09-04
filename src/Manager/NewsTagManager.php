@@ -18,49 +18,6 @@ use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 
 class NewsTagManager extends DefaultManager
 {
-    /**
-     * @var string
-     */
-    private $alias;
-
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    private $framework;
-
-    /**
-     * @var string
-     */
-    private $sourceTable;
-
-    /**
-     * @var string
-     */
-    private $sourceField;
-
-    /**
-     * DefaultManager constructor.
-     *
-     * @param ContaoFrameworkInterface $framework
-     * @param string $sourceTable
-     * @param string $sourceField
-     */
-
-    public function __construct(ContaoFrameworkInterface $framework, string $sourceTable, string $sourceField)
-    {
-        $this->framework   = $framework;
-        $this->sourceTable = $sourceTable;
-        $this->sourceField = $sourceField;
-        parent::__construct($framework, $sourceTable, $sourceField);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAlias(string $alias): void
-    {
-        $this->alias = $alias;
-    }
 
     /**
      * {@inheritdoc}
@@ -99,21 +56,5 @@ class NewsTagManager extends DefaultManager
         }
 
         return $model;
-    }
-
-    /**
-     * Get the criteria with necessary data.
-     *
-     * @param array $criteria
-     *
-     * @return array
-     */
-    private function getCriteria(array $criteria = []): array
-    {
-        $criteria['source']      = $this->alias;
-        $criteria['sourceTable'] = $this->sourceTable;
-        $criteria['sourceField'] = $this->sourceField;
-
-        return $criteria;
     }
 }
