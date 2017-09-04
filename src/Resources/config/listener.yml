@@ -1,19 +1,19 @@
 services:
-  heimrichhannot_news.listener.tag_manager:
-    class: HeimrichHannot\NewsBundle\EventListener\TagManagerListener
-    arguments:
-      - "@codefog_tags.manager_registry"
-  heimrichhannot_news.listener.backend.tl_news:
-    class: HeimrichHannot\NewsBundle\EventListener\Backend\NewsListener
-  heimrichhannot_news.listener.insert_tags:
-    class: HeimrichHannot\NewsBundle\EventListener\InsertTagsListener
-    arguments:
-      - "@contao.framework"
-  heimrichhannot_news.listener.searchable_pages:
-    class: HeimrichHannot\NewsBundle\EventListener\SearchablePagesListener
-    arguments:
-      - "@contao.framework"
-  heimrichhannot_news.listener.hooks:
-    class: HeimrichHannot\NewsBundle\EventListener\HookListener
-    arguments:
-      - "@contao.framework"
+    heimrichhannot_news.listener.tag_manager:
+        class: HeimrichHannot\NewsBundle\EventListener\TagManagerListener
+        arguments:
+            - "@codefog_tags.manager_registry"
+    heimrichhannot_news.listener.backend.tl_news:
+        class: HeimrichHannot\NewsBundle\EventListener\Backend\NewsListener
+    heimrichhannot_news.listener.insert_tags:
+        class: HeimrichHannot\NewsBundle\EventListener\InsertTagsListener
+        arguments:
+            - "@contao.framework"
+    heimrichhannot_news.listener.searchable_pages:
+        class: HeimrichHannot\NewsBundle\EventListener\SearchablePagesListener
+        arguments:
+            - "@contao.framework"
+    heimrichhannot_news.listener.hooks:
+        class: HeimrichHannot\NewsBundle\EventListener\HookListener
+        arguments:
+            - "@contao.framework"
