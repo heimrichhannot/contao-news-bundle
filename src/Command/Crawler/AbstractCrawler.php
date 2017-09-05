@@ -8,7 +8,7 @@
 
 namespace HeimrichHannot\NewsBundle\Command\Crawler;
 
-use HeimrichHannot\NewsBundle\Model\NewsModel;
+use Contao\NewsModel;
 use GuzzleHttp\Client;
 
 abstract class AbstractCrawler implements CrawlerInterface

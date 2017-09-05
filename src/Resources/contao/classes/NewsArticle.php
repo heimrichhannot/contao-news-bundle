@@ -9,17 +9,13 @@
 namespace HeimrichHannot\NewsBundle;
 
 
-use Codefog\TagsBundle\Model\TagModel;
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
-use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
-use NewsCategories\NewsCategories;
-use NewsCategories\NewsCategoryModel;
 use Psr\Log\LogLevel;
 
 class NewsArticle extends \ModuleNews

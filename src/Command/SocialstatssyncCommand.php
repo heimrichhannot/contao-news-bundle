@@ -116,7 +116,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice($message);
             return;
         }
-        $items = NewsModel::getByGoogleAnalyticsUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
+        $items = NewsModel::findByGoogleAnalyticsUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Google Analytics counts</>");
         $this->updateStats(
             new GoogleAnalyticsCrawler($this->httpClient, null, '', $this->config['google_analytics']),
@@ -135,7 +135,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Facebook config provided. Skipping...');
             return;
         }
-        $items = NewsModel::getByFacebookCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
+        $items = NewsModel::findByFacebookCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Facebook counts</>");
         $this->updateStats(
             new FacebookCrawler($this->httpClient),
@@ -154,7 +154,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Twitter config provided. Skipping...');
             return;
         }
-        $items = NewsModel::getByTwitterCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
+        $items = NewsModel::findByTwitterCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Twitter counts</>");
         $this->updateStats(
             new TwitterCrawler($this->httpClient, null, $this->baseUrl, $this->config['twitter']),
@@ -173,7 +173,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Google Plus config provided. Skipping...');
             return;
         }
-        $items = NewsModel::getByGooglePlusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
+        $items = NewsModel::findByGooglePlusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Google Plus counts</>");
         $this->updateStats(
             new GooglePlusCrawler($this->httpClient),
@@ -192,7 +192,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Disqus config provided. Skipping...');
             return;
         }
-        $items = NewsModel::getByDisqusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
+        $items = NewsModel::findByDisqusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Disqus counts</>");
         $this->updateStats(
             new DisqusCrawler($this->httpClient, null, $this->baseUrl, $this->config['disqus']),

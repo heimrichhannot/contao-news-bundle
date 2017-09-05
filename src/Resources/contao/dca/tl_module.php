@@ -13,7 +13,6 @@ $dca['config']['onload_callback']['huh.newsbundle'] = ['HeimrichHannot\NewsBundl
 $dca['palettes']['__selector__'][] = 'use_news_lists';
 $dca['palettes']['__selector__'][] = 'newsListMode';
 $dca['palettes']['__selector__'][] = 'add_related_news';
-$dca['palettes']['__selector__'][] = 'addNewsTagFilter';
 $dca['palettes']['__selector__'][] = 'addCustomSort';
 
 
@@ -30,12 +29,12 @@ $dca['palettes']['news_info_box'] = '{title_legend},name,headline,type;{config_l
 
 $dca['palettes']['newslist'] = str_replace('news_archives', 'news_archives,use_news_lists,skipPreviousNews,addCustomSort', $dca['palettes']['newslist']);
 
-$dca['palettes']['newslist'] = str_replace('{template_legend', '{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newslist']);
+$dca['palettes']['newslist'] = str_replace('{template_legend', '{tags_legend},addNewsTagFilter,newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newslist']);
 
 $dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes']['newslist']);
 
 $dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
-$dca['palettes']['newsreader'] = str_replace('{template_legend', '{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newsreader']);
+$dca['palettes']['newsreader'] = str_replace('{template_legend', '{tags_legend},newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newsreader']);
 
 // update slick_newslist because already invoked
 $dca['palettes']['slick_newslist'] = $dca['palettes']['newslist'];
@@ -46,7 +45,6 @@ $dca['palettes']['slick_newslist'] = $dca['palettes']['newslist'];
 $dca['subpalettes']['use_news_lists']                                                           = 'newsListMode';
 $dca['subpalettes']['newsListMode_' . \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL] = 'news_lists';
 $dca['subpalettes']['add_related_news']                                                         = 'related_news_module';
-$dca['subpalettes']['addNewsTagFilter']                                                         = 'newsTagFilterJumpTo';
 $dca['subpalettes']['addCustomSort']                                                            = 'sortClause';
 
 
@@ -84,7 +82,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_module']['addNewsTagFilter'],
         'exclude'   => true,
         'inputType' => 'checkbox',
-        'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+        'eval'      => ['tl_class' => 'w50'],
         'sql'       => "char(1) NOT NULL default ''",
     ],
     'newsTagFilterJumpTo'        => [
@@ -92,7 +90,7 @@ $fields = [
         'exclude'    => true,
         'inputType'  => 'pageTree',
         'foreignKey' => 'tl_page.title',
-        'eval'       => ['fieldType' => 'radio'],
+        'eval'       => ['fieldType' => 'radio', 'tl_class' => 'clr'],
         'sql'        => "int(10) unsigned NOT NULL default '0'",
         'relation'   => ['type' => 'hasOne', 'load' => 'eager'],
     ],

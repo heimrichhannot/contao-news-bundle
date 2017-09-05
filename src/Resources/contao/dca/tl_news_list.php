@@ -188,7 +188,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                                         'inputType'               => 'select',
                                         'options' => [],
 //                                        'options_callback' => ['HeimrichHannot\Namespace\Class', 'method'],
-                                        'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true],
+                                        'eval'                    => ['tl_class' => 'w50', 'includeBlankOption' => true, 'submitOnChange' => true],
                                         'sql'                     => "varchar(64) NOT NULL default ''"
                                     ],
                                     'value' => [
@@ -196,7 +196,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                                         'exclude'                 => true,
                                         'search'                  => true,
                                         'inputType'               => 'text',
-                                        'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+                                        'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50'],
                                         'sql'                     => "varchar(255) NOT NULL default ''"
                                     ],
                                 ]
