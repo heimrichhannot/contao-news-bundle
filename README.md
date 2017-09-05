@@ -16,7 +16,7 @@ You can do this by setting a jumpTo page for the desired tag source in the globa
 ### Social stats
 
 Searches _Facebook_, _Twitter_ and _Google Plus_ for share counts. Also count number of comments on _Disqus_ and number of visitors by _Google Analytics_.
-To use is, just call `hundh.news.socialstats` from a cronjob periodically.
+To use is, just call `huh.news.socialstats` from a cronjob periodically.
 
 Full available config for your `config.yml`:
 

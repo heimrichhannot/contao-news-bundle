@@ -397,7 +397,7 @@ class NewsList
     protected function addSortFilter()
     {
         if ($this->module->addCustomSort) {
-            if (!empty($this->module->sortClaue)) {
+            if (!empty($this->module->sortClause)) {
                 $this->filterOptions['order'] = $this->module->sortClause;
             }
         }

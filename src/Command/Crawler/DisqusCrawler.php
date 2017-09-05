@@ -2,7 +2,7 @@
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 
-use HeimrichHannot\NewsBundle\Model\NewsModel;
+use Contao\NewsModel;
 use GuzzleHttp\Exception\ClientException;
 
 class DisqusCrawler extends AbstractCrawler

@@ -1,7 +1,7 @@
 <?php
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
-use HeimrichHannot\NewsBundle\Model\NewsModel;
+use Contao\NewsModel;
 use Contao\System;
 use Google_Client;
 use Google_Service_AnalyticsReporting;

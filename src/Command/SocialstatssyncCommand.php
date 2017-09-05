@@ -64,7 +64,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     protected function configure()
     {
-        $this->setName('hundh:news:socialstats')->setDescription('Updates the database with social stats.');
+        $this->setName('huh:news:socialstats')->setDescription('Updates the database with social stats.');
     }
 
     /**
