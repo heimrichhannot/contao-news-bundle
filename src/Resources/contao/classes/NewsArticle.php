@@ -92,11 +92,19 @@ class NewsArticle extends \ModuleNews
 
         $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news', ['limit' => 1], ['tl_fieldpalette.news_list_news = ?'], [$this->article->id]);
 
-        if($relations === null)
-        {
+        if ($relations === null || !$relations->news_list_set_fields) {
             return;
         }
 
+        $customFields = deserialize($relations->news_list_fields, true);
+
+        foreach ($customFields as $key => $set) {
+            if (!$set['field']) {
+                continue;
+            }
+
+            $this->template->{$set['field']} = $set['value'];
+        }
     }
 
 

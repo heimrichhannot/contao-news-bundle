@@ -112,28 +112,28 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
     ],
     // Fields
     'fields'      => [
-        'id'            => [
+        'id'        => [
             'sql' => "int(10) unsigned NOT NULL auto_increment",
         ],
-        'pid'           => [
+        'pid'       => [
             'foreignKey' => 'tl_news_list_archive.title',
             'sql'        => "int(10) unsigned NOT NULL default '0'",
             'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
         ],
-        'sorting'       => [
+        'sorting'   => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-        'tstamp'        => [
+        'tstamp'    => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
-        'dateAdded'     => [
+        'dateAdded' => [
             'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
             'sorting' => true,
             'flag'    => 6,
             'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
             'sql'     => "int(10) unsigned NOT NULL default '0'",
         ],
-        'title'         => [
+        'title'     => [
             'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['title'],
             'exclude'   => true,
             'search'    => true,
@@ -142,8 +142,8 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'eval'      => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
-        'alias'         => \HeimrichHannot\Haste\Dca\General::getAliasField(['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateAlias']),
-        'news'          => [
+        'alias'     => \HeimrichHannot\Haste\Dca\General::getAliasField(['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateAlias']),
+        'news'      => [
             'label'        => &$GLOBALS['TL_LANG']['tl_news_list']['news'],
             'inputType'    => 'fieldpalette',
             'foreignKey'   => 'tl_fieldpalette.id',
@@ -151,21 +151,25 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             'eval'         => ['tl_class' => 'clr wizard'],
             'sql'          => "blob NULL",
             'fieldpalette' => [
-                'config'   => [
+                'config'      => [
                     'hidePublished' => false,
                 ],
-                'list'     => [
+                'list'        => [
                     'label' => [
                         'fields'         => ['news_list_news'],
                         'format'         => '%s',
                         'label_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'generateNewsItemLabel'],
                     ],
                 ],
-                'palettes' => [
-                    'default' => 'news_list_news,news_fields',
+                'palettes'    => [
+                    '__selector__' => ['news_list_set_fields', 'published'],
+                    'default'      => 'news_list_news,news_list_set_fields',
                 ],
-                'fields'   => [
-                    'news_list_news' => [
+                'subpalettes' => [
+                    'news_list_set_fields' => 'news_list_fields'
+                ],
+                'fields'      => [
+                    'news_list_news'       => [
                         'label'            => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_news'],
                         'exclude'          => true,
                         'inputType'        => 'select',
@@ -175,29 +179,35 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                         'eval'             => ['mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
                         'sql'              => "int(10) unsigned NOT NULL default '0'",
                     ],
-                    'news_fields'       => [
-                        'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_fields'],
+                    'news_list_set_fields' => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_set_fields'],
+                        'exclude'   => true,
+                        'inputType' => 'checkbox',
+                        'sql'       => "char(1) NOT NULL default ''",
+                        'eval'      => ['submitOnChange' => true]
+                    ],
+                    'news_list_fields'     => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_fields'],
                         'inputType' => 'multiColumnEditor',
                         'eval'      => [
                             'multiColumnEditor' => [
                                 'fields' => [
                                     'field' => [
-                                        'label'                   => &$GLOBALS['TL_LANG']['tl_']['field'],
-                                        'exclude'                 => true,
-                                        'filter'                  => true,
-                                        'inputType'               => 'select',
-                                        'options' => [],
-//                                        'options_callback' => ['HeimrichHannot\Namespace\Class', 'method'],
-                                        'eval'                    => ['tl_class' => 'w50', 'includeBlankOption' => true, 'submitOnChange' => true],
-                                        'sql'                     => "varchar(64) NOT NULL default ''"
+                                        'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_fields_field'],
+                                        'exclude'   => true,
+                                        'filter'    => true,
+                                        'inputType' => 'select',
+                                        'options'   => ['headline', 'subheadline'],
+                                        'eval'      => ['tl_class' => 'w50', 'includeBlankOption' => true, 'submitOnChange' => true],
+                                        'sql'       => "varchar(64) NOT NULL default ''"
                                     ],
                                     'value' => [
-                                        'label'                   => &$GLOBALS['TL_LANG']['tl_']['value'],
-                                        'exclude'                 => true,
-                                        'search'                  => true,
-                                        'inputType'               => 'text',
-                                        'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50'],
-                                        'sql'                     => "varchar(255) NOT NULL default ''"
+                                        'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_fields_value'],
+                                        'exclude'   => true,
+                                        'search'    => true,
+                                        'inputType' => 'text',
+                                        'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
+                                        'sql'       => "varchar(255) NOT NULL default ''"
                                     ],
                                 ]
                             ],
@@ -206,26 +216,6 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                     ],
                 ],
             ],
-        ],
-        'published'     => [
-            'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['published'],
-            'exclude'   => true,
-            'inputType' => 'checkbox',
-            'sql'       => "char(1) NOT NULL default ''",
-        ],
-        'start'         => [
-            'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['start'],
-            'exclude'   => true,
-            'inputType' => 'text',
-            'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
-            'sql'       => "varchar(10) NOT NULL default ''",
-        ],
-        'stop'          => [
-            'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['stop'],
-            'exclude'   => true,
-            'inputType' => 'text',
-            'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
-            'sql'       => "varchar(10) NOT NULL default ''",
         ],
     ],
 ];
