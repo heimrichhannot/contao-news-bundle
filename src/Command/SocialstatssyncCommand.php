@@ -26,6 +26,7 @@ use GuzzleHttp\Client;
 use Model\Collection;
 use Monolog\Logger;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkAwareInterface
@@ -64,7 +65,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     protected function configure()
     {
-        $this->setName('huh:news:socialstats')->setDescription('Updates the database with social stats.');
+        $this
+            ->setName('huh:news:socialstats')
+            ->setDescription('Updates the database with social stats.')
+            ->addOption('no-chunksize', null, null, "Set to 1 to ignore the limit set in options (means all results). Default 0.")
+            ->addOption('no-days', null, null, "Set to 1 to ignore the days settings (means there is no limit due age of the news).");
     }
 
     /**
@@ -78,7 +83,14 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $this->baseUrl = $route->getScheme() . $route->getHost();
         $this->logger  = System::getContainer()->get('monolog.logger.contao');
         $this->config  = System::getContainer()->getParameter('social_stats');
-
+        if ($input->getOption('no-chunksize') == 1)
+        {
+            $this->config['chunksize'] = 0;
+        }
+        if ($input->getOption('no-days') == 1)
+        {
+            $this->config['days'] = 0;
+        }
         $message = 'START updating social stats...';
         $output->writeln($message);
         $this->logger->info($message, ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
