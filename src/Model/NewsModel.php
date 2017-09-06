@@ -16,12 +16,14 @@ class NewsModel extends \Contao\NewsModel
      * Find news items by oldest Facebook counter update date
      * @param int $limit
      * @param int $days
+     * @param array $pids
      * @param array $options
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
     public static function findByFacebookCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
     {
-        $options['order'] = '`facebook_updated_at` ASC';
+        $t                = static::$strTable;
+        $options['order'] = "$t.facebook_updated_at ASC";
         return static::findForSocialStats($limit, $days, $pids, $options);
     }
 
@@ -29,12 +31,14 @@ class NewsModel extends \Contao\NewsModel
      * Find news items by oldest Twitter counter update date
      * @param int $limit
      * @param int $days
+     * @param array $pids
      * @param array $options
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
     public static function findByTwitterCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
     {
-        $options['order'] = '`twitter_updated_at` ASC';
+        $t                = static::$strTable;
+        $options['order'] = "$t.twitter_updated_at ASC";
         return static::findForSocialStats($limit, $days, $pids, $options);
     }
 
@@ -42,12 +46,14 @@ class NewsModel extends \Contao\NewsModel
      * Find news items by oldest Google Plus update date
      * @param int $limit
      * @param int $days
+     * @param array $pids
      * @param array $options
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
     public static function findByGooglePlusCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
     {
-        $options['order'] = '`google_plus_updated_at` ASC';
+        $t                = static::$strTable;
+        $options['order'] = "$t.google_plus_updated_at ASC";
         return static::findForSocialStats($limit, $days, $pids, $options);
     }
 
@@ -55,12 +61,14 @@ class NewsModel extends \Contao\NewsModel
      * Find news items by oldest Disqus update date
      * @param int $limit
      * @param int $days
+     * @param array $pids
      * @param array $options
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
     public static function findByDisqusCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
     {
-        $options['order'] = '`disqus_updated_at` ASC';
+        $t                = static::$strTable;
+        $options['order'] = "$t.disqus_updated_at ASC";
         return static::findForSocialStats($limit, $days, $pids, $options);
     }
 
@@ -68,12 +76,14 @@ class NewsModel extends \Contao\NewsModel
      * Find news items by oldest Google Analytics update da
      * @param int $limit
      * @param int $days
+     * @param array $pids
      * @param array $options
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
     public static function findByGoogleAnalyticsUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
     {
-        $options['order'] = '`google_analytic_updated_at` ASC';
+        $t                = static::$strTable;
+        $options['order'] = "$t.google_analytic_updated_at ASC";
         return static::findForSocialStats($limit, $days, $pids, $options);
     }
 
@@ -81,23 +91,38 @@ class NewsModel extends \Contao\NewsModel
      * Find news items for social stats
      * @param int $limit
      * @param int $days
+     * @param array $pids
      * @param array $options
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
     public static function findForSocialStats($limit = 20, $days = 180, $pids = [], $options = [])
     {
-        $t          = static::$strTable;
-        $arrColumns = ["$t.published = 1"];
+        $t                = static::$strTable;
+        $arrColumns       = ["$t.published = 1"];
+        if ($options['order'])
+        {
+            $options['order'] = $options['order'].", $t.date DESC";
+        }
+        else {
+            $options['order'] = "$t.date DESC";
+        }
 
-        if ($days > 0) {
-            $period     = time() - (60 * 60 * 24 * $days);
+        if ($days > 0)
+        {
+            $period       = time() - (60 * 60 * 24 * $days);
             $arrColumns[] = "$t.date > $period";
         }
-        if (!empty($pids)) {
+        if ($limit > 0)
+        {
+            $options['limit'] = $limit;
+        }
+
+        if (!empty($pids))
+        {
             $arrColumns[] = "$t.pid IN(" . implode(',', array_map('intval', $pids)) . ")";
         }
 
-        return static::findBy($arrColumns, null, ['order' => "$t.date DESC", 'limit' => $limit]);
+        return static::findBy($arrColumns, null, $options);
     }
 
     /**

@@ -1,4 +1,4 @@
-# Contao News Bundle
+ # Contao News Bundle
 
 This module contains enhancements for the contao news entity. It works with Contao 4 (and higher).
 
@@ -20,31 +20,32 @@ To use is, just call `huh.news.socialstats` from a cronjob periodically.
 
 Full available config for your `config.yml`:
 
-```
+```yml
 social_stats:
-  chunksize: 20 # default value is 20
-  archives: [1,2] # news archive ids. only news in given archives are updated. Default: empty (all archives)
+  chunksize: 20 #max number of articles per job
+  days: 180 #max age of articles in days
+  archives: #news archive ids. only news in given archives are updated. Example: [1,2]
   disqus:
-    public_api_key: MYPUBLICKEY
-    forum_name: my_shortname
-    identifier: news-uid-{id} # {id} is replaced with news id. Default value is {id}
+    public_api_key: 
+    forum_name: 
+    identifier: {id} #{id} is replaced with news id. Example: news-uid-{id}
   google_analytics:
-    email: example@developer.gserviceaccount.com # service account email
-    key_id: 123456abcdef # service account key id
-    client_id: my_client_id.apps.googleusercontent.com # oauth client id
-    client_key: ABCD1234 # oauth client key
-    view_id: ga:12345678 # view id
-    api_key: MYAPIKEY
-    keyfile: files/newsbundle/socialstats/google_analytics/privatekey.json # relative path to keyfile from project root, default is the given value
+    email: #service account email
+    key_id: #service account key id
+    client_id: #oauth client id
+    client_key: #oauth client key
+    view_id: #view id
+    api_key: 
+    keyfile: files/newsbundle/socialstats/google_analytics/privatekey.json #relative path to keyfile from project root
   twitter:
-    consumer_key: MYCONSUMERKEY
-    consumer_secret: myConsumerSecret
-    access_token: MYACCESSTOKEN
-    access_token_secret: MYACCESSTOKENSECRET
-  facebook: # no value needed
-  google_plus: # no value needed
+    consumer_key: 
+    consumer_secret: 
+    access_token: 
+    access_token_secret: 
+  facebook: #no value needed, just set to activate
+  google_plus: #no value needed, just set to activate
 ```
-To deactivate a plattform, don't set settings. 
+To deactivate a plattform, don't set settings. Default values are given
 
 You can scan for more urls than the default one, if you use the `addNewsArticleUrlsToSocialStats` Hook (for example if you need to scan for legacy urls due plattform change).
 
