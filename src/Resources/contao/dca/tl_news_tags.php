@@ -8,7 +8,8 @@ $GLOBALS['TL_DCA']['tl_news_tags'] = [
         'notCopyable'      => true,
         'sql'              => [
             'keys' => [
-                'id' => 'primary',
+                'id'                 => 'primary',
+//                'news_id,cfg_tag_id' => 'index',
             ],
         ],
     ],
@@ -18,5 +19,11 @@ $GLOBALS['TL_DCA']['tl_news_tags'] = [
         'id'         => [
             'sql' => ['type' => 'integer', 'unsigned' => true, 'autoincrement' => true],
         ],
+//        'news_id'    => [
+//            'sql' => ['type' => 'integer', 'unsigned' => true],
+//        ],
+//        'cfg_tag_id' => [
+//            'sql' => ['type' => 'integer', 'unsigned' => true],
+//        ],
     ],
 ];
