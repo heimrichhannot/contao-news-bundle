@@ -47,6 +47,13 @@ class NewsArticle extends \ModuleNews
     protected $tokens = [];
 
     /**
+     * The container object
+     *
+     * @var ContainerInterface The container object
+     */
+    protected $container;
+
+    /**
      * Initialize the object
      * @param \FrontendTemplate $template
      * @param array $article
@@ -54,10 +61,11 @@ class NewsArticle extends \ModuleNews
      */
     public function __construct(\FrontendTemplate $template, array $article, \Module $module)
     {
-        $this->template = $template;
-        $this->article  = (object)$article;
-        $this->module   = $module;
-        $this->twig     = \System::getContainer()->get('twig');
+        $this->template  = $template;
+        $this->article   = (object)$article;
+        $this->module    = $module;
+        $this->container = \System::getContainer();
+        $this->twig      = $this->container->get('twig');
 
         parent::__construct($module->objModel);
 
@@ -119,24 +127,76 @@ class NewsArticle extends \ModuleNews
 
         global $objPage;
 
+        $this->container->get('huh.head.tag.meta_date')->setContent(\Date::parse('c', $this->article->date));
+        $this->container->get('huh.head.tag.og_site_name')->setContent($objPage->rootPageTitle);
+        $this->container->get('huh.head.tag.og_locale')->setContent($this->container->get('request_stack')->getCurrentRequest()->getLocale());
+        $this->container->get('huh.head.tag.og_type')->setContent('article');
+        $this->container->get('huh.head.tag.og_title')->setContent(\StringUtil::stripInsertTags($this->article->headline));
+        $this->container->get('huh.head.tag.og_url')->setContent(\Environment::get('url') . '/' . $this->template->link);
+        $this->container->get('huh.head.tag.og_description')->setContent(str_replace("\n", ' ', strip_tags(\Controller::replaceInsertTags($this->article->teaser))));
+
+        if ($this->template->addImage) {
+            $this->container->get('huh.head.tag.og_image')->setContent(\Environment::get('url') . '/' . $this->template->singleSRC);
+        }
+
+        $title = !$this->article->pageTitle ? \StringUtil::stripInsertTags($this->article->pageTitle) : \StringUtil::stripInsertTags($this->article->headline . ' - ' . $objPage->rootPageTitle);
+        $this->container->get('huh.head.tag.meta_title')->setContent($title);
+
         // Overwrite the page title
-        if ($this->article->pageTitle != '') {
-            $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($this->article->pageTitle));
-        } else if ($this->article->headline != '') {
+        if ($this->article->headline != '') {
             $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($this->article->headline));
         }
 
+        $description = '';
+
         // Overwrite the page description
         if ($this->article->metaDescription != '') {
-            $objPage->description = $this->prepareMetaDescription($this->article->metaDescription);
+            $description = $this->article->metaDescription;
         } else if ($this->article->teaser != '') {
-            $objPage->description = $this->prepareMetaDescription($this->article->teaser);
+            $description = $this->article->teaser;
+        }
+
+        if ($description) {
+            $this->container->get('huh.head.tag.meta_description')->setContent($this->prepareMetaDescription($description));
         }
 
         $keywords = deserialize($this->article->metaKeywords, true);
 
         if (!empty($keywords)) {
-            $GLOBALS['TL_KEYWORDS'] = implode(',', $keywords);
+            $this->container->get('huh.head.tag.meta_keywords')->setContent(implode(',', $keywords));
+        }
+
+        // twitter card
+        if ($this->article->twitterCard) {
+            $this->container->get('huh.head.tag.twitter_card')->setContent($this->article->twitterCard);
+
+            if ($objPage->rootId > 0 && ($rootPage = \PageModel::findByPk($objPage->rootId)) !== null && $rootPage->twitterSite) {
+                \System::getContainer()->get('huh.head.tag.twitter_site')->setContent($rootPage->twitterSite);
+            }
+
+            if ($this->article->twitterCreator) {
+                \System::getContainer()->get('huh.head.tag.twitter_creator')->setContent($this->article->twitterCreator);
+            }
+
+            $this->container->get('huh.head.tag.twitter_title')->setContent($title);
+
+            if ($description) {
+                $this->container->get('huh.head.tag.twitter_description')->setContent($this->prepareMetaDescription($description));
+            }
+
+            if ($this->template->addImage) {
+                $this->container->get('huh.head.tag.twitter_image')->setContent(\Environment::get('url') . '/' . $this->template->singleSRC);
+
+                if ($this->template->alt) {
+                    $this->container->get('huh.head.tag.twitter_image_alt')->setContent($this->template->alt);
+                }
+            }
+
+            if ($this->template->addYoutube) {
+                $this->container->get('huh.head.tag.twitter_player')->setContent('https://www.youtube.com/embed/' . $this->youtube);
+                $this->container->get('huh.head.tag.twitter_player_width')->setContent(480);
+                $this->container->get('huh.head.tag.twitter_player_height')->setContent(300);
+            }
         }
     }
 
@@ -193,7 +253,7 @@ class NewsArticle extends \ModuleNews
         if (!class_exists($strClass)) {
             $this->template->add_related_news = false;
 
-            \System::getContainer()->get('monolog.logger.contao')->log(
+            $this->container->get('monolog.logger.contao')->log(
                 LogLevel::ERROR,
                 'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
                 ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
@@ -236,7 +296,7 @@ class NewsArticle extends \ModuleNews
         }
 
         /** @var $manager NewsTagManager */
-        $manager = \System::getContainer()->get('huh.news.news_tags_manager');
+        $manager = $this->container->get('huh.news.news_tags_manager');
 
         if (($models = $manager->findMultiple(['values' => $ids])) === null) {
             return;
@@ -351,7 +411,7 @@ class NewsArticle extends \ModuleNews
         if (!class_exists($strClass)) {
             $this->template->add_related_news = false;
 
-            \System::getContainer()->get('monolog.logger.contao')->log(
+            $this->container->get('monolog.logger.contao')->log(
                 LogLevel::ERROR,
                 'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
                 ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]

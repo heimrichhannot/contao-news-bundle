@@ -134,7 +134,7 @@ class NewsList
      * @param integer $limit  Current limit from pagination
      * @param integer $offset Current offset from pagination
      *
-     * @return \Model\Collection|NewsModel|null|boolean Return a collection it news items of false for the default fetch behavior
+     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null Return a collection it news items of false for the default fetch behavior
      */
     public function fetch($limit, $offset)
     {

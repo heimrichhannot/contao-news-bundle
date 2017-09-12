@@ -27,7 +27,7 @@ $dc['palettes']['default'] = str_replace(
     $dc['palettes']['default']
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 
 /**
  * Subpalettes
@@ -420,23 +420,21 @@ $fields = [
             ],
         ],
     ],
-    'pageTitle'                 => [
+    'pageTitle'                  => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['pageTitle'],
         'exclude'   => true,
-        'search'    => true,
         'inputType' => 'text',
         'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
         'sql'       => "varchar(255) NOT NULL default ''",
     ],
-    'metaDescription'           => [
+    'metaDescription'            => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['metaDescription'],
         'exclude'   => true,
-        'search'    => true,
         'inputType' => 'textarea',
         'eval'      => ['tl_class' => 'clr'],
         'sql'       => "text NULL",
     ],
-    'metaKeywords'              => [
+    'metaKeywords'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['metaKeywords'],
         'inputType' => 'tagsinput',
         'eval'      => [
@@ -446,6 +444,23 @@ $fields = [
         ],
         'sql'       => "blob NULL",
     ],
+    'twitterCard'                => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['twitterCard'],
+        'exclude'   => true,
+        'inputType' => 'select',
+        'default'   => 'summary_large_image',
+        'reference' => &$GLOBALS['TL_LANG']['tl_news']['twitterCardTypes'],
+        'options'   => ['summary', 'summary_large_image', 'player'],
+        'eval'      => ['tl_class' => 'w50', 'includeBlankOption' => true],
+        'sql'       => "varchar(24) NOT NULL default 'summary_large_image'",
+    ],
+    'twitterCreator'             => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['twitterCreator'],
+        'exclude'   => true,
+        'inputType' => 'text',
+        'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
+        'sql'       => "varchar(255) NOT NULL default ''",
+    ]
 ];
 
 $dc['fields'] = array_merge($dc['fields'], $fields);
