@@ -4,7 +4,11 @@ This module contains enhancements for the contao news entity. It works with Cont
 
 ## Features
 
-- define "news lists" for filtering the news to be displayed in the ordinary NewsList module
+### News lists
+
+- prevent duplicate content for news lists with multiple pages by setting `<meta name="robots" content="noindex/follow">` an all pages except first and adding `<link rel="prev" href="URL">` and/or `<link rel="next" href="URL">` of next or prev page exists (See: [Indicate paginated content
+](https://support.google.com/webmasters/answer/1663744?hl=en))
+- define "news lists" for filtering the news to be displayed in the ordinary NewsList module (new back end entity)
 
 ## Technical instructions
 

@@ -17,6 +17,7 @@ use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
 use Psr\Log\LogLevel;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class NewsArticle extends \ModuleNews
 {
@@ -49,7 +50,7 @@ class NewsArticle extends \ModuleNews
     /**
      * The container object
      *
-     * @var ContainerInterface The container object
+     * @var ContainerAwareInterface The container object
      */
     protected $container;
 
@@ -163,7 +164,8 @@ class NewsArticle extends \ModuleNews
         $keywords = deserialize($this->article->metaKeywords, true);
 
         if (!empty($keywords)) {
-            $this->container->get('huh.head.tag.meta_keywords')->setContent(implode(',', $keywords));
+            // keywords should be delimited by comma with space (see https://github.com/contao/core-bundle/issues/1078)
+            $this->container->get('huh.head.tag.meta_keywords')->setContent(implode(', ', $keywords));
         }
 
         // twitter card
