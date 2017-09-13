@@ -9,9 +9,10 @@
  */
 
 $GLOBALS['TL_LANG']['MSC']['moreNewsCategory'] = 'Artikel aus der Kategorie: %s';
-$GLOBALS['TL_LANG']['MSC']['moreNewsTag'] = 'Artikel zum Thema: %s';
+$GLOBALS['TL_LANG']['MSC']['moreNewsTag']      = 'Artikel zum Thema: %s';
 
 
 $GLOBALS['TL_LANG']['MSC']['writers'] = 'Verfasser';
 $GLOBALS['TL_LANG']['MSC']['tags']    = 'Schlagwörter';
 $GLOBALS['TL_LANG']['MSC']['topics']  = 'Themen';
+$GLOBALS['TL_LANG']['MSC']['ratings'] = 'Bewertungen';

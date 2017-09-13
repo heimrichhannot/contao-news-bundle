@@ -150,6 +150,7 @@ $fields = [
 
 $dca['fields']['news_metaFields']['options'][]              = 'writers';
 $dca['fields']['news_metaFields']['options'][]              = 'tags';
+$dca['fields']['news_metaFields']['options'][]              = 'ratings';
 $dca['fields']['news_metaFields']['eval']['submitOnChange'] = true;
 
 $dca['fields'] = array_merge($dca['fields'], $fields);
