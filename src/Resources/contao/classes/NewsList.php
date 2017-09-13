@@ -126,6 +126,12 @@ class NewsList
         $this->addTagFilter();
         $this->addSortFilter();
 
+        // HOOK: add custom news list count filters
+        if (isset($GLOBALS['TL_HOOKS']['addNewsListCountFilters']) && is_array($GLOBALS['TL_HOOKS']['addNewsListCountFilters'])) {
+            foreach ($GLOBALS['TL_HOOKS']['addNewsListCountFilters'] as $callback) {
+                \System::importStatic($callback[0])->{$callback[1]}($this);
+            }
+        }
     }
 
     /**
@@ -169,6 +175,13 @@ class NewsList
         $this->addCategoryFilter();
         $this->addTagFilter();
         $this->addSortFilter();
+
+        // HOOK: add custom news list count filters
+        if (isset($GLOBALS['TL_HOOKS']['addNewsListFetchFilters']) && is_array($GLOBALS['TL_HOOKS']['addNewsListFetchFilters'])) {
+            foreach ($GLOBALS['TL_HOOKS']['addNewsListFetchFilters'] as $callback) {
+                \System::importStatic($callback[0])->{$callback[1]}($this);
+            }
+        }
     }
 
     private function addSkipPreviousNewsFilter()
@@ -401,5 +414,125 @@ class NewsList
                 $this->filterOptions['order'] = $this->module->sortClause;
             }
         }
+    }
+
+
+    /**
+     * Add filter columns
+     *
+     * @return array
+     */
+    public function addFilterColumns(array $filterColumns)
+    {
+        $this->filterColumns = array_merge($this->filterColumns, $filterColumns);
+    }
+
+    /**
+     * Get filter columns
+     *
+     * @return array
+     */
+    public function getFilterColumns(): array
+    {
+        return $this->filterColumns;
+    }
+
+    /**
+     * Set filter columns
+     *
+     * @param array $filterColumns
+     */
+    public function setFilterColumns(array $filterColumns)
+    {
+        $this->filterColumns = $filterColumns;
+    }
+
+    /**
+     * Add filter values
+     *
+     * @param mixed $filterValues
+     */
+    public function addFilterValues($filterValues)
+    {
+        if(!is_array($filterValues))
+        {
+            $filterValues = [$filterValues];
+        }
+
+        $this->filterValues = array_merge(!is_array($this->filterValues) ? [] : $this->filterValues, $filterValues);
+    }
+
+    /**
+     * Get filter values
+     *
+     * @return array|null
+     */
+    public function getFilterValues()
+    {
+        return $this->filterValues;
+    }
+
+    /**
+     * Set filter values
+     *
+     * @param array|null $filterValues
+     */
+    public function setFilterValues($filterValues)
+    {
+        $this->filterValues = $filterValues;
+    }
+
+    /**
+     * Add filter options
+     *
+     * @param array $filterOptions
+     */
+    public function addFilterOptions(array $filterOptions)
+    {
+        $this->filterOptions = array_merge($this->filterOptions, $filterOptions);
+    }
+
+    /**
+     * Get filter options
+     *
+     * @return array
+     */
+    public function getFilterOptions(): array
+    {
+        return $this->filterOptions;
+    }
+
+    /**
+     * Set filter options
+     *
+     * @param array $filterOptions
+     */
+    public function setFilterOptions(array $filterOptions)
+    {
+        $this->filterOptions = $filterOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNewsArchives(): array
+    {
+        return $this->newsArchives;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFeatured(): bool
+    {
+        return !$this->featured ? false : true;
+    }
+
+    /**
+     * @return \Module
+     */
+    public function getModule(): \Module
+    {
+        return $this->module;
     }
 }
