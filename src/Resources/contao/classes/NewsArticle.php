@@ -17,6 +17,7 @@ use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
 use Psr\Log\LogLevel;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class NewsArticle extends \ModuleNews
 {
@@ -49,7 +50,7 @@ class NewsArticle extends \ModuleNews
     /**
      * The container object
      *
-     * @var ContainerInterface The container object
+     * @var ContainerAwareInterface The container object
      */
     protected $container;
 
@@ -87,6 +88,7 @@ class NewsArticle extends \ModuleNews
         $this->addInfoBox();
         $this->addPageMeta();
         $this->addNewsListFieldOverwrite();
+        $this->addRatings();
     }
 
     /**
@@ -163,7 +165,8 @@ class NewsArticle extends \ModuleNews
         $keywords = deserialize($this->article->metaKeywords, true);
 
         if (!empty($keywords)) {
-            $this->container->get('huh.head.tag.meta_keywords')->setContent(implode(',', $keywords));
+            // keywords should be delimited by comma with space (see https://github.com/contao/core-bundle/issues/1078)
+            $this->container->get('huh.head.tag.meta_keywords')->setContent(implode(', ', $keywords));
         }
 
         // twitter card
@@ -322,6 +325,43 @@ class NewsArticle extends \ModuleNews
         $this->template->hasTags       = true;
         $this->template->tags          = $tags;
         $this->template->hasMetaFields = true;
+    }
+
+    /**
+     * Add article ratings (google page impressions, facebook likes, disqus comments)
+     */
+    protected function addRatings()
+    {
+        $this->template->hasRatings = false;
+
+        if (!in_array('ratings', $this->module->news_metaFields)) {
+            return;
+        }
+
+        if ($this->article->google_analytic_updated_at > 0) {
+            $this->template->hasRatings = true;
+            $this->template->viewRating = $this->article->google_analytic_counter;
+        }
+
+        if ($this->article->disqus_updated_at > 0) {
+            $this->template->hasRatings    = true;
+            $this->template->commentRating = $this->article->disqus_counter;
+        }
+
+        if ($this->article->facebook_updated_at > 0) {
+            $this->template->hasRatings  = true;
+            $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->facebook_counter;
+        }
+
+        if ($this->article->google_plus_updated_at > 0) {
+            $this->template->hasRatings  = true;
+            $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->google_plus_counter;
+        }
+
+        if ($this->article->twitter_updated_at > 0) {
+            $this->template->hasRatings  = true;
+            $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->twitter_counter;
+        }
     }
 
     /**

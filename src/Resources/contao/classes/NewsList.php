@@ -11,6 +11,7 @@
 namespace HeimrichHannot\NewsBundle;
 
 
+use Haste\Util\Url;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
@@ -19,6 +20,7 @@ use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
 use NewsCategories\CategoryHelper;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class NewsList
 {
@@ -75,17 +77,25 @@ class NewsList
     protected $filterOptions = [];
 
     /**
+     * The container object
+     *
+     * @var ContainerAwareInterface The container object
+     */
+    protected $container;
+
+    /**
      * NewsList constructor.
      *
-     * @param array     $newsArchives
+     * @param array $newsArchives
      * @param bool|null $featured
-     * @param \Module   $module
+     * @param \Module $module
      */
     public function __construct(array $newsArchives, $featured, \Module $module)
     {
         $this->newsArchives = $newsArchives;
         $this->featured     = $featured;
         $this->module       = $module;
+        $this->container    = \System::getContainer();
     }
 
     /**
@@ -95,15 +105,17 @@ class NewsList
      */
     public function count()
     {
-        return NewsModel::countPublishedByPidsAndCallback($this->newsArchives, [$this, 'extendCount'], $this->featured, []);
+        $total                         = NewsModel::countPublishedByPidsAndCallback($this->newsArchives, [$this, 'extendCount'], $this->featured, []);
+        $this->module->Template->total = $total; // store total news count
+        return $total;
     }
 
     /**
      * Extend count news items statement
      *
-     * @param array      $columns
+     * @param array $columns
      * @param array|null $values
-     * @param array      $options
+     * @param array $options
      */
     public function extendCount(array &$columns, &$values, array &$options)
     {
@@ -137,7 +149,7 @@ class NewsList
     /**
      * Fetch news items
      *
-     * @param integer $limit  Current limit from pagination
+     * @param integer $limit Current limit from pagination
      * @param integer $offset Current offset from pagination
      *
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null Return a collection it news items of false for the default fetch behavior
@@ -151,9 +163,9 @@ class NewsList
     /**
      * Extend fetch news items statement
      *
-     * @param array      $columns
+     * @param array $columns
      * @param array|null $values
-     * @param array      $options
+     * @param array $options
      */
     public function extendFetch(array &$columns, &$values, array &$options)
     {
@@ -162,12 +174,54 @@ class NewsList
         $this->filterOptions = $options;
 
         $this->addFetchFilters();
+        $this->addListListeners();
 
         $columns = $this->filterColumns;
         $values  = $this->filterValues;
         $options = $this->filterOptions;
     }
 
+    /**
+     * Listeners that should be triggered when the list is generated
+     */
+    protected function addListListeners()
+    {
+        $this->preventDuplicateContentByPagination();
+    }
+
+    /**
+     * Prevent search indexer like google from indexing pages past first page (<meta name="robots" content="noindex/follow">)
+     * page and provide <link rel="prev" href="prev page url"> and <link rel="next" href="prev page url"> in head
+     */
+    protected function preventDuplicateContentByPagination()
+    {
+        if (!$this->module->Template->pagination || !$this->module->Template->total) {
+            return;
+        }
+
+        // Get the current page
+        $id      = 'page_n' . $this->module->id;
+        $page    = (\Input::get($id) !== null) ? \Input::get($id) : 1;
+        $total   = intval($this->module->Template->total);
+        $perPage = $this->module->perPage;
+
+        if ($page > 1) {
+            // set all pages except first page robots to <meta name="robots" content="noindex/follow">
+            $this->container->get('huh.head.tag.meta_robots')->setContent('noindex,follow');
+
+            // prev page exists, add <link rel="prev" href="prev page url">
+            $this->container->get('huh.head.tag.link_prev')->setContent(Url::addQueryString($id . '=' . ($page - 1),  Url::removeQueryString([$id])));
+        }
+
+        // next page exists, add <link rel="next" href="next page url">
+        if ($perPage * $page < $total - $perPage) {
+            $this->container->get('huh.head.tag.link_next')->setContent(Url::addQueryString($id . '=' . ($page + 1),  Url::removeQueryString([$id])));
+        }
+    }
+
+    /**
+     * Add additional fetch news query statement filters
+     */
     protected function addFetchFilters()
     {
         $this->addNewsListFilter();
@@ -184,6 +238,9 @@ class NewsList
         }
     }
 
+    /**
+     * Filter out news that were already shipped by previous news list modules
+     */
     private function addSkipPreviousNewsFilter()
     {
         if ($this->module->skipPreviousNews && ($skipIds = static::getSeen()) !== null) {
@@ -192,6 +249,9 @@ class NewsList
         }
     }
 
+    /**
+     * Filter news list by news from tl_news_list
+     */
     private function addNewsListFilter()
     {
         if ($this->module->use_news_lists) {
@@ -239,6 +299,9 @@ class NewsList
         }
     }
 
+    /**
+     * Filter news list by tags
+     */
     private function addTagFilter()
     {
         if ($this->module->addNewsTagFilter) {
@@ -270,6 +333,10 @@ class NewsList
         }
     }
 
+    /**
+     * Filter by news categories
+     * @return null
+     */
     private function addCategoryFilter()
     {
         $t = static::$table;
@@ -339,7 +406,7 @@ class NewsList
     /**
      * Add news to list of already seen for current page
      *
-     * @param integer $id     News id
+     * @param integer $id News id
      * @param integer $pageId Page id
      */
     public static function addSeen($id, $pageId = null)
@@ -454,8 +521,7 @@ class NewsList
      */
     public function addFilterValues($filterValues)
     {
-        if(!is_array($filterValues))
-        {
+        if (!is_array($filterValues)) {
             $filterValues = [$filterValues];
         }
 
