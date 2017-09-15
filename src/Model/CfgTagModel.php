@@ -21,6 +21,12 @@ class CfgTagModel extends \Model
         return parent::findAll($arrOptions);
     }
 
+    /**
+     * @param       $source
+     * @param array $arrOptions
+     *
+     * @return @return static|Model\Collection|null A model, model collection or null if the result is empty
+     */
     public static function findAllBySource($source, array $arrOptions = [])
     {
         return parent::findBy('source', $source, $arrOptions);
@@ -34,10 +40,9 @@ class CfgTagModel extends \Model
     public static function getSourcesAsOptions(\DataContainer $dc)
     {
         $options = [];
-        $tags = \Database::getInstance()->prepare('SELECT source FROM tl_cfg_tag GROUP BY source')->execute();
+        $tags    = \Database::getInstance()->prepare('SELECT source FROM tl_cfg_tag GROUP BY source')->execute();
 
-        if ($tags !== null)
-        {
+        if ($tags !== null) {
             $options = $tags->fetchEach('source');
 
             asort($options);
