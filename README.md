@@ -28,7 +28,7 @@ Full available config for your `config.yml`:
 social_stats:
   chunksize: 20 #max number of articles per job
   days: 180 #max age of articles in days
-  archives: #news archive ids. only news in given archives are updated. Example: [1,2]
+  archives: 0 #news archive ids. only news in given archives are updated. Example: [1,2]. 0 means all archives.
   disqus:
     public_api_key: 
     forum_name: 
