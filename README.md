@@ -10,6 +10,12 @@ This module contains enhancements for the contao news entity. It works with Cont
 ](https://support.google.com/webmasters/answer/1663744?hl=en))
 - define "news lists" for filtering the news to be displayed in the ordinary NewsList module (new back end entity)
 
+### Info box
+
+An info box is a widget that can be rendered within a news article. 
+The default info box comes with headline, text (wysiwyg), hyperlink and hyperlink text fields.
+Use `##news_info_box##` within your news content elements / details (tl_content) to render the box content.
+
 ## Technical instructions
 
 ### Add tag filtered websites to sitemap and/or search index

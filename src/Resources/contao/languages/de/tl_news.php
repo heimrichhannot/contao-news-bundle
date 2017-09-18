@@ -8,14 +8,12 @@ $lang = &$GLOBALS['TL_LANG']['tl_news'];
 $lang['teaser_short']            = ['Teasertext (kurz)', 'Der Teasertext kann in einer Nachrichtenliste anstatt des ganzen Beitrags angezeigt werden.'];
 $lang['writers']                 = ['Verfasser auswählen', 'Wählen Sie einen oder mehrere Verfasser aus der Mitgliederdatenbank aus.'];
 $lang['tags']                    = ['Schlagwörter', 'Vergeben Sie ein oder mehrere Schlagwörter.'];
-$lang['add_contact_box']         = ['Kontaktbox hinzufügen'];
-$lang['contact_box_header']      = ['Überschrift Kontaktbox'];
-$lang['contact_box_topic']       = ['Thematik'];
-$lang['contact_box_title']       = ['Titel Kontaktperson'];
-$lang['contact_box_members']     = ['Kontakt hinzufügen', 'Bitte geben Sie die E-Mail des Kontaktes ein'];
-$lang['add_contact_box_link']    = ['Kontaktlinks hinzufügen'];
-$lang['contact_box_link']        = ['Link'];
-$lang['contact_box_link_text']   = ['Linktitel'];
+$lang['addContactBox']           = ['Kontaktbox hinzufügen', 'Fügen Sie dem Beitrag einen Ansprechpartner / Kontaktperson hinzu.'];
+$lang['contactBox_header']       = ['Überschrift Kontaktbox', 'Vergeben Sie eine Überschrift für die Kontaktbox.'];
+$lang['contactBox_members']      = ['Kontakt hinzufügen', 'Wählen Sie einen Kontaktperson aus der Mitgliederverwaltung aus (E-Mail Addresse).'];
+$lang['contactBox_links']        = ['Links hinzufügen', 'Fügen Sie mehrere Links zur Kontaktbox hinzu.'];
+$lang['contactBox_link']         = ['Link', 'Geben Sie einen Link an.'];
+$lang['contactBox_linkText']     = ['Linktitel', 'Geben Sie einen Linktitel an.'];
 $lang['add_teaser_image']        = ['Ein Teaserbild hinzufügen', 'Dem Beitrag ein individuelles Bild für den Teaser hinzufügen.'];
 $lang['add_readers_survey']      = ['Leser-Umfrage hinzufügen'];
 $lang['readers_survey_question'] = ['Frage', 'Bitte geben Sie eine Frage ein.'];
@@ -23,12 +21,12 @@ $lang['readers_survey_answers']  = ['Antworten'];
 $lang['readers_survey']          = ['Leser-Umfrage'];
 $lang['news_answers']            = ['Antwort'];
 $lang['readers_survey_answer']   = ['Antwort', 'Bitte geben Sie eine Antwort ein.'];
-$lang['info_box_none']           = ['Keine Infobox'];
-$lang['info_box_selector']       = ['Auswählen'];
-$lang['info_box_text']           = ['Infobox-Text hinzufügen'];
-$lang['info_box_text_link']      = ['Infobox-Link hinzufügen'];
-$lang['info_box_text_link_text'] = ['Infobox-Link-Text hinzufügen'];
-$lang['info_box_text_header']    = ['Infobox-Überschrift hinzufügen'];
+$lang['infoBox']                 = ['Infobox', 'Fügen Sie dem Beitrag eine Infobox hinzu.'];
+$lang['infoBox_header']          = ['Infobox-Überschrift hinzufügen', 'Vergeben Sie der Infobox eine Überschrift.'];
+$lang['infoBox_text']            = ['Infobox-Text', 'Vergeben Sie der Infobox einen Text.'];
+$lang['infoBox_link']            = ['Infobox-Link hinzufügen', 'Fügen Sie der Infobox einen Link hinzu.'];
+$lang['infoBox_link_text']       = ['Infobox-Link-Text hinzufügen', 'Vergeben Sie einen Linktext für den Link.'];
+$lang['infoBox_header']          = ['Infobox-Überschrift hinzufügen'];
 $lang['add_related_news']        = ['Verwandte Nachrichten hinzufügen', 'Verknüpfen Sie verwandte Nachrichten für diesen Beitrag.'];
 $lang['related_news']            = [
     'Verwandte Nachrichten',
@@ -55,13 +53,16 @@ $lang['twitter_legend']        = 'Twitter';
 /**
  * Placeholders
  */
-$lang['placeholders']['contact_box_members'] = 'E-Mail eingeben';
-$lang['placeholders']['metaKeywords']        = 'Keywords eingeben';
+$lang['placeholders']['contactBox_members'] = 'E-Mail eingeben';
+$lang['placeholders']['metaKeywords']       = 'Keywords eingeben';
 
 /**
  * References
  */
 
-$lang['twitterCardTypes']['summary']             = 'Summary Card [summary]';
-$lang['twitterCardTypes']['summary_large_image'] = 'Summary Card with Large Image [summary_large_image]';
-$lang['twitterCardTypes']['player']              = 'Player Card [player]';
+$lang['reference']['twitterCardTypes']['summary']             = 'Summary Card [summary]';
+$lang['reference']['twitterCardTypes']['summary_large_image'] = 'Summary Card with Large Image [summary_large_image]';
+$lang['reference']['twitterCardTypes']['player']              = 'Player Card [player]';
+
+$lang['reference']['infoBox']['none'] = 'Keine';
+$lang['reference']['infoBox']['text'] = 'Text';

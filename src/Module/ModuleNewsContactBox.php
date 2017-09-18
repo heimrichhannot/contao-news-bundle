@@ -70,7 +70,7 @@ class ModuleNewsContactBox extends \ModuleNews
         // Get the news item
         $objArticle = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
 
-        if ($objArticle === null || !$objArticle->add_contact_box)
+        if ($objArticle === null || !$objArticle->addContactBox)
         {
             return '';
         }
@@ -87,7 +87,7 @@ class ModuleNewsContactBox extends \ModuleNews
         {
             $this->Template->contact_box = $twig->render(
                 '@HeimrichHannotContaoNews/news/contact_box.html.twig',
-                ['contactMembers' => $contactMembers, 'contactLinks' => $contactLinks, 'contactBox' => $objArticle->contact_box_header]
+                ['contactMembers' => $contactMembers, 'contactLinks' => $contactLinks, 'contactBox' => $objArticle->contactBox_header]
             );
         }
     }
@@ -95,7 +95,7 @@ class ModuleNewsContactBox extends \ModuleNews
     protected function getContactMembers($objArticle)
     {
         $contactMembers = null;
-        $contacts       = unserialize($objArticle->contact_box_members);
+        $contacts       = deserialize($objArticle->contactBox_members, true);
         foreach ($contacts as $contactId)
         {
             $contact          = \Contao\MemberModel::findByPk($contactId);
@@ -114,7 +114,8 @@ class ModuleNewsContactBox extends \ModuleNews
 
     protected function getContactLinks($objArticle)
     {
-        $contactLinks = unserialize($objArticle->add_contact_box_link);
+        $contactLinks = deserialize($objArticle->contactBox_links, true);
+
         if (empty($contactLinks))
         {
             $contactLinks = null;

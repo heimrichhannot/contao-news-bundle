@@ -89,7 +89,47 @@ class NewsArticle extends \ModuleNews
         $this->addPageMeta();
         $this->addNewsListFieldOverwrite();
         $this->addRatings();
+        $this->addTeaserImage();
     }
+
+    /**
+     * Use a custom teaser if not in newsreader module
+     */
+    protected function addTeaserImage()
+    {
+        if ($this->module instanceof \ModuleNewsReader || $this->module->doNotUse) {
+            return;
+        }
+
+        if (!$this->article->add_teaser_image || $this->article->teaser_singleSRC == '')
+        {
+            return;
+        }
+
+        $objModel = \FilesModel::findByUuid($this->article->teaser_singleSRC);
+
+        if ($objModel === null || !is_file(TL_ROOT . '/' . $objModel->path))
+        {
+            return;
+        }
+
+        $arrArticle = (array) $this->article;
+
+        // Override the default image size
+        if ($this->module->imgSize != '')
+        {
+            $size = \StringUtil::deserialize($this->module->imgSize);
+
+            if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
+            {
+                $arrArticle['size'] = $this->module->imgSize;
+            }
+        }
+
+        $arrArticle['singleSRC'] = $objModel->path;
+        $this->addImageToTemplate($this->template, $arrArticle, null, null, $objModel);
+    }
+
 
     /**
      * Add custom fields from news list article relation

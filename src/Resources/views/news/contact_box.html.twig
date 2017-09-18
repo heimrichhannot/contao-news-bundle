@@ -45,8 +45,8 @@
                             <div class="h6 contact-column-header">{{ 'news.contact.box.links.header'|trans }}</div>
                             {% for link in contactLinks %}
                                 <div class="contact-link-row">
-                                    <a href="http://{{ link.contact_box_link }}" target="_blank">
-                                        <button class="contact_link_button">{{ link.contact_box_link_text }}</button>
+                                    <a href="http://{{ link.link }}" target="_blank">
+                                        <button class="contact_link_button">{{ link.text }}</button>
                                     </a>
                                 </div>
                             {% endfor %}

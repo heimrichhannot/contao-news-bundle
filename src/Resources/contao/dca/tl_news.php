@@ -10,11 +10,11 @@ $dc = &$GLOBALS['TL_DCA']['tl_news'];
 /**
  * Selectors
  */
-$dc['palettes']['__selector__'][] = 'add_contact_box';
+$dc['palettes']['__selector__'][] = 'addContactBox';
 $dc['palettes']['__selector__'][] = 'add_teaser_image';
 $dc['palettes']['__selector__'][] = 'teaser_overwriteMeta';
 $dc['palettes']['__selector__'][] = 'add_readers_survey';
-$dc['palettes']['__selector__'][] = 'info_box_selector';
+$dc['palettes']['__selector__'][] = 'infoBox';
 $dc['palettes']['__selector__'][] = 'add_related_news';
 
 /**
@@ -23,7 +23,7 @@ $dc['palettes']['__selector__'][] = 'add_related_news';
 $dc['palettes']['default'] = str_replace('author;', 'author;{writers_legend:hide},writers;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace(
     '{date_legend}',
-    '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{contact_box_legend},add_contact_box;{info_box_legend:hide},info_box_selector;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
+    '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
     $dc['palettes']['default']
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
@@ -32,13 +32,13 @@ $dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},p
 /**
  * Subpalettes
  */
-$dc['subpalettes']['add_contact_box']                 = 'contact_box_members,contact_box_header,add_contact_box_link';
-$dc['subpalettes']['add_teaser_image']                = 'teaser_singleSRC,teaser_size,teaser_floating,teaser_imagemargin,teaser_fullsize,teaser_overwriteMeta';
-$dc['subpalettes']['teaser_overwriteMeta']            = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
-$dc['subpalettes']['add_readers_survey']              = 'readers_survey';
-$dc['subpalettes']['info_box_selector_info_box_text'] = 'info_box_text_header, info_box_text_text, info_box_text_link, info_box_text_link_text';
-$dc['subpalettes']['info_box_selector_info_box_none'] = '';
-$dc['subpalettes']['add_related_news']                = 'related_news';
+$dc['subpalettes']['addContactBox']        = 'contactBox_members,contactBox_header,contactBox_links';
+$dc['subpalettes']['add_teaser_image']     = 'teaser_singleSRC,teaser_size,teaser_floating,teaser_imagemargin,teaser_fullsize,teaser_overwriteMeta';
+$dc['subpalettes']['teaser_overwriteMeta'] = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
+$dc['subpalettes']['add_readers_survey']   = 'readers_survey';
+$dc['subpalettes']['infoBox_text']         = 'infoBox_header, infoBox_text, infoBox_link, infoBox_linkText';
+$dc['subpalettes']['infoBox_none']         = '';
+$dc['subpalettes']['add_related_news']     = 'related_news';
 
 
 /**
@@ -68,19 +68,19 @@ $fields = [
         ],
         'sql'           => "blob NULL",
     ],
-    'add_contact_box'            => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_contact_box'],
+    'addContactBox'              => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['addContactBox'],
         'inputType' => 'checkbox',
         'exclude'   => true,
         'sql'       => "varchar(255) NOT NULL default ''",
         'eval'      => ['submitOnChange' => true],
     ],
-    'contact_box_members'        => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contact_box_members'],
+    'contactBox_members'         => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_members'],
         'inputType' => 'tagsinput',
         'sql'       => "blob NULL",
         'eval'      => [
-            'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['contact_box_members'],
+            'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['contactBox_members'],
             'freeInput'   => false,
             'multiple'    => true,
             'mode'        => \TagsInput::MODE_REMOTE,
@@ -94,36 +94,34 @@ $fields = [
             ],
         ],
     ],
-    'contact_box_header'         => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contact_box_header'],
+    'contactBox_header'          => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_header'],
         'inputType' => 'text',
         'sql'       => "varchar(255) NOT NULL default ''",
         'eval'      => ['mandatory' => true],
     ],
-    'add_contact_box_link'       => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['add_contact_box_link'],
+    'contactBox_links'           => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_links'],
         'inputType' => 'multiColumnEditor',
         'eval'      => [
             'multiColumnEditor' => [
                 'class'               => 'contact_box_link',
                 // set to 0 if it should also be possible to have *no* row (default: 1)
                 'minRowCount'         => 0,
-                // set to 0 if an infinite number of rows should be possible (default: 0)
-                'maxRowCount'         => 0,
                 // defaults to false
                 'skipCopyValuesOnAdd' => false,
                 'fields'              => [
                     // place your fields here as you would normally in your DCA
                     // (sql is not required)
-                    'contact_box_link'      => [
-                        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contact_box_link'],
+                    'link' => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_link'],
                         'inputType' => 'text',
-                        'eval'      => ['groupStyle' => 'width:150px'],
+                        'eval'      => ['groupStyle' => 'width:250px', 'rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 255, 'dcaPicker' => true, 'tl_class' => 'w50 wizard'],
                     ],
-                    'contact_box_link_text' => [
-                        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contact_box_link_text'],
+                    'text' => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_linkText'],
                         'inputType' => 'text',
-                        'eval'      => ['groupStyle' => 'width:150px'],
+                        'eval'      => ['groupStyle' => 'width:250px'],
                     ],
                 ],
             ],
@@ -354,41 +352,40 @@ $fields = [
     'google_analytic_updated_at' => [
         'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
-    'info_box_selector'          => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_selector'],
+    'infoBox'                    => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['infoBox'],
         'inputType' => 'radio',
-        'options'   => [
-            'info_box_none' => &$GLOBALS['TL_LANG']['tl_news']['info_box_none'],
-            'info_box_text' => &$GLOBALS['TL_LANG']['tl_news']['info_box_text'],
-        ],
-        'default'   => 'info_box_none',
+        'options'   => ['none', 'text'],
+        'reference' => &$GLOBALS['TL_LANG']['tl_news']['reference']['infoBox'],
+        'default'   => 'none',
         'exclude'   => true,
         'filter'    => true,
         'sql'       => "varchar(20) NOT NULL default ''",
         'eval'      => ['submitOnChange' => true],
     ],
-    'info_box_text_header'       => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_header'],
+    'infoBox_header'             => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['infoBox_header'],
         'inputType' => 'text',
         'exclude'   => true,
         'eval'      => ['mandatory' => true],
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
-    'info_box_text_text'         => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text'],
+    'infoBox_text'               => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['infoBox_text'],
         'inputType' => 'textarea',
         'exclude'   => true,
         'eval'      => ['rte' => 'tinyMCE', 'tl_class' => 'clr', 'mandatory' => true],
         'sql'       => "text NULL",
     ],
-    'info_box_text_link'         => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link'],
+    'infoBox_link'               => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['infoBox_link'],
         'inputType' => 'text',
         'exclude'   => true,
+        'eval'      => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 255, 'dcaPicker' => true, 'tl_class' => 'w50 wizard'],
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
-    'info_box_text_link_text'    => [
-        'label'     => &$GLOBALS['TL_LANG']['tl_news']['info_box_text_link_text'],
+    'infoBox_linkText'           => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['infoBox_linkText'],
         'inputType' => 'text',
         'exclude'   => true,
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
@@ -449,7 +446,7 @@ $fields = [
         'exclude'   => true,
         'inputType' => 'select',
         'default'   => 'summary_large_image',
-        'reference' => &$GLOBALS['TL_LANG']['tl_news']['twitterCardTypes'],
+        'reference' => &$GLOBALS['TL_LANG']['tl_news']['reference']['twitterCardTypes'],
         'options'   => ['summary', 'summary_large_image', 'player'],
         'eval'      => ['tl_class' => 'w50', 'includeBlankOption' => true],
         'sql'       => "varchar(24) NOT NULL default 'summary_large_image'",

@@ -31,6 +31,10 @@ $dca['palettes']['newslist'] = str_replace('news_archives', 'news_archives,use_n
 
 $dca['palettes']['newslist'] = str_replace('{template_legend', '{tags_legend},addNewsTagFilter,newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newslist']);
 
+$dca['palettes']['newslist'] = str_replace(',imgSize', ',imgSize,useTeaserImage', $dca['palettes']['newslist']);
+$dca['palettes']['newsreader'] = str_replace(',imgSize', ',imgSize,useTeaserImage', $dca['palettes']['newsreader']);
+$dca['palettes']['newsarchive'] = str_replace(',imgSize', ',imgSize,useTeaserImage', $dca['palettes']['newsarchive']);
+
 $dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes']['newslist']);
 
 $dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
@@ -146,6 +150,13 @@ $fields = [
         'explanation' => 'insertTags',
         'sql'         => "text NULL",
     ],
+    'useTeaserImage' => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_module']['useTeaserImage'],
+        'exclude'   => true,
+        'inputType' => 'checkbox',
+        'eval'      => ['tl_class' => 'clr'],
+        'sql'       => "char(1) NOT NULL default ''",
+    ]
 ];
 
 $dca['fields']['news_metaFields']['options'][]              = 'writers';

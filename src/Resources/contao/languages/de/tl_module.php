@@ -18,7 +18,7 @@ $lang['addNewsTagFilter']           = ['Filterung durch Schlagworte erlauben', '
 $lang['newsTagFilterJumpTo']        = ['Weiterleitungsseite für Schlagwort-Links', 'Wählen Sie hier eine Seite aus, zu der beim Anklicken von Schlagwort-Links weitergeleitet werden soll.'];
 $lang['addCustomSort']              = ['Sortierung überschreiben'];
 $lang['sortClause']                 = ['ORDER-Bedingung überschreiben', 'Geben Sie hier die neue ORDER BY-Bedingung kommasepariert ein.(z.B.: tl_news.date DESC)'];
-
+$lang['useTeaserImage']             = ['Teaserbild verwenden', 'Sofern vorhanden, verwende das Teaserbild anstatt des Beitragsbildes.'];
 /**
  * Legends
  */

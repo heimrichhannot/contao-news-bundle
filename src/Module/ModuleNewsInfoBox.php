@@ -67,7 +67,7 @@ class ModuleNewsInfoBox extends \ModuleNews
         // Get the news item
         $this->article = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
 
-        if ($this->article === null || $this->article->info_box_none) {
+        if ($this->article === null || $this->article->infoBox == 'none') {
             return '';
         }
 
@@ -78,8 +78,8 @@ class ModuleNewsInfoBox extends \ModuleNews
     {
         $infoBox = null;
 
-        switch ($this->article->info_box_selector) {
-            case 'info_box_text':
+        switch ($this->article->infoBox) {
+            case 'text':
                 $infoBox = $this->getInfoBoxText();
                 break;
             default:
@@ -92,10 +92,10 @@ class ModuleNewsInfoBox extends \ModuleNews
     protected function getInfoBoxText()
     {
         $infoBox             = null;
-        $infoBox['header']   = $this->article->info_box_text_header;
-        $infoBox['text']     = $this->article->info_box_text_text;
-        $infoBox['link']     = $this->article->info_box_text_link == '' ? null : $this->article->info_box_text_link;
-        $infoBox['linkText'] = $this->article->info_box_text_link_text == '' ? null : $this->article->info_box_text_link_text;
+        $infoBox['header']   = $this->article->infoBox_header;
+        $infoBox['text']     = $this->article->infoBox_text;
+        $infoBox['link']     = $this->article->infoBox_link == '' ? null : $this->article->infoBox_link;
+        $infoBox['linkText'] = $this->article->infoBox_linkText == '' ? null : $this->article->infoBox_linkText;
 
         /**
          * @var \Twig_Environment $twig
