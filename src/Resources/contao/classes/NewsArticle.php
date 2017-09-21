@@ -56,6 +56,11 @@ class NewsArticle extends \ModuleNews
     protected $container;
 
     /**
+     * @var object|\Symfony\Component\Translation\DataCollectorTranslator
+     */
+    protected $translator;
+
+    /**
      * Initialize the object
      * @param \FrontendTemplate $template
      * @param array $article
@@ -63,11 +68,12 @@ class NewsArticle extends \ModuleNews
      */
     public function __construct(\FrontendTemplate $template, array $article, \Module $module)
     {
-        $this->template  = $template;
-        $this->article   = (object)$article;
-        $this->module    = $module;
-        $this->container = \System::getContainer();
-        $this->twig      = $this->container->get('twig');
+        $this->template   = $template;
+        $this->article    = (object)$article;
+        $this->module     = $module;
+        $this->container  = \System::getContainer();
+        $this->twig       = $this->container->get('twig');
+        $this->translator = \System::getContainer()->get('translator');
 
         parent::__construct($module->objModel);
 
