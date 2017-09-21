@@ -16,6 +16,8 @@ $dc['palettes']['__selector__'][] = 'teaser_overwriteMeta';
 $dc['palettes']['__selector__'][] = 'add_readers_survey';
 $dc['palettes']['__selector__'][] = 'infoBox';
 $dc['palettes']['__selector__'][] = 'add_related_news';
+$dc['palettes']['__selector__'][] = 'player';
+
 
 /**
  * Palettes
@@ -28,6 +30,8 @@ $dc['palettes']['default'] = str_replace(
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
+
 
 /**
  * Subpalettes
@@ -37,9 +41,9 @@ $dc['subpalettes']['add_teaser_image']     = 'teaser_singleSRC,teaser_size,tease
 $dc['subpalettes']['teaser_overwriteMeta'] = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
 $dc['subpalettes']['add_readers_survey']   = 'readers_survey';
 $dc['subpalettes']['infoBox_text']         = 'infoBox_header, infoBox_text, infoBox_link, infoBox_linkText';
-$dc['subpalettes']['infoBox_none']         = '';
 $dc['subpalettes']['add_related_news']     = 'related_news';
-
+$dc['subpalettes']['player_internal']      = 'playerSRC,posterSRC';
+$dc['subpalettes']['player_external']      = 'playerUrl,posterSRC';
 
 /**
  * Fields
@@ -457,7 +461,40 @@ $fields = [
         'inputType' => 'text',
         'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
         'sql'       => "varchar(255) NOT NULL default ''",
-    ]
+    ],
+    'player'                     => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['player'],
+        'exclude'   => true,
+        'filter'    => true,
+        'inputType' => 'radio',
+        'default'   => 'none',
+        'options'   => ['none', 'internal', 'external'],
+        'reference' => &$GLOBALS['TL_LANG']['tl_news']['reference']['player'],
+        'eval'      => ['chosen' => true, 'submitOnChange' => true],
+        'sql'       => "varchar(32) NOT NULL default ''"
+    ],
+    'playerSRC'                  => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['playerSRC'],
+        'exclude'   => true,
+        'inputType' => 'fileTree',
+        'eval'      => ['multiple' => true, 'fieldType' => 'checkbox', 'files' => true, 'mandatory' => true],
+        'sql'       => "blob NULL"
+    ],
+    'playerUrl'                  => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['playerUrl'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'text',
+        'eval'      => ['mandatory' => false, 'decodeEntities' => true, 'maxlength' => 255],
+        'sql'       => "varchar(255) NOT NULL default ''"
+    ],
+    'posterSRC'                  => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['posterSRC'],
+        'exclude'   => true,
+        'inputType' => 'fileTree',
+        'eval'      => ['filesOnly' => true, 'fieldType' => 'radio'],
+        'sql'       => "binary(16) NULL"
+    ],
 ];
 
 $dc['fields'] = array_merge($dc['fields'], $fields);

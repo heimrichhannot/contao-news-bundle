@@ -155,7 +155,7 @@ class NewsModel extends \Contao\NewsModel
             $query .= " AND ($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
-        $query .= " GROUP BY year";
+        $query .= " GROUP BY year ORDER BY year DESC";
 
         $years = \Database::getInstance()->prepare($query)->execute();
 
@@ -187,7 +187,7 @@ class NewsModel extends \Contao\NewsModel
             $query .= " AND ($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
-        $query .= " GROUP BY month";
+        $query .= " GROUP BY month ORDER BY month DESC";
 
         $months = \Database::getInstance()->prepare($query)->execute($yearStart, $yearEnd);
 
@@ -375,7 +375,7 @@ class NewsModel extends \Contao\NewsModel
             }
         }
 
-        return static::countBy($arrColumns, null, $arrOptions);
+        return static::countBy($arrColumns, $arrValues, $arrOptions);
     }
 
     /**

@@ -17,6 +17,9 @@ use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
+use HeimrichHannot\NewsBundle\Module\ModuleNewsListFilter;
+use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
+use HeimrichHannot\NewsBundle\QueryBuilder\NewsFilterQueryBuilder;
 use NewsCategories\CategoryHelper;
 use NewsCategories\NewsCategories;
 use NewsCategories\NewsCategoryModel;
@@ -144,6 +147,22 @@ class NewsList
                 \System::importStatic($callback[0])->{$callback[1]}($this);
             }
         }
+
+        /**
+         * @var $filter NewsFilterModule
+         */
+        if (($filter = \System::getContainer()->get('huh.news.list_filter.module_registry')->get($this->module->newsListFilterModule)) !== null) {
+
+            $builder = new NewsFilterQueryBuilder();
+            $builder->setColumns($this->filterColumns);
+            $builder->setValues($this->filterValues);
+            $builder->setOptions($this->filterOptions);
+            $filter->buildQueries($builder, true);
+
+            $this->filterColumns = $builder->getColumns();
+            $this->filterValues = $builder->getValues();
+            $this->filterOptions = $builder->getOptions();
+        }
     }
 
     /**
@@ -210,12 +229,12 @@ class NewsList
             $this->container->get('huh.head.tag.meta_robots')->setContent('noindex,follow');
 
             // prev page exists, add <link rel="prev" href="prev page url">
-            $this->container->get('huh.head.tag.link_prev')->setContent(Url::addQueryString($id . '=' . ($page - 1),  Url::removeQueryString([$id])));
+            $this->container->get('huh.head.tag.link_prev')->setContent(Url::addQueryString($id . '=' . ($page - 1), Url::removeQueryString([$id])));
         }
 
         // next page exists, add <link rel="next" href="next page url">
         if ($perPage * $page < $total - $perPage) {
-            $this->container->get('huh.head.tag.link_next')->setContent(Url::addQueryString($id . '=' . ($page + 1),  Url::removeQueryString([$id])));
+            $this->container->get('huh.head.tag.link_next')->setContent(Url::addQueryString($id . '=' . ($page + 1), Url::removeQueryString([$id])));
         }
     }
 
@@ -235,6 +254,18 @@ class NewsList
             foreach ($GLOBALS['TL_HOOKS']['addNewsListFetchFilters'] as $callback) {
                 \System::importStatic($callback[0])->{$callback[1]}($this);
             }
+        }
+
+        /**
+         * @var $filter NewsFilterModule
+         */
+        if (($filter = \System::getContainer()->get('huh.news.list_filter.module_registry')->get($this->module->newsListFilterModule)) !== null) {
+
+            $builder = new NewsFilterQueryBuilder();
+            $builder->setColumns($this->filterColumns);
+            $builder->setValues($this->filterValues);
+            $builder->setOptions($this->filterOptions);
+            $filter->buildQueries($builder);
         }
     }
 

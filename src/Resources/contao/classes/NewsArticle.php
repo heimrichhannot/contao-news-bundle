@@ -11,6 +11,7 @@ namespace HeimrichHannot\NewsBundle;
 
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\ImageSizeModel;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
@@ -90,6 +91,154 @@ class NewsArticle extends \ModuleNews
         $this->addNewsListFieldOverwrite();
         $this->addRatings();
         $this->addTeaserImage();
+        $this->addPlayer();
+    }
+
+    /**
+     * Add a player for internal or external video-/audio files
+     * @return void;
+     */
+    protected function addPlayer()
+    {
+        $this->template->addPlayer = false;
+
+        if (!$this->article->player || $this->article->player == 'none') {
+            return;
+        }
+
+        global $objPage;
+
+        $template = new \FrontendTemplate('newsplayer_default');
+        $isVideo  = false;
+        $sources  = [];
+
+        switch ($this->article->player) {
+            case 'internal':
+
+                $uuid = \Contao\StringUtil::deserialize($this->article->playerSRC);
+
+                if (!is_array($uuid) || empty($uuid)) {
+                    return;
+                }
+
+                $files = \Contao\FilesModel::findMultipleByUuidsAndExtensions($uuid, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv', 'm4a', 'mp3', 'wma', 'mpeg', 'wav', 'ogg']);
+
+                if ($files === null) {
+                    return;
+                }
+
+                // Pre-sort the array by preference
+                if (in_array($files->first()->extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'])) {
+                    $isVideo = true;
+                    $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
+                } else {
+                    $isVideo = false;
+                    $sources = ['m4a' => null, 'mp3' => null, 'wma' => null, 'mpeg' => null, 'wav' => null, 'ogg' => null];
+                }
+
+                $files->reset();
+
+                // Convert the language to a locale (see #5678)
+                $language = str_replace('-', '_', $objPage->language);
+
+                // Pass File objects to the template
+                while ($files->next()) {
+                    $arrMeta = \Contao\StringUtil::deserialize($files->meta);
+
+                    if (is_array($arrMeta) && isset($arrMeta[$language])) {
+                        $strTitle = $arrMeta[$language]['title'];
+                    } else {
+                        $strTitle = $files->name;
+                    }
+
+                    $file        = new \Contao\File($files->path);
+                    $file->title = \Contao\StringUtil::specialchars($strTitle);
+
+                    $sources[$file->extension] = $file;
+                }
+
+                break;
+            case 'external':
+                $paths = \Contao\StringUtil::trimsplit('|', $this->article->playerUrl);
+
+                if (!is_array($paths) || empty($paths)) {
+                    return;
+                }
+
+                $extension = pathinfo($paths[0], PATHINFO_EXTENSION);
+
+                // Pre-sort the array by preference
+                if (in_array($extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'])) {
+                    $isVideo = true;
+                    $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
+                } else {
+                    $isVideo = false;
+                    $sources = ['m4a' => null, 'mp3' => null, 'wma' => null, 'mpeg' => null, 'wav' => null, 'ogg' => null];
+                }
+
+                $mimetypes = $GLOBALS['TL_MIME'];
+
+                // set source by extension
+                foreach ($paths as $path) {
+                    $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+                    if (!isset($GLOBALS['TL_MIME'][$extension])) {
+                        continue;
+                    }
+
+                    $file                = new \stdClass();
+                    $file->mime          = $GLOBALS['TL_MIME'][$extension][0];
+                    $file->path          = Url::addScheme($path);
+                    $sources[$extension] = $file;
+                }
+
+                break;
+        }
+
+        $template->poster = false;
+        $posterSRC        = $this->article->posterSRC ?: $this->module->posterSRC;
+
+        // Optional poster
+        if ($posterSRC != '') {
+            if (($poster = \FilesModel::findByUuid($posterSRC)) !== null) {
+                $template->poster = $poster->path;
+            }
+        }
+
+        $size = \StringUtil::deserialize($this->module->imgSize, true);
+
+        if ($isVideo) {
+            $template->size = ' width="640" height="360"';
+
+            if ($size[0] > 0 || $size[1] > 0) {
+                $template->size = ' width="' . $size[0] . '" height="' . $size[1] . '"';
+            } else if (is_numeric($size[2])) {
+                /** @var ImageSizeModel $imageModel */
+                $imageModel = $this->container->get('contao.framework')->getAdapter(ImageSizeModel::class);
+                $imageSize  = $imageModel->findByPk($size[2]);
+
+                if (null !== $imageSize) {
+                    $template->size = ' width="' . $imageSize->width . '" height="' . $imageSize->height . '"';
+                }
+            }
+        } else {
+
+            if ($template->poster != '') {
+                $image = ['singleSRC' => $template->poster, 'size' => serialize([640, 360])];
+
+                if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
+                    $image['size'] = $this->module->imgSize;
+                }
+
+                $this->addImageToTemplate($template, $image, null, null, $poster);
+            }
+        }
+
+        $template->files   = array_values(array_filter($sources));
+        $template->isVideo = $isVideo;
+
+        $this->template->addPlayer = true;
+        $this->template->player    = $template->parse();
     }
 
     /**
@@ -101,27 +250,23 @@ class NewsArticle extends \ModuleNews
             return;
         }
 
-        if (!$this->article->add_teaser_image || $this->article->teaser_singleSRC == '')
-        {
+        if (!$this->article->add_teaser_image || $this->article->teaser_singleSRC == '') {
             return;
         }
 
         $objModel = \FilesModel::findByUuid($this->article->teaser_singleSRC);
 
-        if ($objModel === null || !is_file(TL_ROOT . '/' . $objModel->path))
-        {
+        if ($objModel === null || !is_file(TL_ROOT . '/' . $objModel->path)) {
             return;
         }
 
-        $arrArticle = (array) $this->article;
+        $arrArticle = (array)$this->article;
 
         // Override the default image size
-        if ($this->module->imgSize != '')
-        {
+        if ($this->module->imgSize != '') {
             $size = \StringUtil::deserialize($this->module->imgSize);
 
-            if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
-            {
+            if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
                 $arrArticle['size'] = $this->module->imgSize;
             }
         }

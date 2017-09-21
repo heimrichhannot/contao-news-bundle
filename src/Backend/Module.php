@@ -39,6 +39,39 @@ class Module extends \Backend
     }
 
     /**
+     * Get all news list filters as list
+     * @param \DataContainer $dc
+     * @return array List of all news filters
+     */
+    public function getNewsListFilters(\DataContainer $dc)
+    {
+        $filters = \System::getContainer()->get('huh.news.list_filter.registry')->getAliases();
+
+        $options = [];
+
+        foreach ($filters as $alias)
+        {
+            $options[$alias] = $alias;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get all news list modules as list
+     * @param \DataContainer $dc
+     * @return array List of all news list modules
+     */
+    public function getNewsListFilterModules(\DataContainer $dc)
+    {
+        $options = static::getModuleOptions('newslist_filter');
+
+        unset($options[$dc->id]);
+
+        return $options;
+    }
+
+    /**
      * Get all related modules as list
      * @param \DataContainer $dc
      * @return array List of all related modules

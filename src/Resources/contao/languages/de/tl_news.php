@@ -37,6 +37,10 @@ $lang['metaDescription']         = ['Meta-Description', 'Vergeben Sie eine indiv
 $lang['metaKeywords']            = ['Meta-Keywords', 'Vergeben Sie individuelle &lt;meta type="keywords"&gt; für diese Nachricht. (Standard: Keine)'];
 $lang['twitterCard']             = ['Twitter Karte', 'Wählen Sie eine Twitter Karte aus, die bei Tweets angehängt werden soll.'];
 $lang['twitterCreator']          = ['Author Twitter @username', 'Geben Sie den Twitter @username des Authors dieses Artikels ans.'];
+$lang['player']                  = ['Video-/Audio-Dateien', 'Hier können Sie die Video-/Audio-Datei hinzufügen.'];
+$lang['playerSRC']               = ['Video/Audio-Datei', 'Hier können Sie die Url zur Video/Audio-Datei bzw. – wenn Sie verschiedene Codecs verwenden – die Video-/Audio-Dateien hinzufügen.'];
+$lang['playerUrl']               = ['Video/Audio-Url', 'Hier können Sie die Url zur Video/Audio-Datei bzw. – wenn Sie verschiedene Codecs verwenden – die Video-/Audio-Dateien (durch Pipe | getrennt) hinzufügen.'];
+$lang['posterSRC']               = ['Vorschaubild', 'Das Bild statt des ersten Frame des Videos vor dem Abspielen anzeigen.'];
 
 /**
  * Legends
@@ -49,6 +53,7 @@ $lang['info_box_legend']       = 'Infobox';
 $lang['related_news_legend']   = 'Verwandte Nachrichten';
 $lang['meta_legend']           = 'Metadaten';
 $lang['twitter_legend']        = 'Twitter';
+$lang['player_legend']         = 'Player-Einstellungen';
 
 /**
  * Placeholders
@@ -66,3 +71,7 @@ $lang['reference']['twitterCardTypes']['player']              = 'Player Card [pl
 
 $lang['reference']['infoBox']['none'] = 'Keine';
 $lang['reference']['infoBox']['text'] = 'Text';
+
+$lang['reference']['player']['none']     = 'Keine';
+$lang['reference']['player']['internal'] = 'Datei';
+$lang['reference']['player']['external'] = 'Externe URL';

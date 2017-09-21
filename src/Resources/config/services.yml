@@ -16,3 +16,15 @@ services:
             - "tags"
         tags:
             - { name: codefog_tags.manager, alias: app.news }
+    huh.news.list_filter.registry:
+        class: HeimrichHannot\NewsBundle\NewsFilter\NewsFilterRegistry
+    huh.news.list_filter.module_registry:
+            class: HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModuleRegistry
+    huh.news.list_filter.year:
+        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\YearFilter
+        tags:
+          - { name: huh.news.list_filter, alias: year}
+    huh.news.list_filter.year_month:
+        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\YearMonthFilter
+        tags:
+          - { name: huh.news.list_filter, alias: year_month}

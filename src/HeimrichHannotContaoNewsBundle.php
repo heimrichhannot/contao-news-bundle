@@ -10,7 +10,7 @@
 
 namespace HeimrichHannot\NewsBundle;
 
-use HeimrichHannot\NewsBundle\DependencyInjection\Compiler\FeedSourcePass;
+use HeimrichHannot\NewsBundle\DependencyInjection\Compiler\NewsFilterManagerPass;
 use HeimrichHannot\NewsBundle\DependencyInjection\HeimrichHannotContaoNewsExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -29,6 +29,7 @@ class HeimrichHannotContaoNewsBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new NewsFilterManagerPass('huh.news.list_filter.registry', 'huh.news.list_filter'));
     }
 
 

@@ -6,3 +6,25 @@ news.contact.box.links.header: Links und Downloads
 news.readers.survey.header: Leser-Umfrage
 news.readers.survey.result.header: Leser-Umfrage-Ergebnis
 news.readers.survey.submit: Abstimmen
+
+# filter form
+news.form.filter.placeholder.year: Alle
+news.form.filter.label.year: Jahr
+news.form.filter.placeholder.month: Alle
+news.form.filter.label.month: Monat
+
+# month names
+news.form.filter.choice.month.01: Januar
+news.form.filter.choice.month.02: Februar
+news.form.filter.choice.month.03: März
+news.form.filter.choice.month.04: April
+news.form.filter.choice.month.05: Mai
+news.form.filter.choice.month.06: Juni
+news.form.filter.choice.month.07: Juli
+news.form.filter.choice.month.08: August
+news.form.filter.choice.month.09: September
+news.form.filter.choice.month.10: Oktober
+news.form.filter.choice.month.11: November
+news.form.filter.choice.month.12: Dezember
+
+

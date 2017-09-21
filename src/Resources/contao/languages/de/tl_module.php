@@ -19,6 +19,8 @@ $lang['newsTagFilterJumpTo']        = ['Weiterleitungsseite für Schlagwort-Link
 $lang['addCustomSort']              = ['Sortierung überschreiben'];
 $lang['sortClause']                 = ['ORDER-Bedingung überschreiben', 'Geben Sie hier die neue ORDER BY-Bedingung kommasepariert ein.(z.B.: tl_news.date DESC)'];
 $lang['useTeaserImage']             = ['Teaserbild verwenden', 'Sofern vorhanden, verwende das Teaserbild anstatt des Beitragsbildes.'];
+$lang['posterSRC']                  = ['Vorschaubild', 'Das Bild statt des ersten Frame des Videos vor dem Abspielen anzeigen.'];
+$lang['newsListFilterModule']       = ['Nachrichtenliste-Filter-Modul', 'Wählen Sie ein Modul aus, dass die Filterung der Nachrichtenliste steuert.'];
 /**
  * Legends
  */
