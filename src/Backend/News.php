@@ -8,10 +8,10 @@
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
-namespace HeimrichHannot\NewsBundle\EventListener\Backend;
+namespace HeimrichHannot\NewsBundle\Backend;
 
 
-class NewsListener extends \Backend
+class News extends \Backend
 {
     /**
      * Import the back end user object
