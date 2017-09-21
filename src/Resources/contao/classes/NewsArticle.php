@@ -77,8 +77,9 @@ class NewsArticle extends \ModuleNews
 
         parent::__construct($module->objModel);
 
+        $this->module->news_metaFields = deserialize($this->module->news_metaFields, true);
+
         $this->generate();
-        $this->replaceTokens();
     }
 
     /**
@@ -98,6 +99,8 @@ class NewsArticle extends \ModuleNews
         $this->addRatings();
         $this->addTeaserImage();
         $this->addPlayer();
+
+        $this->replaceTokens();
     }
 
     /**
