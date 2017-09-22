@@ -372,6 +372,12 @@ class NewsList
     {
         $t = static::$table;
 
+        $GLOBALS['NEWS_FILTER_CATEGORIES'] = $this->module->news_filterCategories ? true : false;
+        $GLOBALS['NEWS_FILTER_DEFAULT']    = deserialize($this->module->news_filterDefault, true);
+        $GLOBALS['NEWS_FILTER_PRESERVE']   = $this->module->news_filterPreserve;
+        $GLOBALS['NEWS_FILTER_PRIMARY']    = $this->module->news_filterPrimaryCategory;
+        $GLOBALS['NEWS_FILTER_STOP_LEVEL']  = intval($this->module->news_filterStopLevel);
+
         // Use the default filter
         if (is_array($GLOBALS['NEWS_FILTER_DEFAULT']) && !empty($GLOBALS['NEWS_FILTER_DEFAULT'])) {
             $arrCategories = \NewsCategories\NewsModel::getCategoriesCache();
@@ -401,7 +407,7 @@ class NewsList
                 // Preserve the default category
                 if ($GLOBALS['NEWS_FILTER_PRESERVE']) {
                     $strKey = 'category_default';
-                }
+                }https://anwaltauskunft.de/magazin/leben/gesundheit/
 
                 $strQuery = "$t.id IN (" . implode(',', (empty($arrIds) ? [0] : array_unique($arrIds))) . ")";
 
