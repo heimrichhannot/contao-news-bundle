@@ -131,7 +131,7 @@ $fields = [
                         'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true]
                     ],
                     'alias' => [
-                        'label'                   => &$GLOBALS['TL_LANG']['tl_module']['alias'],
+                        'label'                   => &$GLOBALS['TL_LANG']['tl_module']['relatedNewsModuleAlias'],
                         'exclude'                 => true,
                         'search'                  => true,
                         'inputType'               => 'text',
