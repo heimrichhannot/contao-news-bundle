@@ -16,6 +16,8 @@ services:
             - "tags"
         tags:
             - { name: codefog_tags.manager, alias: app.news }
+    huh.news.backend.tl_news:
+        class: HeimrichHannot\NewsBundle\Backend\News
     huh.news.list_filter.registry:
         class: HeimrichHannot\NewsBundle\NewsFilter\NewsFilterRegistry
     huh.news.list_filter.module_registry:
