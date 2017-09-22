@@ -51,7 +51,7 @@ $dca['palettes']['slick_newslist'] = $dca['palettes']['newslist'];
  */
 $dca['subpalettes']['use_news_lists']                                                           = 'newsListMode';
 $dca['subpalettes']['newsListMode_' . \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL] = 'news_lists';
-$dca['subpalettes']['add_related_news']                                                         = 'related_news_module';
+$dca['subpalettes']['add_related_news']                                                         = 'relatedNewsModules';
 $dca['subpalettes']['addCustomSort']                                                            = 'sortClause';
 
 
@@ -116,13 +116,31 @@ $fields = [
         'eval'      => ['tl_class' => 'clr', 'submitOnChange' => true],
         'sql'       => "char(1) NOT NULL default ''",
     ],
-    'related_news_module'        => [
-        'label'            => &$GLOBALS['TL_LANG']['tl_module']['related_news_module'],
-        'exclude'          => true,
-        'inputType'        => 'select',
-        'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getNewsListRelatedModules'],
-        'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true],
-        'sql'              => "int(10) NOT NULL default '0'",
+    'relatedNewsModules'       => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_module']['relatedNewsModules'],
+        'inputType' => 'multiColumnEditor',
+        'eval'      => [
+            'multiColumnEditor' => [
+                'sortable' => true,
+                'fields' => [
+                    'module' => [
+                        'label'            => &$GLOBALS['TL_LANG']['tl_module']['relatedNewsModule'],
+                        'exclude'          => true,
+                        'inputType'        => 'select',
+                        'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getNewsListRelatedModules'],
+                        'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true]
+                    ],
+                    'alias' => [
+                        'label'                   => &$GLOBALS['TL_LANG']['tl_module']['alias'],
+                        'exclude'                 => true,
+                        'search'                  => true,
+                        'inputType'               => 'text',
+                        'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true]
+                    ],
+                ],
+            ],
+        ],
+        'sql'       => "blob NULL",
     ],
     'skipPreviousNews'           => [
         'label'     => &$GLOBALS['TL_LANG']['tl_module']['skipPreviousNews'],
