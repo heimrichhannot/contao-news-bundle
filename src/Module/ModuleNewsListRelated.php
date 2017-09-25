@@ -17,21 +17,17 @@ class ModuleNewsListRelated extends \ModuleNewsList
     /**
      * The parent news that contains the relations
      *
-     * @var int
+     * @var \NewsModel
      */
     protected $news;
 
     public function generate()
     {
-        if (TL_MODE == 'FE' && !$this->news && !$this->news->add_related_news) {
+        if (TL_MODE == 'FE' && !$this->news) {
             return '';
         }
 
         $this->news->related_news = deserialize($this->news->related_news, true);
-
-        if (empty($this->news->related_news)) {
-            return '';
-        }
 
         return parent::generate();
     }
@@ -49,7 +45,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
         // HOOK: add custom logic
         if (isset($GLOBALS['TL_HOOKS']['newsListRelatedCountItems']) && is_array($GLOBALS['TL_HOOKS']['newsListRelatedCountItems'])) {
             foreach ($GLOBALS['TL_HOOKS']['newsListRelatedCountItems'] as $callback) {
-                if (($intResult = \System::importStatic($callback[0])->{$callback[1]}($newsArchives, $this->news->related_news, $blnFeatured, $this)) === false) {
+                if (($intResult = \System::importStatic($callback[0])->{$callback[1]}($newsArchives, $this->news, $blnFeatured, $this)) === false) {
                     continue;
                 }
 
@@ -59,9 +55,15 @@ class ModuleNewsListRelated extends \ModuleNewsList
             }
         }
 
-        $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
+        $options = [];
 
-        return NewsModel::countPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $options);
+        if (!empty($this->news->related_news))
+        {
+            $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
+            return NewsModel::countPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $options);
+        }
+
+        return NewsModel::countPublishedByPids($newsArchives, $blnFeatured, $options);
     }
 
 
@@ -80,7 +82,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
         // HOOK: add custom logic
         if (isset($GLOBALS['TL_HOOKS']['newsListRelatedFetchItems']) && is_array($GLOBALS['TL_HOOKS']['newsListRelatedFetchItems'])) {
             foreach ($GLOBALS['TL_HOOKS']['newsListRelatedFetchItems'] as $callback) {
-                if (($objCollection = \System::importStatic($callback[0])->{$callback[1]}($newsArchives, $this->news->related_news, $blnFeatured, $limit, $offset, $this)) === false) {
+                if (($objCollection = \System::importStatic($callback[0])->{$callback[1]}($newsArchives, $this->news, $blnFeatured, $limit, $offset, $this)) === false) {
                     continue;
                 }
 
@@ -90,9 +92,15 @@ class ModuleNewsListRelated extends \ModuleNewsList
             }
         }
 
-        $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
+        $options = [];
 
-        return NewsModel::findPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $limit, $offset, $options);
+        if (!empty($this->news->related_news))
+        {
+            $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
+            return NewsModel::findPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $limit, $offset, $options);
+        }
+
+        return NewsModel::findPublishedByPids($newsArchives, $blnFeatured, $limit, $offset, $options);
     }
 
     /**
@@ -106,6 +114,15 @@ class ModuleNewsListRelated extends \ModuleNewsList
     }
 
     /**
+     * Get the parent news
+     * @return \NewsModel
+     */
+    public function getNewsModel()
+    {
+        return $this->news;
+    }
+
+    /**
      * Set the parent news id
      *
      * @param int $news
@@ -116,6 +133,4 @@ class ModuleNewsListRelated extends \ModuleNewsList
             $this->news = $model;
         }
     }
-
-
 }

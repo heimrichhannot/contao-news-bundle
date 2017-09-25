@@ -88,6 +88,7 @@ class NewsArticle extends \ModuleNews
     protected function compile()
     {
         $this->module->news_metaFields = deserialize($this->module->news_metaFields, true);
+        $this->template->module = $this->module;
 
         $this->setSeen();
         $this->addRelatedNews();
@@ -629,50 +630,47 @@ class NewsArticle extends \ModuleNews
     {
         $relatedNewsModules = deserialize($this->module->relatedNewsModules, true);
 
-        if (!$this->article->add_related_news || empty($relatedNewsModules)) {
-            $this->template->add_related_news = false;
-
-            return;
-        }
-
         $relatedNews = [];
 
-        foreach ($relatedNewsModules as $relatedNewsModule)
+        if (!empty($relatedNewsModules))
         {
-            if (($model = \ModuleModel::findByPk($relatedNewsModule['module'])) === null) {
-                $this->template->add_related_news = false;
+            foreach ($relatedNewsModules as $relatedNewsModule)
+            {
+                if (($model = \ModuleModel::findByPk($relatedNewsModule['module'])) === null) {
+                    $this->template->add_related_news = false;
 
-                continue;
+                    continue;
+                }
+
+                $strClass = \Module::findClass($model->type);
+
+                // Return if the class does not exist
+                if (!class_exists($strClass)) {
+                    $this->template->add_related_news = false;
+
+                    $this->container->get('monolog.logger.contao')->log(
+                        LogLevel::ERROR,
+                        'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
+                        ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
+                    );
+
+                    continue;
+                }
+
+                $model->typePrefix = 'mod_';
+
+                /** @var ModuleNewsListRelated $objModule */
+                $objModule = new $strClass($model);
+                $objModule->setNews($this->article->id);
+                $strBuffer = $objModule->generate();
+
+                // Disable indexing if protected
+                if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
+                    $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
+                }
+
+                $relatedNews[$relatedNewsModule['alias']] = $strBuffer;
             }
-
-            $strClass = \Module::findClass($model->type);
-
-            // Return if the class does not exist
-            if (!class_exists($strClass)) {
-                $this->template->add_related_news = false;
-
-                $this->container->get('monolog.logger.contao')->log(
-                    LogLevel::ERROR,
-                    'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
-                    ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
-                );
-
-                continue;
-            }
-
-            $model->typePrefix = 'mod_';
-
-            /** @var ModuleNewsListRelated $objModule */
-            $objModule = new $strClass($model);
-            $objModule->setNews($this->article->id);
-            $strBuffer = $objModule->generate();
-
-            // Disable indexing if protected
-            if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
-                $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
-            }
-
-            $relatedNews[$relatedNewsModule['alias']] = $strBuffer;
         }
 
         $this->template->related_news = $relatedNews;
