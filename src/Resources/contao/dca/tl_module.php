@@ -198,7 +198,7 @@ $fields = [
         'exclude'          => true,
         'inputType'        => 'checkboxWizard',
         'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getNewsListFilters'],
-        'eval'             => ['tl_class' => 'w50', 'multiple' => true],
+        'eval'             => ['tl_class' => 'wizard', 'multiple' => true],
         'sql'              => "blob NULL",
     ]
 ];
