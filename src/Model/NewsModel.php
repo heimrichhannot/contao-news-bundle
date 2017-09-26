@@ -431,4 +431,56 @@ class NewsModel extends \Contao\NewsModel
 
         return static::findBy($arrColumns, $arrValues, $arrOptions);
     }
+
+    public static function findMultipleByIdsAndPids($arrIds, $arrPids, array $arrOptions = [])
+    {
+        if (empty($arrIds) || !is_array($arrIds)) {
+            return null;
+        }
+
+        $arrRegistered   = [];
+        $arrUnregistered = [];
+
+        // Search for registered models
+        foreach ($arrIds as $intId) {
+            if (empty($arrOptions)) {
+                $arrRegistered[$intId] = \Model\Registry::getInstance()->fetch(static::$strTable, $intId);
+            }
+
+            if (!isset($arrRegistered[$intId])) {
+                $arrUnregistered[] = $intId;
+            }
+        }
+
+        // Fetch only the missing models from the database
+        if (!empty($arrUnregistered)) {
+            $t = static::$strTable;
+
+            $arrOptions = array_merge
+            (
+                [
+                    'column' => [
+                        "$t.id IN(" . implode(',', array_map('intval', $arrUnregistered)) . ")",
+                        "$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ")"
+                    ],
+                    'value'  => null,
+                    'order'  => \Database::getInstance()->findInSet("$t.id", $arrIds),
+                    'return' => 'Collection'
+                ],
+
+                $arrOptions
+            );
+
+            $objMissing = static::find($arrOptions);
+
+            if ($objMissing !== null) {
+                while ($objMissing->next()) {
+                    $intId                 = $objMissing->{static::$strPk};
+                    $arrRegistered[$intId] = $objMissing->current();
+                }
+            }
+        }
+
+        return static::createCollection(array_filter(array_values($arrRegistered)), static::$strTable);
+    }
 }
