@@ -26,7 +26,7 @@ class NewsFilterForm extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'nf';
+        return 'f';
     }
 
     /**
