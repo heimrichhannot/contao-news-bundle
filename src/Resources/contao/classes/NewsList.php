@@ -266,6 +266,10 @@ class NewsList
             $builder->setValues($this->filterValues);
             $builder->setOptions($this->filterOptions);
             $filter->buildQueries($builder);
+
+            $this->filterColumns = $builder->getColumns();
+            $this->filterValues = $builder->getValues();
+            $this->filterOptions = $builder->getOptions();
         }
     }
 
