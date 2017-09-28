@@ -28,7 +28,7 @@ $dc['palettes']['default'] = str_replace(
     '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
     $dc['palettes']['default']
 );
-$dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
 
@@ -66,7 +66,7 @@ $fields = [
             'tagsCreate'  => true, // Allow to create tags, optional (true by default)
             'tl_class'    => 'clr',
         ],
-        'save_callback' => [['heimrichhannot_news.listener.tag_manager', 'onFieldSave']],
+        'save_callback' => [['huh.news.listener.tag_manager', 'onFieldSave']],
         'relation'      => [
             'relationTable' => 'tl_news_tags',
         ],
@@ -494,6 +494,14 @@ $fields = [
         'inputType' => 'fileTree',
         'eval'      => ['filesOnly' => true, 'fieldType' => 'radio'],
         'sql'       => "binary(16) NULL"
+    ],
+    'copyright'                  => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['copyright'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'text',
+        'eval'      => ['maxlength' => 255, 'tl_class' => 'long'],
+        'sql'       => "varchar(255) NOT NULL default ''"
     ],
 ];
 

@@ -24,7 +24,8 @@ $GLOBALS['TL_DCA']['tl_news_list_archive'] = [
             'format' => '%s'
         ],
         'sorting'           => [
-            'mode'         => 0,
+            'mode'         => 2,
+            'fields'       => ['title'],
             'headerFields' => ['title'],
             'panelLayout'  => 'filter;search,limit'
         ],

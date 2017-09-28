@@ -87,12 +87,6 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                 'attributes'      => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
                 'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'deleteList'],
             ],
-            'toggle' => [
-                'label'           => &$GLOBALS['TL_LANG']['tl_news_list']['toggle'],
-                'icon'            => 'visible.svg',
-                'attributes'      => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-                'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'toggleIcon'],
-            ],
             'show'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_news_list']['show'],
                 'href'  => 'act=show',

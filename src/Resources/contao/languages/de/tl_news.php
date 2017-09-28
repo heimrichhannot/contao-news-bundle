@@ -41,6 +41,7 @@ $lang['player']                  = ['Video-/Audio-Dateien', 'Hier können Sie di
 $lang['playerSRC']               = ['Video/Audio-Datei', 'Hier können Sie die Url zur Video/Audio-Datei bzw. – wenn Sie verschiedene Codecs verwenden – die Video-/Audio-Dateien hinzufügen.'];
 $lang['playerUrl']               = ['Video/Audio-Url', 'Hier können Sie die Url zur Video/Audio-Datei bzw. – wenn Sie verschiedene Codecs verwenden – die Video-/Audio-Dateien (durch Pipe | getrennt) hinzufügen.'];
 $lang['posterSRC']               = ['Vorschaubild', 'Das Bild statt des ersten Frame des Videos vor dem Abspielen anzeigen.'];
+$lang['copyright']               = ['Urheberrechte', 'Geben Sie hier eventuelle Hinweise zu den Urheberrechten ein.'];
 
 /**
  * Legends
@@ -54,6 +55,8 @@ $lang['related_news_legend']   = 'Verwandte Nachrichten';
 $lang['meta_legend']           = 'Metadaten';
 $lang['twitter_legend']        = 'Twitter';
 $lang['player_legend']         = 'Player-Einstellungen';
+$lang['copyright_legend']      = 'Urheberrechte';
+
 
 /**
  * Placeholders
