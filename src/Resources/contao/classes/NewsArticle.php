@@ -100,6 +100,7 @@ class NewsArticle extends \ModuleNews
         $this->addRatings();
         $this->addTeaserImage();
         $this->addPlayer();
+        $this->addShare();
 
         $this->replaceTokens();
     }
@@ -556,6 +557,20 @@ class NewsArticle extends \ModuleNews
         if ($this->article->twitter_updated_at > 0) {
             $this->template->hasRatings  = true;
             $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->twitter_counter;
+        }
+    }
+
+    /**
+     * Add heimrichhannot/contao-share support
+     */
+    protected function addShare()
+    {
+        $this->template->addShare = false;
+
+        if ($this->module->addShare) {
+            $this->article->title  = $this->article->headline;
+            $objShare              = new \HeimrichHannot\Share\Share($this->module->getModel(), $this->article);
+            $this->template->share = $objShare->generate();
         }
     }
 

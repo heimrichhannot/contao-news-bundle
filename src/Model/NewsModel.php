@@ -13,10 +13,52 @@ namespace HeimrichHannot\NewsBundle\Model;
 class NewsModel extends \Contao\NewsModel
 {
     /**
+     * Count published news by pid and additional criterias
+     * @param array $pid
+     * @param array $columns
+     * @param array|null $values
+     * @param array $options
+     * @return integer The number of matching rows
+     */
+    public static function countPublishedByPidAndCriteria(array $pid, array $columns = [], $values = null, $options = [])
+    {
+        $t         = static::$strTable;
+        $columns[] = "$t.pid IN(" . implode(',', array_map('intval', $pid)) . ")";
+
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
+            $time      = \Date::floorToMinute();
+            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+        }
+
+        return static::countBy($columns, $values, $options);
+    }
+
+    /**
+     * Find published news by pid and additional criterias
+     * @param array $pid
+     * @param array $columns
+     * @param array|null $values
+     * @param array $options
+     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     */
+    public static function findPublishedByPidAndCriteria(array $pid, array $columns = [], $values = null, $options = [])
+    {
+        $t         = static::$strTable;
+        $columns[] = "$t.pid IN(" . implode(',', array_map('intval', $pid)) . ")";
+
+        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
+            $time      = \Date::floorToMinute();
+            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
+        }
+
+        return static::findBy($columns, $values, $options);
+    }
+
+    /**
      * Find news items by oldest Facebook counter update date
      *
-     * @param int   $limit
-     * @param int   $days
+     * @param int $limit
+     * @param int $days
      * @param array $pids
      * @param array $options
      *
@@ -33,8 +75,8 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find news items by oldest Twitter counter update date
      *
-     * @param int   $limit
-     * @param int   $days
+     * @param int $limit
+     * @param int $days
      * @param array $pids
      * @param array $options
      *
@@ -51,8 +93,8 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find news items by oldest Google Plus update date
      *
-     * @param int   $limit
-     * @param int   $days
+     * @param int $limit
+     * @param int $days
      * @param array $pids
      * @param array $options
      *
@@ -69,8 +111,8 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find news items by oldest Disqus update date
      *
-     * @param int   $limit
-     * @param int   $days
+     * @param int $limit
+     * @param int $days
      * @param array $pids
      * @param array $options
      *
@@ -87,8 +129,8 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find news items by oldest Google Analytics update da
      *
-     * @param int   $limit
-     * @param int   $days
+     * @param int $limit
+     * @param int $days
      * @param array $pids
      * @param array $options
      *
@@ -105,8 +147,8 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find news items for social stats
      *
-     * @param int   $limit
-     * @param int   $days
+     * @param int $limit
+     * @param int $days
      * @param array $pids
      * @param array $options
      *
@@ -201,7 +243,7 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Get published news items within a given year and pids
      *
-     * @param int   $year The year value (for example 2017)
+     * @param int $year The year value (for example 2017)
      * @param       array pids The parent news archives
      * @param array $arrOptions
      *
@@ -227,8 +269,8 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Get published news items within a given year and month and pids
      *
-     * @param  int  $month The month to search in given year
-     * @param  int  $year  The year to search in
+     * @param  int $month The month to search in given year
+     * @param  int $year The year to search in
      * @param array $arrOptions
      *
      * @return \Contao\NewsModel|\Contao\NewsModel[]|\Model\Collection|null
@@ -253,10 +295,10 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Count published news items by their parent ID
      *
-     * @param array   $arrPids     An array of news archive IDs
-     * @param array   $arrIds      An array of news IDs
+     * @param array $arrPids An array of news archive IDs
+     * @param array $arrIds An array of news IDs
      * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
-     * @param array   $arrOptions  An optional options array
+     * @param array $arrOptions An optional options array
      *
      * @return integer The number of news items
      */
@@ -290,12 +332,12 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find published news items by their parent ID
      *
-     * @param array   $arrPids     An array of news archive IDs
-     * @param array   $arrIds      An array of news IDs
+     * @param array $arrPids An array of news archive IDs
+     * @param array $arrIds An array of news IDs
      * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
-     * @param integer $intLimit    An optional limit
-     * @param integer $intOffset   An optional offset
-     * @param array   $arrOptions  An optional options array
+     * @param integer $intLimit An optional limit
+     * @param integer $intOffset An optional offset
+     * @param array $arrOptions An optional options array
      *
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
@@ -337,10 +379,10 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Count published news items by their parent ID
      *
-     * @param array   $arrPids     An array of news archive IDs
-     * @param array   $callback    A callback function to modify $arrColumns, $arrValues and $arrOptions
+     * @param array $arrPids An array of news archive IDs
+     * @param array $callback A callback function to modify $arrColumns, $arrValues and $arrOptions
      * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
-     * @param array   $arrOptions  An optional options array
+     * @param array $arrOptions An optional options array
      *
      * @return integer The number of news items
      */
@@ -381,12 +423,12 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find published news items by their parent ID
      *
-     * @param array   $arrPids     An array of news archive IDs
-     * @param array   $callback    A callback function to modify $arrColumns, $arrValues and $arrOptions
+     * @param array $arrPids An array of news archive IDs
+     * @param array $callback A callback function to modify $arrColumns, $arrValues and $arrOptions
      * @param boolean $blnFeatured If true, return only featured news, if false, return only unfeatured news
-     * @param integer $intLimit    An optional limit
-     * @param integer $intOffset   An optional offset
-     * @param array   $arrOptions  An optional options array
+     * @param integer $intLimit An optional limit
+     * @param integer $intOffset An optional offset
+     * @param array $arrOptions An optional options array
      *
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
