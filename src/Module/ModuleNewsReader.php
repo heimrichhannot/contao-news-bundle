@@ -1,7 +1,8 @@
 <?php
 /**
  * Copyright (c) 2017 Heimrich & Hannot GmbH
- * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
+ *
+ * @author  Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
@@ -10,10 +11,12 @@ namespace HeimrichHannot\NewsBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
+use HeimrichHannot\NewsPlus\NewsPlusHelper;
 use NewsCategories\CategoryHelper;
 
 class ModuleNewsReader extends \ModuleNewsReader
 {
+
     /**
      * Generate the module
      */

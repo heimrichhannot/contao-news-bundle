@@ -30,3 +30,7 @@ services:
         class: HeimrichHannot\NewsBundle\NewsFilter\Filter\YearMonthFilter
         tags:
           - { name: huh.news.list_filter, alias: year_month}
+    huh.news.list_filter.datepicker:
+        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\DatepickerFilter
+        tags:
+          - { name: huh.news.list_filter, alias: datepicker}

@@ -1,0 +1,14 @@
+<script>
+    var f = {},
+        filter = {
+
+            init: function () {
+                this.registerDatepicker();
+            },
+            registerDatepicker: function () {
+                $(".js_datepicker").datetimepicker();
+            }
+        };
+
+    filter.init();
+</script>

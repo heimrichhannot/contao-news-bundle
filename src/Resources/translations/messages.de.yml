@@ -12,6 +12,8 @@ news.form.filter.placeholder.year: Alle
 news.form.filter.label.year: Jahr
 news.form.filter.placeholder.month: Alle
 news.form.filter.label.month: Monat
+news.form.filter.placeholder.datepicker.start: von
+news.form.filter.placeholder.datepicker.end: bis
 
 # month names
 news.form.filter.choice.month.01: Januar

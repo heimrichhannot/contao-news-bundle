@@ -24,6 +24,7 @@ class News extends \Backend
 
     /**
      * Manipulate related news from `tl_news.related_news` remote tagsinput call
+     *
      * @param                $arrOption
      * @param \DataContainer $dc
      *
@@ -31,8 +32,7 @@ class News extends \Backend
      */
     public function getRelatedNews($arrOption, \DataContainer $dc)
     {
-        if ($arrOption['value'] == $dc->id)
-        {
+        if ($arrOption['value'] == $dc->id) {
             return null;
         }
 

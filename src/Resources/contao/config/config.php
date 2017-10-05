@@ -61,3 +61,10 @@ $GLOBALS['AJAX'][\HeimrichHannot\NewsBundle\News::XHR_GROUP] = [
  */
 $GLOBALS['TL_PERMISSIONS'][] = 'newslists';
 $GLOBALS['TL_PERMISSIONS'][] = 'newslistp';
+
+/**
+ * Modal module configuration
+ */
+$GLOBALS['MODAL_MODULES']['newslist'] = [
+    'invokePalette' => 'customTpl;', // The modal palette will be invoked after the field customTpl; as example
+];

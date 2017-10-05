@@ -1,7 +1,8 @@
 <?php
 /**
  * Copyright (c) 2017 Heimrich & Hannot GmbH
- * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
+ *
+ * @author  Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
@@ -21,7 +22,7 @@ class ModuleNewsList extends \Contao\ModuleNewsList
     {
         /**
          * @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcher
-         * @var $event NewsListAfterCompileEvent
+         * @var $event      NewsListAfterCompileEvent
          */
         $dispatcher = \System::getContainer()->get('event_dispatcher');
 

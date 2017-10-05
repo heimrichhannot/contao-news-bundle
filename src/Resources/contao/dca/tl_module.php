@@ -29,7 +29,7 @@ $dca['palettes']['news_info_box'] = '{title_legend},name,headline,type;{config_l
 
 $dca['palettes']['newslist'] = str_replace('news_archives', 'news_archives,newsListFilterModule,use_news_lists,skipPreviousNews,addCustomSort', $dca['palettes']['newslist']);
 
-$dca['palettes']['newslist'] = str_replace('{template_legend', '{tags_legend},addNewsTagFilter,newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newslist']);
+$dca['palettes']['newslist'] = str_replace('{template_legend', '{tags_legend},addNewsTagFilter,newsTagFilterJumpTo;{news_related_legend},add_related_news;{modal_legend},useModal,useModalExplanation;{template_legend', $dca['palettes']['newslist']);
 
 $dca['palettes']['newslist']    = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes']['newslist']);
 $dca['palettes']['newsreader']  = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes']['newsreader']);
@@ -38,7 +38,7 @@ $dca['palettes']['newsarchive'] = str_replace(',imgSize', ',imgSize,useTeaserIma
 $dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes']['newslist']);
 
 $dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
-$dca['palettes']['newsreader'] = str_replace('{template_legend', '{tags_legend},newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newsreader']);
+$dca['palettes']['newsreader'] = str_replace('{template_legend}', '{tags_legend},newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend}', $dca['palettes']['newsreader']);
 
 $dca['palettes']['newslist_filter'] = '{title_legend},name,headline,type;{config_legend},news_archives,newsListFilters;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
@@ -116,26 +116,26 @@ $fields = [
         'eval'      => ['tl_class' => 'clr', 'submitOnChange' => true],
         'sql'       => "char(1) NOT NULL default ''",
     ],
-    'relatedNewsModules'       => [
+    'relatedNewsModules'         => [
         'label'     => &$GLOBALS['TL_LANG']['tl_module']['relatedNewsModules'],
         'inputType' => 'multiColumnEditor',
         'eval'      => [
             'multiColumnEditor' => [
                 'sortable' => true,
-                'fields' => [
+                'fields'   => [
                     'module' => [
                         'label'            => &$GLOBALS['TL_LANG']['tl_module']['relatedNewsModule'],
                         'exclude'          => true,
                         'inputType'        => 'select',
                         'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getNewsListRelatedModules'],
-                        'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true]
+                        'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true],
                     ],
-                    'alias' => [
-                        'label'                   => &$GLOBALS['TL_LANG']['tl_module']['relatedNewsModuleAlias'],
-                        'exclude'                 => true,
-                        'search'                  => true,
-                        'inputType'               => 'text',
-                        'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true]
+                    'alias'  => [
+                        'label'     => &$GLOBALS['TL_LANG']['tl_module']['relatedNewsModuleAlias'],
+                        'exclude'   => true,
+                        'search'    => true,
+                        'inputType' => 'text',
+                        'eval'      => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
                     ],
                 ],
             ],
@@ -183,7 +183,7 @@ $fields = [
         'exclude'   => true,
         'inputType' => 'fileTree',
         'eval'      => ['filesOnly' => true, 'fieldType' => 'radio'],
-        'sql'       => "binary(16) NULL"
+        'sql'       => "binary(16) NULL",
     ],
     'newsListFilterModule'       => [
         'label'            => &$GLOBALS['TL_LANG']['tl_module']['newsListFilterModule'],
@@ -200,11 +200,11 @@ $fields = [
         'options_callback' => ['HeimrichHannot\NewsBundle\Backend\Module', 'getNewsListFilters'],
         'eval'             => ['tl_class' => 'wizard', 'multiple' => true],
         'sql'              => "blob NULL",
-    ]
+    ],
 ];
 
-$dca['fields']['news_metaFields']['options'][]              = 'writers';
-$dca['fields']['news_metaFields']['options'][]              = 'tags';
-$dca['fields']['news_metaFields']['options'][]              = 'ratings';
+$dca['fields']['news_metaFields']['options'][] = 'writers';
+$dca['fields']['news_metaFields']['options'][] = 'tags';
+$dca['fields']['news_metaFields']['options'][] = 'ratings';
 
 $dca['fields'] = array_merge($dca['fields'], $fields);
