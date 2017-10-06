@@ -19,6 +19,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FuzzySearchFilter implements NewsFilterInterface
 {
+    CONST SUBMIT_NAME = 'submit';
+
     /**
      * Build the filter query
      *
@@ -53,6 +55,13 @@ class FuzzySearchFilter implements NewsFilterInterface
             'label'    => false,
             'attr'     => [
                 'placeholder' => 'news.form.filter.placeholder.fuzzy',
+            ],
+        ]);
+
+        $builder->add(static::SUBMIT_NAME, SubmitType::class, [
+            'label' => 'news.form.filter.label.fuzzy.submit',
+            'attr'  => [
+                'class' => 'btn-secondary fuzzy-submit',
             ],
         ]);
     }

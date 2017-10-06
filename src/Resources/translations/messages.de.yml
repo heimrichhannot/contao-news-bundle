@@ -17,6 +17,8 @@ news.form.filter.placeholder.datepicker.end: bis
 news.form.filter.placeholder.archive: Filter
 news.form.filter.label.submit: <span class="sr-only">Suchen</span>
 news.form.filter.placeholder.fuzzy: Suchbegriff eingeben
+news.form.filter.label.fuzzy.submit: <span class="sr-only">Suchen</span>
+
 
 # month names
 news.form.filter.choice.month.01: Januar

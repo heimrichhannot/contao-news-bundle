@@ -51,23 +51,23 @@ class DatepickerFilter implements NewsFilterInterface
     public function buildForm(FormBuilderInterface $builder, NewsFilterModule $filter)
     {
         $builder->add(static::DATEPICKERSTARTNAME, DateType::class, [
-            'widget'      => 'single_text', // render as a single text box
-            'required'    => false,
-            'html5'       => false,
-            'placeholder' => 'news.form.filter.placeholder.datepicker.start',
-            'label'       => false,
-            'attr'        => [
-                'class' => 'bs_datetimepicker',
+            'widget'   => 'single_text', // render as a single text box
+            'required' => false,
+            'html5'    => false,
+            'label'    => false,
+            'attr'     => [
+                'class'       => 'bs_datetimepicker',
+                'placeholder' => 'news.form.filter.placeholder.datepicker.start',
             ],
         ]);
         $builder->add(static::DATEPICKERENDNAME, DateType::class, [
-            'widget'      => 'single_text', // render as a single text box
-            'required'    => false,
-            'html5'       => false,
-            'placeholder' => 'news.form.filter.placeholder.datepicker.start',
-            'label'       => false,
-            'attr'        => [
-                'class' => 'bs_datetimepicker',
+            'widget'   => 'single_text', // render as a single text box
+            'required' => false,
+            'html5'    => false,
+            'label'    => false,
+            'attr'     => [
+                'class'       => 'bs_datetimepicker',
+                'placeholder' => 'news.form.filter.placeholder.datepicker.end',
             ],
         ]);
     }
