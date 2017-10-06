@@ -8,17 +8,15 @@
 
 namespace HeimrichHannot\NewsBundle\NewsFilter\Filter;
 
+use HeimrichHannot\NewsBundle\Choices\ArchivesChoice;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterInterface;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
 use HeimrichHannot\NewsBundle\QueryBuilder\NewsFilterQueryBuilder;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class DatepickerFilter implements NewsFilterInterface
+class ArchiveFilter implements NewsFilterInterface
 {
-    CONST DATEPICKERSTARTNAME = 'datepicker_start';
-    CONST DATEPICKERENDNAME   = 'datepicker_end';
-
     /**
      * Build the filter query
      *
@@ -27,13 +25,11 @@ class DatepickerFilter implements NewsFilterInterface
      */
     public function buildQuery(NewsFilterQueryBuilder $builder, array $data = [], $count = false)
     {
-        $start = strtotime($data[DatepickerFilter::DATEPICKERSTARTNAME]->date);
-        $end   = strtotime($data[DatepickerFilter::DATEPICKERENDNAME]->date);
+        $archiveId = intval($data[ArchiveFilter::getName()]);
 
-
-        if ($start > 0 && $end > 0) {
-            $builder->addColumns(["tl_news.date >= ? AND tl_news.date <= ?"]);
-            $builder->addValues([$start, $end]);
+        if ($archiveId > 0) {
+            $builder->addColumns(["tl_news.pid = ?"]);
+            $builder->addValues([$archiveId]);
         }
     }
 
@@ -50,26 +46,15 @@ class DatepickerFilter implements NewsFilterInterface
      */
     public function buildForm(FormBuilderInterface $builder, NewsFilterModule $filter)
     {
-        $builder->add(static::DATEPICKERSTARTNAME, DateType::class, [
-            'widget'      => 'single_text', // render as a single text box
-            'required'    => false,
-            'html5'       => false,
-            'placeholder' => 'news.form.filter.placeholder.datepicker.start',
-            'label'       => false,
-            'attr'        => [
-                'class' => 'bs_datetimepicker',
-            ],
-        ]);
-        $builder->add(static::DATEPICKERENDNAME, DateType::class, [
-            'widget'      => 'single_text', // render as a single text box
-            'required'    => false,
-            'html5'       => false,
-            'placeholder' => 'news.form.filter.placeholder.datepicker.start',
-            'label'       => false,
-            'attr'        => [
-                'class' => 'bs_datetimepicker',
-            ],
-        ]);
+        $builder->add(static::getName(), ChoiceType::class, [
+                'choices'     => ArchivesChoice::create($filter, $builder->getData())->getChoices(),
+                'required'    => false,
+                'placeholder' => 'news.form.filter.placeholder.archive',
+                'label'       => false,
+                'attr'        => [
+                    'onchange' => 'this.form.submit()',
+                ],
+            ]);
     }
 
     /**
@@ -79,7 +64,7 @@ class DatepickerFilter implements NewsFilterInterface
      */
     public static function getName()
     {
-        return 'datepicker';
+        return 'archives';
     }
 
 

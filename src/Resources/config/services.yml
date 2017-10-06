@@ -34,3 +34,11 @@ services:
         class: HeimrichHannot\NewsBundle\NewsFilter\Filter\DatepickerFilter
         tags:
           - { name: huh.news.list_filter, alias: datepicker}
+    huh.news.list_filter.archives:
+        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\ArchiveFilter
+        tags:
+          - { name: huh.news.list_filter, alias: archives}
+    huh.news.list_filter.fuzzy_string:
+        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\FuzzySearchFilter
+        tags:
+          - { name: huh.news.list_filter, alias: fuzzy_string}
