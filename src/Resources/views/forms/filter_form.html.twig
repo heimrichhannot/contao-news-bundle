@@ -3,6 +3,11 @@
 {% block body %}
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     {{ form_errors(form) }}
+    {% if form.archives is defined %}
+        <div class="form-group f_archives">
+            {{ form_widget(form.archives) }}
+        </div>
+    {% endif %}
     {% if form.datepicker is defined %}
         <div class="form-group input-group bs-datetimepicker">
             {{ form_widget(form.datepicker) }}
