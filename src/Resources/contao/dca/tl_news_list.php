@@ -39,8 +39,8 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
         ],
         'sql'               => [
             'keys' => [
-                'id'  => 'primary',
-                'pid' => 'index',
+                'id'                       => 'primary',
+                'pid,start,stop,published' => 'index',
             ],
         ],
         'backlink'          => 'do=news',
@@ -160,7 +160,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                     'default'      => 'news_list_news,news_list_set_fields',
                 ],
                 'subpalettes' => [
-                    'news_list_set_fields' => 'news_list_fields'
+                    'news_list_set_fields' => 'news_list_fields',
                 ],
                 'fields'      => [
                     'news_list_news'       => [
@@ -178,7 +178,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                         'exclude'   => true,
                         'inputType' => 'checkbox',
                         'sql'       => "char(1) NOT NULL default ''",
-                        'eval'      => ['submitOnChange' => true]
+                        'eval'      => ['submitOnChange' => true],
                     ],
                     'news_list_fields'     => [
                         'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_fields'],
@@ -193,7 +193,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                                         'inputType' => 'select',
                                         'options'   => ['headline', 'subheadline'],
                                         'eval'      => ['tl_class' => 'w50', 'includeBlankOption' => true, 'submitOnChange' => true],
-                                        'sql'       => "varchar(64) NOT NULL default ''"
+                                        'sql'       => "varchar(64) NOT NULL default ''",
                                     ],
                                     'value' => [
                                         'label'     => &$GLOBALS['TL_LANG']['tl_news_list']['news_list_fields_value'],
@@ -201,15 +201,38 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                                         'search'    => true,
                                         'inputType' => 'text',
                                         'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
-                                        'sql'       => "varchar(255) NOT NULL default ''"
+                                        'sql'       => "varchar(255) NOT NULL default ''",
                                     ],
-                                ]
+                                ],
                             ],
                         ],
                         'sql'       => "blob NULL",
                     ],
                 ],
             ],
+        ],
+        'published' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_news']['published'],
+            'exclude'   => true,
+            'filter'    => true,
+            'flag'      => 1,
+            'inputType' => 'checkbox',
+            'eval'      => ['doNotCopy' => true],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'start'     => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_news']['start'],
+            'exclude'   => true,
+            'inputType' => 'text',
+            'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'sql'       => "varchar(10) NOT NULL default ''",
+        ],
+        'stop'      => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_news']['stop'],
+            'exclude'   => true,
+            'inputType' => 'text',
+            'eval'      => ['rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'sql'       => "varchar(10) NOT NULL default ''",
         ],
     ],
 ];
