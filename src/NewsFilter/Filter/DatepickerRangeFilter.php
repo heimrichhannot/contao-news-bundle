@@ -8,13 +8,13 @@
 
 namespace HeimrichHannot\NewsBundle\NewsFilter\Filter;
 
+use \Symfony\Component\Form\Extension\Core\Type\TextType;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterInterface;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
 use HeimrichHannot\NewsBundle\QueryBuilder\NewsFilterQueryBuilder;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class DatepickerFilter implements NewsFilterInterface
+class DatepickerRangeFilter implements NewsFilterInterface
 {
     /**
      * Build the filter query
@@ -24,11 +24,12 @@ class DatepickerFilter implements NewsFilterInterface
      */
     public function buildQuery(NewsFilterQueryBuilder $builder, array $data = [], $count = false)
     {
-        $start = strtotime($data[static::getName()]);
+        $start = strtotime($data[DatepickerFilter::getName()]);
+        $end   = strtotime($data[static::getName()]);
 
-        if ($start > 0) {
+        if ($start > 0 && $end > 0) {
             $builder->addColumns(["tl_news.date >= ? AND tl_news.date <= ?"]);
-            $builder->addValues([$start, $start]);
+            $builder->addValues([$start, $end]);
         }
     }
 
@@ -45,11 +46,18 @@ class DatepickerFilter implements NewsFilterInterface
      */
     public function buildForm(FormBuilderInterface $builder, NewsFilterModule $filter)
     {
-        $builder->add(static::getName(), TextType::class, [
+        $builder->add(DatepickerFilter::getName(), TextType::class, [
             'required' => false,
             'label'    => false,
             'attr'     => [
                 'placeholder' => 'news.form.filter.placeholder.datepicker.start',
+            ],
+        ]);
+        $builder->add(static::getName(), TextType::class, [
+            'required' => false,
+            'label'    => false,
+            'attr'     => [
+                'placeholder' => 'news.form.filter.placeholder.datepicker.end',
             ],
         ]);
     }
@@ -61,7 +69,7 @@ class DatepickerFilter implements NewsFilterInterface
      */
     public static function getName()
     {
-        return 'datepicker';
+        return 'datepicker_range';
     }
 
 

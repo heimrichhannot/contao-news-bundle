@@ -3,22 +3,22 @@
 {% block body %}
     {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
     {{ form_errors(form) }}
+    {% if form.datepicker is defined %}
+        <div class="form-group input-group bs-datetimepicker">
+            {{ form_widget(form.datepicker) }}
+            <span class="input-group-addon calendar-icon"></span>
+        </div>
+    {% endif %}
+    {% if form.datepicker_range is defined %}
+        <div class="form-group input-group bs-datetimepicker">
+            {{ form_widget(form.datepicker_range) }}
+            <span class="input-group-addon calendar-icon"></span>
+        </div>
+    {% endif %}
     {% if form.fuzzy_string is defined %}
         <div class="input-group form-group-fuzzy form-group">
             {{ form_widget(form.fuzzy_string) }}
             <span class="input-group-btn">{{ form_widget(form.submit) }}</span>
-        </div>
-    {% endif %}
-    {% if form.datepicker_start is defined %}
-        <div class="form-group input-group bs_datetimepicker">
-            {{ form_widget(form.datepicker_start) }}
-            <span class="input-group-addon calendar-icon"></span>
-        </div>
-    {% endif %}
-    {% if form.datepicker_end is defined %}
-        <div class="form-group input-group bs_datetimepicker">
-            {{ form_widget(form.datepicker_end) }}
-            <span class="input-group-addon calendar-icon"></span>
         </div>
     {% endif %}
     {{ form_end(form) }}

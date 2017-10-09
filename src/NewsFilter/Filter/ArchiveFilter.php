@@ -14,6 +14,8 @@ use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
 use HeimrichHannot\NewsBundle\QueryBuilder\NewsFilterQueryBuilder;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class ArchiveFilter implements NewsFilterInterface
 {
@@ -47,14 +49,33 @@ class ArchiveFilter implements NewsFilterInterface
     public function buildForm(FormBuilderInterface $builder, NewsFilterModule $filter)
     {
         $builder->add(static::getName(), ChoiceType::class, [
-                'choices'     => ArchivesChoice::create($filter, $builder->getData())->getChoices(),
-                'required'    => false,
-                'placeholder' => 'news.form.filter.placeholder.archive',
-                'label'       => false,
-                'attr'        => [
-                    'onchange' => 'this.form.submit()',
-                ],
-            ]);
+            'choices'     => ArchivesChoice::create($filter, $builder->getData())->getChoices(),
+            'required'    => false,
+            'placeholder' => 'news.form.filter.placeholder.archive',
+            'label'       => false,
+            'attr'        => [
+                'onchange' => 'this.form.submit()',
+            ],
+        ]);
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($filter) {
+            $form    = $event->getForm();
+            $archive = $form->get(ArchiveFilter::getName())->getData();
+
+            if ($archive !== null) {
+                $choices = ArchivesChoice::create($filter, $form->getData())->getChoices();
+                $form->add(static::getName(), ChoiceType::class, [
+                    'choices'     => $choices,
+                    'required'    => false,
+                    'placeholder' => 'news.form.filter.placeholder.archive_reset',
+                    'label'       => false,
+                    'attr'        => [
+                        'onchange' => 'this.form.submit()',
+                    ],
+                    'data'        => in_array($archive, $choices) ? $archive : null,
+                ]);
+            }
+        });
     }
 
     /**

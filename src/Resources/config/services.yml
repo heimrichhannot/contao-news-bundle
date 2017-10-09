@@ -34,6 +34,10 @@ services:
         class: HeimrichHannot\NewsBundle\NewsFilter\Filter\DatepickerFilter
         tags:
           - { name: huh.news.list_filter, alias: datepicker}
+    huh.news.list_filter.datepicker_range:
+        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\DatepickerRangeFilter
+        tags:
+          - { name: huh.news.list_filter, alias: datepicker_range}
     huh.news.list_filter.archives:
         class: HeimrichHannot\NewsBundle\NewsFilter\Filter\ArchiveFilter
         tags:

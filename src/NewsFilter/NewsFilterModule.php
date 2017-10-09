@@ -1,7 +1,8 @@
 <?php
 /**
  * Copyright (c) 2017 Heimrich & Hannot GmbH
- * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
+ *
+ * @author  Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
@@ -24,6 +25,7 @@ class NewsFilterModule
 
     /**
      * The form builder
+     *
      * @var FormBuilderInterface
      */
     protected $formBuilder;
@@ -31,6 +33,7 @@ class NewsFilterModule
 
     /**
      * The form instance
+     *
      * @var FormInterface
      */
     protected $form;
