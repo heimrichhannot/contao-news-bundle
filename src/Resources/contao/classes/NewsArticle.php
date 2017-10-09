@@ -44,6 +44,7 @@ class NewsArticle extends \ModuleNews
 
     /**
      * Simple tokens
+     *
      * @var array
      */
     protected $tokens = [];
@@ -62,9 +63,10 @@ class NewsArticle extends \ModuleNews
 
     /**
      * Initialize the object
+     *
      * @param \FrontendTemplate $template
-     * @param array $article
-     * @param \Module $module
+     * @param array             $article
+     * @param \Module           $module
      */
     public function __construct(\FrontendTemplate $template, array $article, \Module $module)
     {
@@ -88,7 +90,7 @@ class NewsArticle extends \ModuleNews
     protected function compile()
     {
         $this->module->news_metaFields = deserialize($this->module->news_metaFields, true);
-        $this->template->module = $this->module;
+        $this->template->module        = $this->module;
 
         $this->setSeen();
         $this->addRelatedNews();
@@ -107,6 +109,7 @@ class NewsArticle extends \ModuleNews
 
     /**
      * Add a player for internal or external video-/audio files
+     *
      * @return void;
      */
     protected function addPlayer()
@@ -452,11 +455,7 @@ class NewsArticle extends \ModuleNews
         if (!class_exists($strClass)) {
             $this->template->add_related_news = false;
 
-            $this->container->get('monolog.logger.contao')->log(
-                LogLevel::ERROR,
-                'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
-                ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
-            );
+            $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist', ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]);
 
             return;
         }
@@ -568,9 +567,10 @@ class NewsArticle extends \ModuleNews
         $this->template->addShare = false;
 
         if ($this->module->addShare) {
-            $this->article->title  = $this->article->headline;
-            $objShare              = new \HeimrichHannot\Share\Share($this->module->getModel(), $this->article);
-            $this->template->share = $objShare->generate();
+            $this->article->title     = $this->article->headline;
+            $this->template->addShare = true;
+            $objShare                 = new \HeimrichHannot\Share\Share($this->module->getModel(), $this->article);
+            $this->template->share    = $objShare->generate();
         }
     }
 
@@ -603,8 +603,10 @@ class NewsArticle extends \ModuleNews
 
         /**
          * Provide a helper function that returns the writer names separated with given delimiter
-         * @param string $delimiter The delimiter
-         * @param string|null $format The writer name format string (default: ##firstname## ##lastname##)
+         *
+         * @param string      $delimiter The delimiter
+         * @param string|null $format    The writer name format string (default: ##firstname## ##lastname##)
+         *
          * @return string The writers separated by the delimiter string
          */
         $this->template->writerNames = function ($delimiter = ',', $format = null) use ($writers) {
@@ -647,10 +649,8 @@ class NewsArticle extends \ModuleNews
 
         $relatedNews = [];
 
-        if (!empty($relatedNewsModules))
-        {
-            foreach ($relatedNewsModules as $relatedNewsModule)
-            {
+        if (!empty($relatedNewsModules)) {
+            foreach ($relatedNewsModules as $relatedNewsModule) {
                 if (($model = \ModuleModel::findByPk($relatedNewsModule['module'])) === null) {
                     $this->template->add_related_news = false;
 
@@ -663,11 +663,7 @@ class NewsArticle extends \ModuleNews
                 if (!class_exists($strClass)) {
                     $this->template->add_related_news = false;
 
-                    $this->container->get('monolog.logger.contao')->log(
-                        LogLevel::ERROR,
-                        'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist',
-                        ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]
-                    );
+                    $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist', ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]);
 
                     continue;
                 }

@@ -11,7 +11,6 @@ namespace HeimrichHannot\NewsBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
-use HeimrichHannot\NewsPlus\NewsPlusHelper;
 use NewsCategories\CategoryHelper;
 
 class ModuleNewsReader extends \ModuleNewsReader
