@@ -38,7 +38,7 @@ $dca['palettes']['newsarchive'] = str_replace(',imgSize', ',imgSize,useTeaserIma
 $dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes']['newslist']);
 
 $dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
-$dca['palettes']['newsreader'] = str_replace('{template_legend}', '{tags_legend},newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend}', $dca['palettes']['newsreader']);
+$dca['palettes']['newsreader'] = str_replace('{template_legend', '{tags_legend},newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newsreader']);
 
 $dca['palettes']['newslist_filter'] = '{title_legend},name,headline,type;{config_legend},news_archives,newsListFilters;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
