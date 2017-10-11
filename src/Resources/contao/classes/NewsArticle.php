@@ -634,7 +634,7 @@ class NewsArticle extends \ModuleNews
      */
     protected function setSeen()
     {
-        if ($this->module instanceof \ModuleNewsList || $this->module instanceof \ModuleNewsArchive) {
+        if ($this->module instanceof \Contao\ModuleNewsList || $this->module instanceof \ModuleNewsArchive) {
             NewsList::addSeen($this->article->id);
         }
     }
