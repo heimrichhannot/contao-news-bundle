@@ -16,12 +16,20 @@ An info box is a widget that can be rendered within a news article.
 The default info box comes with headline, text (wysiwyg), hyperlink and hyperlink text fields.
 Use `##news_info_box##` within your news content elements / details (tl_content) to render the box content.
 
+### News navigation
+
+Navigate between news articles. You can go to the next (newer) or the previous (older) article direct from a news article. Respect filters set by the user.
+
 ## Technical instructions
 
 ### Add tag filtered websites to sitemap and/or search index
 
 This feature is useful e.g. if you have a tag filtered list module on some website and want to have this site containing all tags as auto_item in the sitemap and/or search index.
 You can do this by setting a jumpTo page for the desired tag source in the global contao settings (tl_settings) in the tags section.
+
+### News navigation
+
+To activate news navigation, you need to create a `newsnavigation` module and configure it with a `newslist` module. And you need to add set the `newsnavigation` module in the `newsreader` module. Don't add the module to an article, as this won't work, instead a template variable with the navigation is added to the news article template.
 
 ### Social stats
 
@@ -64,9 +72,9 @@ You can scan for more urls than the default one, if you use the `addNewsArticleU
 
 ### Modules
 
-Name | Description
----- | -----------
-...
+Name           | Description
+-------------- | -----------
+newsnavigation | Create the news navigation. Respect filters set by the `newslist_filter` module. To be used in combination with `newslist` module and `newsreader` module.
 
 ### Insert Tags
 
