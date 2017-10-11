@@ -1,5 +1,7 @@
 <?php
 
+$bundleClass = new \HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
+
 /**
  * Front end modules
  */
@@ -14,8 +16,9 @@ array_insert($GLOBALS['FE_MOD'], 2, [
     ],
 ]);
 
-$GLOBALS['FE_MOD']['news']['newsreader'] = 'HeimrichHannot\NewsBundle\Module\ModuleNewsReader';
-$GLOBALS['FE_MOD']['news']['newslist']   = 'HeimrichHannot\NewsBundle\Module\ModuleNewsList';
+$GLOBALS['FE_MOD']['news']['newsreader']                  = 'HeimrichHannot\NewsBundle\Module\ModuleNewsReader';
+$GLOBALS['FE_MOD']['news'][$bundleClass::MODULE_NEWSLIST] = 'HeimrichHannot\NewsBundle\Module\ModuleNewsList';
+$GLOBALS['FE_MOD']['news'][$bundleClass::MODULE_NEWSNAVIGATION] = 'HeimrichHannot\NewsBundle\Module\ModuleNewsNavigation';
 
 /**
  * Back end modules

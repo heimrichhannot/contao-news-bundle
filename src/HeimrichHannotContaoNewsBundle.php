@@ -17,6 +17,9 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoNewsBundle extends Bundle
 {
+    const MODULE_NEWSLIST       = 'newslist';
+    const MODULE_NEWSNAVIGATION = 'newsnavigation';
+
     /**
      * Builds the bundle.
      *

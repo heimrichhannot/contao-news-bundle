@@ -9,6 +9,9 @@
 namespace HeimrichHannot\NewsBundle\Backend;
 
 
+use Contao\DataContainer;
+use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
+
 class Module extends \Backend
 {
     /**
@@ -31,7 +34,7 @@ class Module extends \Backend
                 $dca['fields']['customTpl']['options'] = $this->getTemplateGroup('mod_newslist');
                 unset($dca['fields']['customTpl']['options_callback']);
                 break;
-            case 'newslist':
+            case HeimrichHannotContaoNewsBundle::MODULE_NEWSLIST:
                 break;
             case 'newsreader':
                 break;
@@ -113,6 +116,15 @@ class Module extends \Backend
     public function getNewsInfoBoxModules(\DataContainer $dc)
     {
         return static::getModuleOptions('news_info_box');
+    }
+
+    public function getNewsListModules(DataContainer $dc)
+    {
+        return static::getModuleOptions(HeimrichHannotContaoNewsBundle::MODULE_NEWSLIST);
+    }
+    public function getNewsNavigationModules(DataContainer $dc)
+    {
+        return static::getModuleOptions(HeimrichHannotContaoNewsBundle::MODULE_NEWSNAVIGATION);
     }
 
     /**

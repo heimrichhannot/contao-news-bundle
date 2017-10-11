@@ -1,0 +1,118 @@
+<?php
+/**
+ * Contao Open Source CMS
+ *
+ * Copyright (c) 2017 Heimrich & Hannot GmbH
+ *
+ * @author  Thomas Körner <t.koerner@heimrich-hannot.de>
+ * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+ */
+
+
+namespace HeimrichHannot\NewsBundle\Module;
+
+
+use HeimrichHannot\NewsBundle\Model\NewsModel;
+use HeimrichHannot\NewsBundle\NewsList;
+use Patchwork\Utf8;
+
+class ModuleNewsNavigation extends \Contao\ModuleNews
+{
+    /**
+     * Current news id
+     * @var int
+     */
+    protected $current;
+
+
+    /**
+     * @var NewsList
+     */
+    protected $list;
+
+    /**
+     * Display a wildcard in the back end
+     *
+     * @return string
+     */
+    public function generate()
+    {
+        if (TL_MODE == 'BE')
+        {
+            /** @var \Contao\BackendTemplate|object $objTemplate */
+            $objTemplate = new \BackendTemplate('be_wildcard');
+
+            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['newsnavigation'][0]) . ' ###';
+            $objTemplate->title    = $this->headline;
+            $objTemplate->id       = $this->id;
+            $objTemplate->link     = $this->name;
+            $objTemplate->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+
+            return $objTemplate->parse();
+        }
+
+        if (($listModule = \ModuleModel::findByPk($this->newsListModule)) === null)
+        {
+            return '';
+        }
+
+        $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($listModule->news_archives));
+
+        // Return if there are no archives
+        if (!is_array($this->news_archives) || empty($this->news_archives))
+        {
+            return '';
+        }
+
+        $featured = null;
+
+        // Handle featured news
+        if ($this->news_featured == 'featured')
+        {
+            $featured = true;
+        } elseif ($this->news_featured == 'unfeatured')
+        {
+            $featured = false;
+        }
+
+        $this->list = new NewsList($this->news_archives, $featured, $listModule);
+
+        return parent::generate();
+    }
+
+
+    /**
+     * Compile the current element
+     */
+    protected function compile()
+    {
+        $total = $this->list->count();
+
+        if ($total < 1)
+        {
+            return;
+        }
+
+        $t = NewsModel::getTable();
+
+        $this->list->initFetch();
+
+        $columns = $this->list->getFilterColumns();
+        $values  = $this->list->getFilterValues();
+        $options = $this->list->getFilterOptions();
+
+        $next = NewsModel::findBy(
+            array_merge([$columns], ["$t.time > ?"]),
+            array_merge(is_array($values) ? $values : [$this->current->time]),
+            array_merge($options, ['limit' => 1])
+        );
+    }
+
+    public function setCurrent($news)
+    {
+        if (($model = NewsModel::findByPk($news)) !== null)
+        {
+            $this->current = $model;
+        }
+    }
+}

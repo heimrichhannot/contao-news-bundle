@@ -65,8 +65,8 @@ class NewsArticle extends \ModuleNews
      * Initialize the object
      *
      * @param \FrontendTemplate $template
-     * @param array             $article
-     * @param \Module           $module
+     * @param array $article
+     * @param \Module $module
      */
     public function __construct(\FrontendTemplate $template, array $article, \Module $module)
     {
@@ -103,8 +103,53 @@ class NewsArticle extends \ModuleNews
         $this->addTeaserImage();
         $this->addPlayer();
         $this->addShare();
+        $this->addNavigation();
 
         $this->replaceTokens();
+    }
+
+    /**
+     * Add prev/next navigation
+     */
+    protected function addNavigation()
+    {
+        $this->template->addNavigation = false;
+
+        if (!$this->module->newsNavigationModule)
+        {
+            return;
+        }
+
+        if (($model = \ModuleModel::findByPk($this->module->newsNavigationModule)) === null)
+        {
+            return;
+        }
+
+        $strClass = \Module::findClass($model->type);
+
+        // Return if the class does not exist
+        if (!class_exists($strClass))
+        {
+            $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist', ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]);
+
+            return;
+        }
+
+        $model->typePrefix = 'mod_';
+
+        /** @var ModuleNewsNavigation $objModule */
+        $objModule = new $strClass($model);
+        $objModule->setCurrent($this->article->id);
+        $strBuffer = $objModule->generate();
+
+        // Disable indexing if protected
+        if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer))
+        {
+            $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
+        }
+
+        $this->template->navigation    = $strBuffer;
+        $this->template->addNavigation = true;
     }
 
     /**
@@ -116,7 +161,8 @@ class NewsArticle extends \ModuleNews
     {
         $this->template->addPlayer = false;
 
-        if (!$this->article->player || $this->article->player == 'none') {
+        if (!$this->article->player || $this->article->player == 'none')
+        {
             return;
         }
 
@@ -126,26 +172,31 @@ class NewsArticle extends \ModuleNews
         $isVideo  = false;
         $sources  = [];
 
-        switch ($this->article->player) {
+        switch ($this->article->player)
+        {
             case 'internal':
 
                 $uuid = \Contao\StringUtil::deserialize($this->article->playerSRC);
 
-                if (!is_array($uuid) || empty($uuid)) {
+                if (!is_array($uuid) || empty($uuid))
+                {
                     return;
                 }
 
                 $files = \Contao\FilesModel::findMultipleByUuidsAndExtensions($uuid, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv', 'm4a', 'mp3', 'wma', 'mpeg', 'wav', 'ogg']);
 
-                if ($files === null) {
+                if ($files === null)
+                {
                     return;
                 }
 
                 // Pre-sort the array by preference
-                if (in_array($files->first()->extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'])) {
+                if (in_array($files->first()->extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv']))
+                {
                     $isVideo = true;
                     $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
-                } else {
+                } else
+                {
                     $isVideo = false;
                     $sources = ['m4a' => null, 'mp3' => null, 'wma' => null, 'mpeg' => null, 'wav' => null, 'ogg' => null];
                 }
@@ -156,12 +207,15 @@ class NewsArticle extends \ModuleNews
                 $language = str_replace('-', '_', $objPage->language);
 
                 // Pass File objects to the template
-                while ($files->next()) {
+                while ($files->next())
+                {
                     $arrMeta = \Contao\StringUtil::deserialize($files->meta);
 
-                    if (is_array($arrMeta) && isset($arrMeta[$language])) {
+                    if (is_array($arrMeta) && isset($arrMeta[$language]))
+                    {
                         $strTitle = $arrMeta[$language]['title'];
-                    } else {
+                    } else
+                    {
                         $strTitle = $files->name;
                     }
 
@@ -175,17 +229,20 @@ class NewsArticle extends \ModuleNews
             case 'external':
                 $paths = \Contao\StringUtil::trimsplit('|', $this->article->playerUrl);
 
-                if (!is_array($paths) || empty($paths)) {
+                if (!is_array($paths) || empty($paths))
+                {
                     return;
                 }
 
                 $extension = pathinfo($paths[0], PATHINFO_EXTENSION);
 
                 // Pre-sort the array by preference
-                if (in_array($extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'])) {
+                if (in_array($extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv']))
+                {
                     $isVideo = true;
                     $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
-                } else {
+                } else
+                {
                     $isVideo = false;
                     $sources = ['m4a' => null, 'mp3' => null, 'wma' => null, 'mpeg' => null, 'wav' => null, 'ogg' => null];
                 }
@@ -193,10 +250,12 @@ class NewsArticle extends \ModuleNews
                 $mimetypes = $GLOBALS['TL_MIME'];
 
                 // set source by extension
-                foreach ($paths as $path) {
+                foreach ($paths as $path)
+                {
                     $extension = pathinfo($path, PATHINFO_EXTENSION);
 
-                    if (!isset($GLOBALS['TL_MIME'][$extension])) {
+                    if (!isset($GLOBALS['TL_MIME'][$extension]))
+                    {
                         continue;
                     }
 
@@ -213,34 +272,46 @@ class NewsArticle extends \ModuleNews
         $posterSRC        = $this->article->posterSRC ?: $this->module->posterSRC;
 
         // Optional poster
-        if ($posterSRC != '') {
-            if (($poster = \FilesModel::findByUuid($posterSRC)) !== null) {
+        if ($posterSRC != '')
+        {
+            if (($poster = \FilesModel::findByUuid($posterSRC)) !== null)
+            {
                 $template->poster = $poster->path;
             }
         }
 
         $size = \StringUtil::deserialize($this->module->imgSize, true);
 
-        if ($isVideo) {
+        if ($isVideo)
+        {
             $template->size = ' width="640" height="360"';
 
-            if ($size[0] > 0 || $size[1] > 0) {
+            if ($size[0] > 0 || $size[1] > 0)
+            {
                 $template->size = ' width="' . $size[0] . '" height="' . $size[1] . '"';
-            } else if (is_numeric($size[2])) {
-                /** @var ImageSizeModel $imageModel */
-                $imageModel = $this->container->get('contao.framework')->getAdapter(ImageSizeModel::class);
-                $imageSize  = $imageModel->findByPk($size[2]);
+            } else
+            {
+                if (is_numeric($size[2]))
+                {
+                    /** @var ImageSizeModel $imageModel */
+                    $imageModel = $this->container->get('contao.framework')->getAdapter(ImageSizeModel::class);
+                    $imageSize  = $imageModel->findByPk($size[2]);
 
-                if (null !== $imageSize) {
-                    $template->size = ' width="' . $imageSize->width . '" height="' . $imageSize->height . '"';
+                    if (null !== $imageSize)
+                    {
+                        $template->size = ' width="' . $imageSize->width . '" height="' . $imageSize->height . '"';
+                    }
                 }
             }
-        } else {
+        } else
+        {
 
-            if ($template->poster != '') {
+            if ($template->poster != '')
+            {
                 $image = ['singleSRC' => $template->poster, 'size' => serialize([640, 360])];
 
-                if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
+                if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
+                {
                     $image['size'] = $this->module->imgSize;
                 }
 
@@ -260,27 +331,32 @@ class NewsArticle extends \ModuleNews
      */
     protected function addTeaserImage()
     {
-        if ($this->module instanceof \ModuleNewsReader || $this->module->doNotUse) {
+        if ($this->module instanceof \ModuleNewsReader || $this->module->doNotUse)
+        {
             return;
         }
 
-        if (!$this->article->add_teaser_image || $this->article->teaser_singleSRC == '') {
+        if (!$this->article->add_teaser_image || $this->article->teaser_singleSRC == '')
+        {
             return;
         }
 
         $objModel = \FilesModel::findByUuid($this->article->teaser_singleSRC);
 
-        if ($objModel === null || !is_file(TL_ROOT . '/' . $objModel->path)) {
+        if ($objModel === null || !is_file(TL_ROOT . '/' . $objModel->path))
+        {
             return;
         }
 
         $arrArticle = (array)$this->article;
 
         // Override the default image size
-        if ($this->module->imgSize != '') {
+        if ($this->module->imgSize != '')
+        {
             $size = \StringUtil::deserialize($this->module->imgSize);
 
-            if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
+            if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
+            {
                 $arrArticle['size'] = $this->module->imgSize;
             }
         }
@@ -295,20 +371,24 @@ class NewsArticle extends \ModuleNews
      */
     protected function addNewsListFieldOverwrite()
     {
-        if (!$this->module->use_news_lists) {
+        if (!$this->module->use_news_lists)
+        {
             return;
         }
 
         $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news', ['limit' => 1], ['tl_fieldpalette.news_list_news = ?'], [$this->article->id]);
 
-        if ($relations === null || !$relations->news_list_set_fields) {
+        if ($relations === null || !$relations->news_list_set_fields)
+        {
             return;
         }
 
         $customFields = deserialize($relations->news_list_fields, true);
 
-        foreach ($customFields as $key => $set) {
-            if (!$set['field']) {
+        foreach ($customFields as $key => $set)
+        {
+            if (!$set['field'])
+            {
                 continue;
             }
 
@@ -322,7 +402,8 @@ class NewsArticle extends \ModuleNews
      */
     protected function addPageMeta()
     {
-        if (!$this->module instanceof \ModuleNewsReader) {
+        if (!$this->module instanceof \ModuleNewsReader)
+        {
             return;
         }
 
@@ -336,7 +417,8 @@ class NewsArticle extends \ModuleNews
         $this->container->get('huh.head.tag.og_url')->setContent(\Environment::get('url') . '/' . $this->template->link);
         $this->container->get('huh.head.tag.og_description')->setContent(str_replace("\n", ' ', strip_tags(\Controller::replaceInsertTags($this->article->teaser))));
 
-        if ($this->template->addImage) {
+        if ($this->template->addImage)
+        {
             $this->container->get('huh.head.tag.og_image')->setContent(\Environment::get('url') . '/' . $this->template->singleSRC);
         }
 
@@ -344,57 +426,72 @@ class NewsArticle extends \ModuleNews
         $this->container->get('huh.head.tag.meta_title')->setContent($title);
 
         // Overwrite the page title
-        if ($this->article->headline != '') {
+        if ($this->article->headline != '')
+        {
             $objPage->pageTitle = strip_tags(\StringUtil::stripInsertTags($this->article->headline));
         }
 
         $description = '';
 
         // Overwrite the page description
-        if ($this->article->metaDescription != '') {
+        if ($this->article->metaDescription != '')
+        {
             $description = $this->article->metaDescription;
-        } else if ($this->article->teaser != '') {
-            $description = $this->article->teaser;
+        } else
+        {
+            if ($this->article->teaser != '')
+            {
+                $description = $this->article->teaser;
+            }
         }
 
-        if ($description) {
+        if ($description)
+        {
             $this->container->get('huh.head.tag.meta_description')->setContent($this->prepareMetaDescription($description));
         }
 
         $keywords = deserialize($this->article->metaKeywords, true);
 
-        if (!empty($keywords)) {
+        if (!empty($keywords))
+        {
             // keywords should be delimited by comma with space (see https://github.com/contao/core-bundle/issues/1078)
             $this->container->get('huh.head.tag.meta_keywords')->setContent(implode(', ', $keywords));
         }
 
         // twitter card
-        if ($this->article->twitterCard) {
+        if ($this->article->twitterCard)
+        {
             $this->container->get('huh.head.tag.twitter_card')->setContent($this->article->twitterCard);
 
-            if ($objPage->rootId > 0 && ($rootPage = \PageModel::findByPk($objPage->rootId)) !== null && $rootPage->twitterSite) {
+            if ($objPage->rootId > 0 && ($rootPage = \PageModel::findByPk($objPage->rootId)) !== null && $rootPage->twitterSite)
+            {
                 \System::getContainer()->get('huh.head.tag.twitter_site')->setContent($rootPage->twitterSite);
             }
 
-            if ($this->article->twitterCreator) {
+            if ($this->article->twitterCreator)
+            {
                 \System::getContainer()->get('huh.head.tag.twitter_creator')->setContent($this->article->twitterCreator);
             }
 
             $this->container->get('huh.head.tag.twitter_title')->setContent($title);
 
-            if ($description) {
+            if ($description)
+            {
                 $this->container->get('huh.head.tag.twitter_description')->setContent($this->prepareMetaDescription($description));
             }
 
-            if ($this->template->addImage) {
+            if ($this->template->addImage)
+            {
                 $this->container->get('huh.head.tag.twitter_image')->setContent(\Environment::get('url') . '/' . $this->template->singleSRC);
 
-                if ($this->template->alt) {
+                if ($this->template->alt)
+                {
                     $this->container->get('huh.head.tag.twitter_image_alt')->setContent($this->template->alt);
                 }
             }
 
-            if ($this->template->addYoutube) {
+            if ($this->template->addYoutube)
+            {
                 $this->container->get('huh.head.tag.twitter_player')->setContent('https://www.youtube.com/embed/' . $this->youtube);
                 $this->container->get('huh.head.tag.twitter_player_width')->setContent(480);
                 $this->container->get('huh.head.tag.twitter_player_height')->setContent(300);
@@ -410,18 +507,22 @@ class NewsArticle extends \ModuleNews
         $id     = $this->article->id;
         $tokens = $this->tokens;
 
-        if ($this->template->hasText) {
+        if ($this->template->hasText)
+        {
             $this->template->text = function () use ($id, $tokens) {
                 $strText    = '';
                 $objElement = \ContentModel::findPublishedByPidAndTable($id, 'tl_news');
 
-                if ($objElement !== null) {
-                    while ($objElement->next()) {
+                if ($objElement !== null)
+                {
+                    while ($objElement->next())
+                    {
                         $strText .= $this->getContentElement($objElement->current());
                     }
                 }
 
-                if (count($tokens) > 0) {
+                if (count($tokens) > 0)
+                {
                     $strText = \StringUtil::parseSimpleTokens($strText, $tokens);
                 }
 
@@ -429,7 +530,8 @@ class NewsArticle extends \ModuleNews
             };
         }
 
-        if ($this->template->hasTeaser) {
+        if ($this->template->hasTeaser)
+        {
             $this->template->teaser = \StringUtil::parseSimpleTokens($this->template->teaser, $tokens);
         }
     }
@@ -441,18 +543,21 @@ class NewsArticle extends \ModuleNews
     {
         $this->template->hasInfoBox = false;
 
-        if (!$this->module->newsInfoBoxModule) {
+        if (!$this->module->newsInfoBoxModule)
+        {
             return;
         }
 
-        if (($model = \ModuleModel::findByPk($this->module->newsInfoBoxModule)) === null) {
+        if (($model = \ModuleModel::findByPk($this->module->newsInfoBoxModule)) === null)
+        {
             return;
         }
 
         $strClass = \Module::findClass($model->type);
 
         // Return if the class does not exist
-        if (!class_exists($strClass)) {
+        if (!class_exists($strClass))
+        {
             $this->template->add_related_news = false;
 
             $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist', ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]);
@@ -467,7 +572,8 @@ class NewsArticle extends \ModuleNews
         $strBuffer = $objModule->generate();
 
         // Disable indexing if protected
-        if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
+        if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer))
+        {
             $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
         }
 
@@ -483,32 +589,38 @@ class NewsArticle extends \ModuleNews
     {
         $this->template->hasTags = false;
 
-        if (!in_array('tags', $this->module->news_metaFields)) {
+        if (!in_array('tags', $this->module->news_metaFields))
+        {
             return;
         }
 
         $ids = deserialize($this->article->tags, true);
 
-        if (empty($ids)) {
+        if (empty($ids))
+        {
             return;
         }
 
         /** @var $manager NewsTagManager */
         $manager = $this->container->get('huh.news.news_tags_manager');
 
-        if (($models = $manager->findMultiple(['values' => $ids])) === null) {
+        if (($models = $manager->findMultiple(['values' => $ids])) === null)
+        {
             return;
         }
 
         $tags = [];
 
         /** @var $model Tag */
-        foreach ($models as $model) {
+        foreach ($models as $model)
+        {
             $tag = $model->getData();
 
-            if (($url = Url::generateFrontendUrl($this->module->newsTagFilterJumpTo))) {
+            if (($url = Url::generateFrontendUrl($this->module->newsTagFilterJumpTo)))
+            {
                 $tag['href'] = $url . '/' . $tag['alias'];
-            } else {
+            } else
+            {
                 $tag['href'] = '#';
             }
 
@@ -529,31 +641,37 @@ class NewsArticle extends \ModuleNews
     {
         $this->template->hasRatings = false;
 
-        if (!in_array('ratings', $this->module->news_metaFields)) {
+        if (!in_array('ratings', $this->module->news_metaFields))
+        {
             return;
         }
 
-        if ($this->article->google_analytic_updated_at > 0) {
+        if ($this->article->google_analytic_updated_at > 0)
+        {
             $this->template->hasRatings = true;
             $this->template->viewRating = $this->article->google_analytic_counter;
         }
 
-        if ($this->article->disqus_updated_at > 0) {
+        if ($this->article->disqus_updated_at > 0)
+        {
             $this->template->hasRatings    = true;
             $this->template->commentRating = $this->article->disqus_counter;
         }
 
-        if ($this->article->facebook_updated_at > 0) {
+        if ($this->article->facebook_updated_at > 0)
+        {
             $this->template->hasRatings  = true;
             $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->facebook_counter;
         }
 
-        if ($this->article->google_plus_updated_at > 0) {
+        if ($this->article->google_plus_updated_at > 0)
+        {
             $this->template->hasRatings  = true;
             $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->google_plus_counter;
         }
 
-        if ($this->article->twitter_updated_at > 0) {
+        if ($this->article->twitter_updated_at > 0)
+        {
             $this->template->hasRatings  = true;
             $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->twitter_counter;
         }
@@ -566,7 +684,8 @@ class NewsArticle extends \ModuleNews
     {
         $this->template->addShare = false;
 
-        if ($this->module->addShare) {
+        if ($this->module->addShare)
+        {
             $this->article->title     = $this->article->headline;
             $this->template->addShare = true;
             $objShare                 = new \HeimrichHannot\Share\Share($this->module->getModel(), $this->article);
@@ -581,42 +700,48 @@ class NewsArticle extends \ModuleNews
     {
         $this->template->hasWriters = false;
 
-        if (!in_array('writers', $this->module->news_metaFields)) {
+        if (!in_array('writers', $this->module->news_metaFields))
+        {
             return;
         }
 
         $ids = deserialize($this->article->writers, true);
 
-        if (empty($ids)) {
+        if (empty($ids))
+        {
             return;
         }
 
-        if (($members = \MemberModel::findMultipleByIds($ids)) === null) {
+        if (($members = \MemberModel::findMultipleByIds($ids)) === null)
+        {
             return;
         }
 
         $writers = [];
 
-        while ($members->next()) {
+        while ($members->next())
+        {
             $writers[] = $members->row();
         }
 
         /**
          * Provide a helper function that returns the writer names separated with given delimiter
          *
-         * @param string      $delimiter The delimiter
-         * @param string|null $format    The writer name format string (default: ##firstname## ##lastname##)
+         * @param string $delimiter The delimiter
+         * @param string|null $format The writer name format string (default: ##firstname## ##lastname##)
          *
          * @return string The writers separated by the delimiter string
          */
         $this->template->writerNames = function ($delimiter = ',', $format = null) use ($writers) {
-            if ($format === null) {
+            if ($format === null)
+            {
                 $format = '##firstname## ##lastname##';
             }
 
             $names = [];
 
-            foreach ($writers as $writer) {
+            foreach ($writers as $writer)
+            {
                 $names[] = trim(\StringUtil::parseSimpleTokens($format, $writer));
             }
 
@@ -634,7 +759,8 @@ class NewsArticle extends \ModuleNews
      */
     protected function setSeen()
     {
-        if ($this->module instanceof \ModuleNewsList || $this->module instanceof \ModuleNewsArchive) {
+        if ($this->module instanceof \ModuleNewsList || $this->module instanceof \ModuleNewsArchive)
+        {
             NewsList::addSeen($this->article->id);
         }
     }
@@ -649,9 +775,12 @@ class NewsArticle extends \ModuleNews
 
         $relatedNews = [];
 
-        if (!empty($relatedNewsModules)) {
-            foreach ($relatedNewsModules as $relatedNewsModule) {
-                if (($model = \ModuleModel::findByPk($relatedNewsModule['module'])) === null) {
+        if (!empty($relatedNewsModules))
+        {
+            foreach ($relatedNewsModules as $relatedNewsModule)
+            {
+                if (($model = \ModuleModel::findByPk($relatedNewsModule['module'])) === null)
+                {
                     $this->template->add_related_news = false;
 
                     continue;
@@ -660,7 +789,8 @@ class NewsArticle extends \ModuleNews
                 $strClass = \Module::findClass($model->type);
 
                 // Return if the class does not exist
-                if (!class_exists($strClass)) {
+                if (!class_exists($strClass))
+                {
                     $this->template->add_related_news = false;
 
                     $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Module class "' . $strClass . '" (module "' . $model->type . '") does not exist', ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]);
@@ -676,7 +806,8 @@ class NewsArticle extends \ModuleNews
                 $strBuffer = $objModule->generate();
 
                 // Disable indexing if protected
-                if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer)) {
+                if ($model->protected && !preg_match('/^\s*<!-- indexer::stop/', $strBuffer))
+                {
                     $strBuffer = "\n<!-- indexer::stop -->" . $strBuffer . "<!-- indexer::continue -->\n";
                 }
 

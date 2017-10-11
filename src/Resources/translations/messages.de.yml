@@ -35,4 +35,9 @@ news.form.filter.choice.month.10: Oktober
 news.form.filter.choice.month.11: November
 news.form.filter.choice.month.12: Dezember
 
+# news navigation
+huh.newsbundle.newsnavigation:
+  previous: Vorheriger Artikel
+  next: Nächster Artikel
+
 

@@ -1,0 +1,8 @@
+<?php $this->block('content'); ?>
+
+<div class="news-navigation">
+    <a href="" class="previous">Zurück</a>
+    <a href="" class="next">Weiter</a>
+</div>
+
+<?php $this->endblock(); ?>
