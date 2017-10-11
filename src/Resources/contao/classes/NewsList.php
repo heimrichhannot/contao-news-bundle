@@ -11,6 +11,7 @@
 namespace HeimrichHannot\NewsBundle;
 
 
+use Contao\Module;
 use Haste\Util\Url;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
@@ -93,7 +94,7 @@ class NewsList
      * @param bool|null $featured
      * @param \Module $module
      */
-    public function __construct(array $newsArchives, $featured, \Module $module)
+    public function __construct(array $newsArchives, $featured, Module $module)
     {
         $this->newsArchives = $newsArchives;
         $this->featured     = $featured;

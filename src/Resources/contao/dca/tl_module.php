@@ -35,11 +35,6 @@ $dca['palettes'][$bundleClass::MODULE_NEWSLIST] = str_replace('{template_legend'
 
 $dca['palettes'][$bundleClass::MODULE_NEWSLIST]    = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
 
-//$GLOBALS['TL_DCA']['tl_module']['palettes']['newsreader']  = '{title_legend},name,headline,type;{config_legend},news_archives;{template_legend:hide},news_metaFields,news_template,customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-
-
-
-
 $dca['palettes']['newsreader']  = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes']['newsreader']);
 $dca['palettes']['newsarchive'] = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes']['newsarchive']);
 
@@ -48,19 +43,13 @@ $dca['palettes']['newslist_related'] = str_replace(
     '',
     $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
 
-$dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
-
-\Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-    ->addLegend('news_navigation_legend', 'template_legend')
-    ->addField('newsNavigationModule', 'news_navigation_legend')
-    ->applyToPalette('newsreader', $table);
-
+$dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_navigation_legend},newsNavigationModule;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
 
 $dca['palettes']['newsreader'] = str_replace('{template_legend', '{tags_legend},newsTagFilterJumpTo;{news_related_legend},add_related_news;{template_legend', $dca['palettes']['newsreader']);
 
 $dca['palettes']['newslist_filter'] = '{title_legend},name,headline,type;{config_legend},news_archives,newsListFilters;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dca['palettes'][$bundleClass::MODULE_NEWSNAVIGATION] = 'newsListModule';
+$dca['palettes'][$bundleClass::MODULE_NEWSNAVIGATION] = '{title_legend},name,headline,type;{news_list_legend},newsListModule;';
 
 
 // update slick_newslist because already invoked

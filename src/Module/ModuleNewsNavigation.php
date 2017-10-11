@@ -12,9 +12,12 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\Module;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\NewsList;
 use Patchwork\Utf8;
+use Psr\Log\LogLevel;
 
 class ModuleNewsNavigation extends \Contao\ModuleNews
 {
@@ -51,12 +54,27 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
             return $objTemplate->parse();
         }
 
-        if (($listModule = \ModuleModel::findByPk($this->newsListModule)) === null)
+        if (($listModuleModel = \ModuleModel::findByPk($this->newsListModule)) === null)
         {
             return '';
         }
+        $class = Module::findClass($listModuleModel->type);
+        // Return if the class does not exist
+        if (!class_exists($class))
+        {
+            $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, 'Module class "' . $class . '" (module "' . $listModuleModel->type . '") does not exist', ['contao' => new ContaoContext(__METHOD__, TL_ERROR)]);
 
-        $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($listModule->news_archives));
+            return '';
+        }
+
+        $listModuleModel->typePrefix = 'mod_';
+
+        /** @var ModuleNewsNavigation $module */
+        $module = new $class($listModuleModel);
+
+
+
+        $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($module->news_archives));
 
         // Return if there are no archives
         if (!is_array($this->news_archives) || empty($this->news_archives))
@@ -75,7 +93,7 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
             $featured = false;
         }
 
-        $this->list = new NewsList($this->news_archives, $featured, $listModule);
+        $this->list = new NewsList($this->news_archives, $featured, $module);
 
         return parent::generate();
     }
@@ -101,8 +119,10 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
         $values  = $this->list->getFilterValues();
         $options = $this->list->getFilterOptions();
 
+
+
         $next = NewsModel::findBy(
-            array_merge([$columns], ["$t.time > ?"]),
+            array_merge($columns, ["$t.time > ?"]),
             array_merge(is_array($values) ? $values : [$this->current->time]),
             array_merge($options, ['limit' => 1])
         );
