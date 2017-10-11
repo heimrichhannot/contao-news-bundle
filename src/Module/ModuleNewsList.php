@@ -12,7 +12,7 @@ namespace HeimrichHannot\NewsBundle\Module;
 use HeimrichHannot\NewsBundle\Event\NewsListAfterCompileEvent;
 use HeimrichHannot\NewsBundle\Event\NewsListBeforeCompileEvent;
 
-class ModuleNewsList extends \ModuleNewsList
+class ModuleNewsList extends \Contao\ModuleNewsList
 {
 
     /**

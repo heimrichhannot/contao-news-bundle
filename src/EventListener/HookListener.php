@@ -9,16 +9,11 @@
 namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
-use Contao\ModuleModel;
-use Contao\System;
 use HeimrichHannot\Modal\ModalController;
 use HeimrichHannot\Modal\ModalModel;
-use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
 use HeimrichHannot\NewsBundle\Model\NewsListArchiveModel;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
-use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\NewsArticle;
-use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
 use HeimrichHannot\NewsBundle\NewsList;
 
 class HookListener
@@ -42,7 +37,7 @@ class HookListener
     /**
      * Modify the page or layout object
      *
-     * @param \PageModel $page
+     * @param \PageModel   $page
      * @param \LayoutModel $layout
      * @param \PageRegular $pageRegular
      */
@@ -54,9 +49,9 @@ class HookListener
     /**
      * Extend the news list count all items
      *
-     * @param array $newsArchives
+     * @param array     $newsArchives
      * @param bool|null $featured
-     * @param \Module $module
+     * @param \Module   $module
      *
      * @return int|boolean Return the number of total items or false if next hook should be triggered
      */
@@ -71,13 +66,13 @@ class HookListener
     /**
      * Extend fetch matching of news list items
      *
-     * @param  array $newsArchives
+     * @param  array        $newsArchives
      * @param  boolean|null $featured
-     * @param  integer $limit
-     * @param  integer $offset
-     * @param \Module $module
+     * @param  integer      $limit
+     * @param  integer      $offset
+     * @param \Module       $module
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null|false Return a collection of items or false if next hook should be triggered
+     * @return \Model\Collection|\NewsModel|null|false Return a collection of items or false if next hook should be triggered
      */
     public function newsListFetchItems(array $newsArchives, $featured, $limit, $offset, \Module $module)
     {
@@ -91,44 +86,12 @@ class HookListener
      * Extend news article data
      *
      * @param \FrontendTemplate $template
-     * @param array $article
-     * @param \Module $module
-     *
-     * @return void
+     * @param array             $article
+     * @param \Module           $module
      */
     public function parseArticles(\FrontendTemplate $template, array $article, \Module $module)
     {
         $objArticle = new NewsArticle($template, $article, $module);
         $template   = $objArticle->getNewsTemplate();
-
-        if (!$module->useModal || $article['source'] != 'default')
-        {
-            return;
-        }
-
-        $objJumpTo = \PageModel::findPublishedById($template->archive->jumpTo);
-
-        if ($objJumpTo === null || !$objJumpTo->linkModal)
-        {
-            return;
-        }
-
-        $objModal = ModalModel::findPublishedByIdOrAlias($objJumpTo->modal);
-
-        if ($objModal === null)
-        {
-            return;
-        }
-
-        $objJumpTo = \PageModel::findWithDetails($objJumpTo->id);
-
-        $arrConfig = ModalController::getModalConfig($objModal->current(), $objJumpTo->layout);
-
-        $blnAjax     = true;
-        $blnRedirect = true;
-
-        $template->link         = ModalController::generateModalUrl($article, $template->archive->jumpTo, $blnAjax, $blnRedirect);
-        $template->linkHeadline = ModalController::convertLinkToModalLink($template->linkHeadline, $template->link, $arrConfig, $blnRedirect);
-        $template->more         = ModalController::convertLinkToModalLink($template->more, $template->link, $arrConfig, $blnRedirect);
     }
 }
