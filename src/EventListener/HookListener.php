@@ -93,32 +93,5 @@ class HookListener
     {
         $objArticle = new NewsArticle($template, $article, $module);
         $template   = $objArticle->getNewsTemplate();
-
-        if (!$module->useModal || $article['source'] != 'default') {
-            return false;
-        }
-
-        $objJumpTo = \PageModel::findPublishedById($template->archive->jumpTo);
-
-        if ($objJumpTo === null || !$objJumpTo->linkModal) {
-            return false;
-        }
-
-        $objModal = ModalModel::findPublishedByIdOrAlias($objJumpTo->modal);
-
-        if ($objModal === null) {
-            return false;
-        }
-
-        $objJumpTo = \PageModel::findWithDetails($objJumpTo->id);
-
-        $arrConfig = ModalController::getModalConfig($objModal->current(), $objJumpTo->layout);
-
-        $blnAjax     = true;
-        $blnRedirect = true;
-
-        $template->link         = ModalController::generateModalUrl($article, $template->archive->jumpTo, $blnAjax, $blnRedirect);
-        $template->linkHeadline = ModalController::convertLinkToModalLink($template->linkHeadline, $template->link, $arrConfig, $blnRedirect);
-        $template->more         = ModalController::convertLinkToModalLink($template->more, $template->link, $arrConfig, $blnRedirect);
     }
 }
