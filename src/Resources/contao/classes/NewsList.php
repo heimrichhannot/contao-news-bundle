@@ -181,6 +181,31 @@ class NewsList
     }
 
     /**
+     * Fetch news items
+     *
+     * @param integer $limit Current limit from pagination
+     * @param integer $offset Current offset from pagination
+     *
+     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null Return a collection it news items of false for the default fetch behavior
+     */
+    public function fetch($limit, $offset)
+    {
+        $t = NewsModel::getTable();
+
+        $this->initFetch([
+            'limit' => $limit,
+            'offset' => $offset
+        ]);
+
+        if (!isset($this->filterOptions['order']))
+        {
+            $this->filterOptions['order'] = "$t.date DESC";
+        }
+
+        return NewsModel::findBy($this->getFilterColumns(), $this->getFilterValues(), $this->getFilterOptions());
+    }
+
+    /**
      * Init the fetch columns, values and options
      * @param array $options
      */
@@ -207,31 +232,6 @@ class NewsList
         }
 
         $this->addFetchFilters();
-    }
-
-    /**
-     * Fetch news items
-     *
-     * @param integer $limit Current limit from pagination
-     * @param integer $offset Current offset from pagination
-     *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null Return a collection it news items of false for the default fetch behavior
-     */
-    public function fetch($limit, $offset)
-    {
-        $t = NewsModel::getTable();
-
-        $this->filterOptions['limit']  = $limit;
-        $this->filterOptions['offset'] = $offset;
-
-        $this->initFetch();
-
-        if (!isset($this->filterOptions['order']))
-        {
-            $this->filterOptions['order'] = "$t.date DESC";
-        }
-
-        return NewsModel::findBy($this->getFilterColumns(), $this->getFilterValues(), $this->getFilterOptions());
     }
 
 
