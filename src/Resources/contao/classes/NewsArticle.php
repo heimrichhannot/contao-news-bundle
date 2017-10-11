@@ -844,6 +844,9 @@ class NewsArticle extends \ModuleNews
     }
 
 
+    /**
+     * Add filter queries to the modal urls
+     */
     public function addFilterToModalUrls ()
     {
         if ($query = NewsFilterForm::getFilterQuery())
