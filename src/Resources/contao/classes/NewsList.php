@@ -111,7 +111,7 @@ class NewsList
     {
         $this->initCount();
 
-        $total                         = NewsModel::countBy($this->getFilterColumns(), $this->getFilterValues(), $this->getFilterOptions());
+        $total = NewsModel::countBy($this->getFilterColumns(), $this->getFilterValues(), $this->getFilterOptions());
         $this->module->Template->total = $total; // store total news count
         return $total;
     }
@@ -193,7 +193,7 @@ class NewsList
         $t = NewsModel::getTable();
 
         $this->initFetch([
-            'limit' => $limit,
+            'limit'  => $limit,
             'offset' => $offset
         ]);
 

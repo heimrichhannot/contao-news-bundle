@@ -12,8 +12,11 @@ namespace HeimrichHannot\NewsBundle;
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\ImageSizeModel;
+use Contao\System;
+use DOMDocument;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\Haste\Util\Url;
+use HeimrichHannot\NewsBundle\Form\NewsFilterForm;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
@@ -65,8 +68,8 @@ class NewsArticle extends \ModuleNews
      * Initialize the object
      *
      * @param \FrontendTemplate $template
-     * @param array             $article
-     * @param \Module           $module
+     * @param array $article
+     * @param \Module $module
      */
     public function __construct(\FrontendTemplate $template, array $article, \Module $module)
     {
@@ -103,9 +106,10 @@ class NewsArticle extends \ModuleNews
         $this->addTeaserImage();
         $this->addPlayer();
         $this->addShare();
+        $this->addFilterToModalUrls();
         $this->addNavigation();
-
         $this->replaceTokens();
+
     }
 
     /**
@@ -140,6 +144,10 @@ class NewsArticle extends \ModuleNews
         /** @var ModuleNewsNavigation $objModule */
         $objModule = new $strClass($model);
         $objModule->setCurrent($this->article->id);
+        $objModule->setQuery($query = NewsFilterForm::getFilterQuery());
+
+
+
         $strBuffer = $objModule->generate();
 
         // Disable indexing if protected
@@ -759,8 +767,8 @@ class NewsArticle extends \ModuleNews
      */
     protected function setSeen()
     {
-        if ($this->module instanceof \Contao\ModuleNewsList || $this->module instanceof \ModuleNewsArchive) 
-	{
+        if ($this->module instanceof \Contao\ModuleNewsList || $this->module instanceof \ModuleNewsArchive)
+        {
             NewsList::addSeen($this->article->id);
         }
     }
@@ -833,5 +841,40 @@ class NewsArticle extends \ModuleNews
     public function setNewsTemplate(\FrontendTemplate $template)
     {
         $this->template = $template;
+    }
+
+
+    public function addFilterToModalUrls ()
+    {
+        if ($query = NewsFilterForm::getFilterQuery())
+        {
+            $link = Url::addQueryString($query, $this->template->link);
+            $this->template->link = $link;
+            if ($this->template->linkHeadline)
+            {
+                $this->template->linkHeadline = $this->replaceLinkHref($this->template->linkHeadline, $link);
+            }
+            if ($this->template->more)
+            {
+                $this->template->more = $this->replaceLinkHref($this->template->more, $link);
+            }
+        }
+    }
+
+    /**
+     * Replace the href attribute in a link
+     *
+     * @param $link
+     * @param $newHref
+     * @return mixed
+     */
+    public function replaceLinkHref ($link, $newHref)
+    {
+        $new = preg_replace(
+            '/<a(.*)href="([^"]*)"(.*)>/',
+            '<a$1href="'.$newHref.'"$3>',
+            $link
+        );
+        return $new;
     }
 }

@@ -25,7 +25,7 @@ class NewsModel extends \Contao\NewsModel
         $t         = static::$strTable;
         $columns[] = "$t.pid IN(" . implode(',', array_map('intval', $pid)) . ")";
 
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
+        if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time      = \Date::floorToMinute();
             $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
@@ -585,7 +585,7 @@ class NewsModel extends \Contao\NewsModel
     public static function findOnePublished($columns = [], $values = [], $options = [])
     {
         $t = static::$strTable;
-        if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN)
+        if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN)
         {
             $time      = \Date::floorToMinute();
             $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";

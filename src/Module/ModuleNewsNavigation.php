@@ -12,8 +12,12 @@
 namespace HeimrichHannot\NewsBundle\Module;
 
 
+use Contao\Controller;
 use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\Environment;
 use Contao\Module;
+use Contao\Request;
+use Contao\System;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\NewsList;
 use Patchwork\Utf8;
@@ -21,6 +25,14 @@ use Psr\Log\LogLevel;
 
 class ModuleNewsNavigation extends \Contao\ModuleNews
 {
+    /**
+     * Template
+     *
+     * @var string
+     */
+    protected $strTemplate = 'mod_newsnavigation';
+
+
     /**
      * Current news id
      * @var int
@@ -32,6 +44,11 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
      * @var NewsList
      */
     protected $list;
+
+    /**
+     * @var string|null
+     */
+    protected $query = '';
 
     /**
      * Display a wildcard in the back end
@@ -69,10 +86,8 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
 
         $listModuleModel->typePrefix = 'mod_';
 
-        /** @var ModuleNewsNavigation $module */
+        /** @var ModuleNewsList $module */
         $module = new $class($listModuleModel);
-
-
 
         $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($module->news_archives));
 
@@ -104,12 +119,7 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
      */
     protected function compile()
     {
-        $total = $this->list->count();
-
-        if ($total < 1)
-        {
-            return;
-        }
+        $this->list->initCount();
 
         $t = NewsModel::getTable();
 
@@ -123,9 +133,25 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
 
         $next = NewsModel::findBy(
             array_merge($columns, ["$t.time > ?"]),
-            array_merge(is_array($values) ? $values : [$this->current->time]),
-            array_merge($options, ['limit' => 1])
+            array_merge(is_array($values) ? $values : [], [$this->current->time]),
+            array_merge($options, [
+                'limit' => 1,
+                'order' => "$t.time ASC"
+            ])
         );
+        $previous = NewsModel::findBy(
+            array_merge($columns, ["$t.time < ?"]),
+            array_merge(is_array($values) ? $values : [], [$this->current->time]),
+            array_merge($options, [
+                'limit' => 1,
+                'order' => "$t.time DESC"
+            ])
+        );
+        $this->Template->nextArticleId = $next->id;
+        $this->Template->previousArticleId = $previous->id;
+        $this->Template->newsUrlQuery = $this->query;
+
+
     }
 
     public function setCurrent($news)
@@ -135,4 +161,24 @@ class ModuleNewsNavigation extends \Contao\ModuleNews
             $this->current = $model;
         }
     }
+
+    /**
+     * @return null|string
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Set a query to append to the link url
+     *
+     * @param null|string $query
+     */
+    public function setQuery($query)
+    {
+        $this->query = $query;
+    }
+
+
 }

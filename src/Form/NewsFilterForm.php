@@ -10,6 +10,7 @@ namespace HeimrichHannot\NewsBundle\Form;
 
 
 use HeimrichHannot\Haste\Util\Url;
+use HeimrichHannot\Request\Request;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -40,5 +41,17 @@ class NewsFilterForm extends AbstractType
         $form = new static();
 
         return rawurldecode(Url::addParametersToUri(Url::removeQueryString([$form->getBlockPrefix()], $url), [$form->getBlockPrefix() => $params]));
+    }
+
+    public static function getFilterQuery()
+    {
+        $form = new static();
+
+        if(!Request::hasGet($form->getBlockPrefix()))
+        {
+            return '';
+        }
+
+        return http_build_query([$form->getBlockPrefix() => Request::getGet($form->getBlockPrefix())]);
     }
 }

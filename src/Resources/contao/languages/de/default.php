@@ -16,3 +16,6 @@ $GLOBALS['TL_LANG']['MSC']['writers'] = 'Verfasser';
 $GLOBALS['TL_LANG']['MSC']['tags']    = 'Schlagwörter';
 $GLOBALS['TL_LANG']['MSC']['topics']  = 'Themen';
 $GLOBALS['TL_LANG']['MSC']['ratings'] = 'Bewertungen';
+
+$GLOBALS['TL_LANG']['MSC']['newsNextArticle'] = 'Nächster Artikel';
+$GLOBALS['TL_LANG']['MSC']['newsPreviousArticle'] = 'Vorheriger Artikel';
