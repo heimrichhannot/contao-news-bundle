@@ -83,12 +83,10 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $this->baseUrl = $route->getScheme() . $route->getHost();
         $this->logger  = System::getContainer()->get('monolog.logger.contao');
         $this->config  = System::getContainer()->getParameter('social_stats');
-        if ($input->getOption('no-chunksize') == 1)
-        {
+        if ($input->getOption('no-chunksize') == 1) {
             $this->config['chunksize'] = 0;
         }
-        if ($input->getOption('no-days') == 1)
-        {
+        if ($input->getOption('no-days') == 1) {
             $this->config['days'] = 0;
         }
         $message = 'START updating social stats...';
@@ -128,6 +126,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice($message);
             return;
         }
+        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByGoogleAnalyticsUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Google Analytics counts</>");
         $this->updateStats(
@@ -147,6 +146,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Facebook config provided. Skipping...');
             return;
         }
+        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByFacebookCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Facebook counts</>");
         $this->updateStats(
@@ -166,6 +166,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Twitter config provided. Skipping...');
             return;
         }
+        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByTwitterCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Twitter counts</>");
         $this->updateStats(
@@ -185,6 +186,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Google Plus config provided. Skipping...');
             return;
         }
+        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByGooglePlusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Google Plus counts</>");
         $this->updateStats(
@@ -204,6 +206,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->logger->addNotice('No Disqus config provided. Skipping...');
             return;
         }
+        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByDisqusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
         $this->output->writeln("<fg=green;options=bold>Retriving Disqus counts</>");
         $this->updateStats(
