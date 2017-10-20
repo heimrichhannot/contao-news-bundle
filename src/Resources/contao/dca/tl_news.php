@@ -17,6 +17,7 @@ $dc['palettes']['__selector__'][] = 'add_readers_survey';
 $dc['palettes']['__selector__'][] = 'infoBox';
 $dc['palettes']['__selector__'][] = 'add_related_news';
 $dc['palettes']['__selector__'][] = 'player';
+$dc['palettes']['__selector__'][] = 'relocate';
 
 
 /**
@@ -31,7 +32,7 @@ $dc['palettes']['default'] = str_replace(
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
-
+$dc['palettes']['default'] = str_replace('cssClass,', 'relocate,cssClass,', $dc['palettes']['default']);
 
 /**
  * Subpalettes
@@ -44,6 +45,8 @@ $dc['subpalettes']['infoBox_text']         = 'infoBox_header, infoBox_text, info
 $dc['subpalettes']['add_related_news']     = 'related_news';
 $dc['subpalettes']['player_internal']      = 'playerSRC,posterSRC';
 $dc['subpalettes']['player_external']      = 'playerUrl,posterSRC';
+$dc['subpalettes']['relocate_deindex']     = 'relocateUrl';
+$dc['subpalettes']['relocate_redirect']    = 'relocateUrl';
 
 /**
  * Fields
@@ -503,6 +506,23 @@ $fields = [
         'eval'      => ['maxlength' => 255, 'tl_class' => 'long'],
         'sql'       => "varchar(255) NOT NULL default ''"
     ],
+    'relocate'                   => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['relocate'],
+        'inputType' => 'radio',
+        'options'   => ['none', 'deindex', 'redirect'],
+        'reference' => &$GLOBALS['TL_LANG']['tl_news']['reference']['relocate'],
+        'exclude'   => true,
+        'sql'       => "varchar(12) NOT NULL default 'none'",
+        'eval'      => ['submitOnChange' => true],
+    ],
+    'relocateUrl'                => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['relocateUrl'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'text',
+        'eval'      => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 255, 'dcaPicker' => true, 'tl_class' => 'full wizard'],
+        'sql'       => "varchar(255) NOT NULL default ''"
+    ]
 ];
 
 $dc['fields'] = array_merge($dc['fields'], $fields);

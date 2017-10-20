@@ -111,7 +111,7 @@ class NewsList
     {
         $this->initCount();
 
-        $total = NewsModel::countBy($this->getFilterColumns(), $this->getFilterValues(), $this->getFilterOptions());
+        $total                         = NewsModel::countBy($this->getFilterColumns(), $this->getFilterValues(), $this->getFilterOptions());
         $this->module->Template->total = $total; // store total news count
         return $total;
     }
@@ -128,16 +128,13 @@ class NewsList
         $this->filterValues  = null;
         $this->filterColumns = ["$t.pid IN(" . implode(',', array_map('intval', $this->newsArchives)) . ")"];
 
-        if ($this->featured === true)
-        {
+        if ($this->featured === true) {
             $this->filterColumns[] = "$t.featured='1'";
-        } elseif ($this->featured === false)
-        {
+        } elseif ($this->featured === false) {
             $this->filterColumns[] = "$t.featured=''";
         }
 
-        if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time                  = \Date::floorToMinute();
             $this->filterColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
@@ -152,12 +149,11 @@ class NewsList
         $this->addCategoryFilter();
         $this->addTagFilter();
         $this->addSortFilter();
+        $this->addRelocateFilter();
 
         // HOOK: add custom news list count filters
-        if (isset($GLOBALS['TL_HOOKS']['addNewsListCountFilters']) && is_array($GLOBALS['TL_HOOKS']['addNewsListCountFilters']))
-        {
-            foreach ($GLOBALS['TL_HOOKS']['addNewsListCountFilters'] as $callback)
-            {
+        if (isset($GLOBALS['TL_HOOKS']['addNewsListCountFilters']) && is_array($GLOBALS['TL_HOOKS']['addNewsListCountFilters'])) {
+            foreach ($GLOBALS['TL_HOOKS']['addNewsListCountFilters'] as $callback) {
                 \System::importStatic($callback[0])->{$callback[1]}($this);
             }
         }
@@ -165,8 +161,7 @@ class NewsList
         /**
          * @var $filter NewsFilterModule
          */
-        if (($filter = \System::getContainer()->get('huh.news.list_filter.module_registry')->get($this->module->newsListFilterModule)) !== null)
-        {
+        if (($filter = \System::getContainer()->get('huh.news.list_filter.module_registry')->get($this->module->newsListFilterModule)) !== null) {
 
             $builder = new NewsFilterQueryBuilder();
             $builder->setColumns($this->filterColumns);
@@ -197,8 +192,7 @@ class NewsList
             'offset' => $offset
         ]);
 
-        if (!isset($this->filterOptions['order']))
-        {
+        if (!isset($this->filterOptions['order'])) {
             $this->filterOptions['order'] = "$t.date DESC";
         }
 
@@ -217,16 +211,13 @@ class NewsList
         $this->filterValues  = null;
         $this->filterColumns = ["$t.pid IN(" . implode(',', array_map('intval', $this->newsArchives)) . ")"];
 
-        if ($this->featured === true)
-        {
+        if ($this->featured === true) {
             $this->filterColumns[] = "$t.featured='1'";
-        } elseif ($this->featured === false)
-        {
+        } elseif ($this->featured === false) {
             $this->filterColumns[] = "$t.featured=''";
         }
 
-        if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN)
-        {
+        if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time                  = \Date::floorToMinute();
             $this->filterColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
@@ -249,8 +240,7 @@ class NewsList
      */
     protected function preventDuplicateContentByPagination()
     {
-        if (!$this->module->Template->pagination || !$this->module->Template->total)
-        {
+        if (!$this->module->Template->pagination || !$this->module->Template->total) {
             return;
         }
 
@@ -260,8 +250,7 @@ class NewsList
         $total   = intval($this->module->Template->total);
         $perPage = $this->module->perPage;
 
-        if ($page > 1)
-        {
+        if ($page > 1) {
             // set all pages except first page robots to <meta name="robots" content="noindex/follow">
             $this->container->get('huh.head.tag.meta_robots')->setContent('noindex,follow');
 
@@ -270,8 +259,7 @@ class NewsList
         }
 
         // next page exists, add <link rel="next" href="next page url">
-        if ($perPage * $page < $total - $perPage)
-        {
+        if ($perPage * $page < $total - $perPage) {
             $this->container->get('huh.head.tag.link_next')->setContent(Url::addQueryString($id . '=' . ($page + 1), Url::removeQueryString([$id])));
         }
     }
@@ -286,12 +274,11 @@ class NewsList
         $this->addCategoryFilter();
         $this->addTagFilter();
         $this->addSortFilter();
+        $this->addRelocateFilter();
 
         // HOOK: add custom news list count filters
-        if (isset($GLOBALS['TL_HOOKS']['addNewsListFetchFilters']) && is_array($GLOBALS['TL_HOOKS']['addNewsListFetchFilters']))
-        {
-            foreach ($GLOBALS['TL_HOOKS']['addNewsListFetchFilters'] as $callback)
-            {
+        if (isset($GLOBALS['TL_HOOKS']['addNewsListFetchFilters']) && is_array($GLOBALS['TL_HOOKS']['addNewsListFetchFilters'])) {
+            foreach ($GLOBALS['TL_HOOKS']['addNewsListFetchFilters'] as $callback) {
                 \System::importStatic($callback[0])->{$callback[1]}($this);
             }
         }
@@ -299,8 +286,7 @@ class NewsList
         /**
          * @var $filter NewsFilterModule
          */
-        if (($filter = \System::getContainer()->get('huh.news.list_filter.module_registry')->get($this->module->newsListFilterModule)) !== null)
-        {
+        if (($filter = \System::getContainer()->get('huh.news.list_filter.module_registry')->get($this->module->newsListFilterModule)) !== null) {
 
             $builder = new NewsFilterQueryBuilder();
             $builder->setColumns($this->filterColumns);
@@ -315,12 +301,20 @@ class NewsList
     }
 
     /**
+     * Filter out relocated news within list mode
+     */
+    private function addRelocateFilter()
+    {
+        $t                     = static::$table;
+        $this->filterColumns[] = "$t.relocate = 'none'";
+    }
+
+    /**
      * Filter out news that were already shipped by previous news list modules
      */
     private function addSkipPreviousNewsFilter()
     {
-        if ($this->module->skipPreviousNews && ($skipIds = static::getSeen()) !== null)
-        {
+        if ($this->module->skipPreviousNews && ($skipIds = static::getSeen()) !== null) {
             $t                     = static::$table;
             $this->filterColumns[] = "$t.id NOT IN(" . implode(',', array_map('intval', $skipIds)) . ")";
         }
@@ -331,17 +325,14 @@ class NewsList
      */
     private function addNewsListFilter()
     {
-        if ($this->module->use_news_lists)
-        {
+        if ($this->module->use_news_lists) {
             $t = static::$table;
 
-            switch ($this->module->newsListMode)
-            {
+            switch ($this->module->newsListMode) {
                 case \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL:
                     $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news');
 
-                    if ($relations === null)
-                    {
+                    if ($relations === null) {
                         return false;
                     }
 
@@ -350,24 +341,20 @@ class NewsList
                     break;
                 case \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_AUTO_ITEM:
                     // Set the item from the auto_item parameter
-                    if (!isset($_GET['news_list']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
-                    {
+                    if (!isset($_GET['news_list']) && \Config::get('useAutoItem') && isset($_GET['auto_item'])) {
                         $alias = \Input::get('auto_item');
 
                         \Input::setGet('news_list', $alias);
                     }
 
-                    if (!\Input::get('news_list'))
-                    {
+                    if (!\Input::get('news_list')) {
                         \Controller::redirect('/');
                     }
 
-                    if (($objNewsList = NewsListModel::findBy(['alias=?', 'published=?'], [\Input::get('news_list'), true])) !== null)
-                    {
+                    if (($objNewsList = NewsListModel::findBy(['alias=?', 'published=?'], [\Input::get('news_list'), true])) !== null) {
                         $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField([$objNewsList->id], 'tl_news_list', 'news');
 
-                        if ($relations === null)
-                        {
+                        if ($relations === null) {
                             return false;
                         }
 
@@ -376,8 +363,7 @@ class NewsList
                     break;
             }
 
-            if (!empty($ids))
-            {
+            if (!empty($ids)) {
                 $this->filterColumns[]        = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
                 $this->filterOptions['order'] = "FIELD($t.pid, " . implode(',', array_map('intval', $this->newsArchives)) . "), FIELD($t.id, " . implode(',', array_map('intval', $ids)) . ")";
             }
@@ -389,36 +375,30 @@ class NewsList
      */
     private function addTagFilter()
     {
-        if ($this->module->addNewsTagFilter)
-        {
+        if ($this->module->addNewsTagFilter) {
             $t = static::$table;
 
-            if (!isset($_GET['news_tag']) && \Config::get('useAutoItem') && isset($_GET['auto_item']))
-            {
+            if (!isset($_GET['news_tag']) && \Config::get('useAutoItem') && isset($_GET['auto_item'])) {
                 $alias = \Input::get('auto_item');
 
                 \Input::setGet('news_tag', $alias);
             }
 
-            if (!\Input::get('news_tag'))
-            {
+            if (!\Input::get('news_tag')) {
                 \Controller::redirect('/');
             }
 
             /** @var $manager NewsTagManager */
             $manager = \System::getContainer()->get('huh.news.news_tags_manager');
 
-            if (($tag = $manager->findByAlias(\Input::get('news_tag'))) === null)
-            {
+            if (($tag = $manager->findByAlias(\Input::get('news_tag'))) === null) {
                 \Controller::redirect('/');
             }
 
-            if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null)
-            {
+            if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null) {
                 $ids                   = $newsTags->fetchEach('news_id');
                 $this->filterColumns[] = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
-            } else
-            {
+            } else {
                 \Controller::redirect('/');
             }
         }
@@ -439,20 +419,16 @@ class NewsList
         $GLOBALS['NEWS_FILTER_STOP_LEVEL'] = intval($this->module->news_filterStopLevel);
 
         // Use the default filter
-        if (is_array($GLOBALS['NEWS_FILTER_DEFAULT']) && !empty($GLOBALS['NEWS_FILTER_DEFAULT']))
-        {
+        if (is_array($GLOBALS['NEWS_FILTER_DEFAULT']) && !empty($GLOBALS['NEWS_FILTER_DEFAULT'])) {
             $arrCategories = \NewsCategories\NewsModel::getCategoriesCache();
 
-            if (!empty($arrCategories))
-            {
+            if (!empty($arrCategories)) {
                 $arrIds = [];
 
                 $filterCategories = $GLOBALS['NEWS_FILTER_DEFAULT'];
 
-                if ($GLOBALS['NEWS_FILTER_STOP_LEVEL'] > 0)
-                {
-                    foreach ($GLOBALS['NEWS_FILTER_DEFAULT'] as $category)
-                    {
+                if ($GLOBALS['NEWS_FILTER_STOP_LEVEL'] > 0) {
+                    foreach ($GLOBALS['NEWS_FILTER_DEFAULT'] as $category) {
                         $filterCategories = array_merge($filterCategories, CategoryHelper::getCategoryIdTree($category, $GLOBALS['NEWS_FILTER_STOP_LEVEL'], true));
                     }
                 }
@@ -460,10 +436,8 @@ class NewsList
                 $filterCategories = array_unique($filterCategories);
 
                 // Get the news IDs for particular categories
-                foreach ($filterCategories as $category)
-                {
-                    if (isset($arrCategories[$category]))
-                    {
+                foreach ($filterCategories as $category) {
+                    if (isset($arrCategories[$category])) {
                         $arrIds = array_merge($arrCategories[$category], $arrIds);
                     }
                 }
@@ -471,16 +445,14 @@ class NewsList
                 $strKey = 'category';
 
                 // Preserve the default category
-                if ($GLOBALS['NEWS_FILTER_PRESERVE'])
-                {
+                if ($GLOBALS['NEWS_FILTER_PRESERVE']) {
                     $strKey = 'category_default';
                 }
                 https://anwaltauskunft.de/magazin/leben/gesundheit/
 
                 $strQuery = "$t.id IN (" . implode(',', (empty($arrIds) ? [0] : array_unique($arrIds))) . ")";
 
-                if ($GLOBALS['NEWS_FILTER_PRIMARY'])
-                {
+                if ($GLOBALS['NEWS_FILTER_PRIMARY']) {
                     $strQuery .= " AND $t.primaryCategory IN (" . implode(',', $filterCategories) . ")";
                 }
 
@@ -489,20 +461,17 @@ class NewsList
         }
 
         // Exclude particular news items
-        if (is_array($GLOBALS['NEWS_FILTER_EXCLUDE']) && !empty($GLOBALS['NEWS_FILTER_EXCLUDE']))
-        {
+        if (is_array($GLOBALS['NEWS_FILTER_EXCLUDE']) && !empty($GLOBALS['NEWS_FILTER_EXCLUDE'])) {
             $this->filterColumns[] = "$t.id NOT IN (" . implode(',', array_map('intval', $GLOBALS['NEWS_FILTER_EXCLUDE'])) . ")";
         }
 
         $strParam = NewsCategories::getParameterName();
 
         // Try to find by category
-        if ($GLOBALS['NEWS_FILTER_CATEGORIES'] && \Input::get($strParam))
-        {
+        if ($GLOBALS['NEWS_FILTER_CATEGORIES'] && \Input::get($strParam)) {
             $objCategory = NewsCategoryModel::findPublishedByIdOrAlias(\Input::get($strParam));
 
-            if ($objCategory === null)
-            {
+            if ($objCategory === null) {
                 return null;
             }
 
@@ -520,16 +489,14 @@ class NewsList
      */
     public static function addSeen($id, $pageId = null)
     {
-        if ($pageId === null)
-        {
+        if ($pageId === null) {
             global $objPage;
             $pageId = $objPage->id;
         }
 
         $pages = \Session::getInstance()->get(static::SESSION_SEEN_NEWS);
 
-        if (!is_array($pages))
-        {
+        if (!is_array($pages)) {
             $pages = [];
         }
 
@@ -548,16 +515,14 @@ class NewsList
      */
     public static function getSeen($pageId = null)
     {
-        if ($pageId === null)
-        {
+        if ($pageId === null) {
             global $objPage;
             $pageId = $objPage->id;
         }
 
         $pages = \Session::getInstance()->get(static::SESSION_SEEN_NEWS);
 
-        if (!is_array($pages) || !isset($pages[$pageId]))
-        {
+        if (!is_array($pages) || !isset($pages[$pageId])) {
             return null;
         }
 
@@ -571,16 +536,14 @@ class NewsList
      */
     public static function resetSeen($pageId = null)
     {
-        if ($pageId === null)
-        {
+        if ($pageId === null) {
             global $objPage;
             $pageId = $objPage->id;
         }
 
         $pages = \Session::getInstance()->get(static::SESSION_SEEN_NEWS);
 
-        if (is_array($pages) && isset($pages[$pageId]))
-        {
+        if (is_array($pages) && isset($pages[$pageId])) {
             unset($pages[$pageId]);
             \Session::getInstance()->set(static::SESSION_SEEN_NEWS, $pages);
         }
@@ -591,10 +554,8 @@ class NewsList
      */
     protected function addSortFilter()
     {
-        if ($this->module->addCustomSort)
-        {
-            if (!empty($this->module->sortClause))
-            {
+        if ($this->module->addCustomSort) {
+            if (!empty($this->module->sortClause)) {
                 $this->filterOptions['order'] = $this->module->sortClause;
             }
         }
@@ -638,8 +599,7 @@ class NewsList
      */
     public function addFilterValues($filterValues)
     {
-        if (!is_array($filterValues))
-        {
+        if (!is_array($filterValues)) {
             $filterValues = [$filterValues];
         }
 

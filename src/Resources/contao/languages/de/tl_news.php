@@ -42,6 +42,8 @@ $lang['playerSRC']               = ['Video/Audio-Datei', 'Hier können Sie die U
 $lang['playerUrl']               = ['Video/Audio-Url', 'Hier können Sie die Url zur Video/Audio-Datei bzw. – wenn Sie verschiedene Codecs verwenden – die Video-/Audio-Dateien (durch Pipe | getrennt) hinzufügen.'];
 $lang['posterSRC']               = ['Vorschaubild', 'Das Bild statt des ersten Frame des Videos vor dem Abspielen anzeigen.'];
 $lang['copyright']               = ['Urheberrechte', 'Geben Sie hier eventuelle Hinweise zu den Urheberrechten ein.'];
+$lang['relocate']                = ['Nachricht umziehen', 'Die Nachricht wird auf einen anderen Inhalt umgeleitet.'];
+$lang['relocateUrl']             = ['Umleitungsziel', 'Geben Sie die Ziel-URL für die Weiterleitung ein.'];
 
 /**
  * Legends
@@ -78,3 +80,7 @@ $lang['reference']['infoBox']['text'] = 'Text';
 $lang['reference']['player']['none']     = 'Keine';
 $lang['reference']['player']['internal'] = 'Datei';
 $lang['reference']['player']['external'] = 'Externe URL';
+
+$lang['reference']['relocate']['none']     = 'Keine';
+$lang['reference']['relocate']['deindex']  = 'Deindexierung (Pagerank geht verloren, Nachricht ist nicht mehr erreichbar)';
+$lang['reference']['relocate']['redirect'] = 'Umzug (Pagerank wird auf Umleitungsziel übertragen, Nachricht bleibt erreichbar)';
