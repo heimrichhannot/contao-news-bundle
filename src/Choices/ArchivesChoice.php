@@ -22,15 +22,15 @@ class ArchivesChoice extends AbstractChoice
         $choices      = [];
         $newsArchives = deserialize($this->filter->getModule()->news_archives, true);
 
-        if (empty($newsArchives))
-        {
+        if (empty($newsArchives)) {
             return $choices;
         }
 
-        foreach ($newsArchives as $newsArchiveId)
-        {
+        foreach ($newsArchives as $newsArchiveId) {
             $choices[NewsArchiveModel::findById($newsArchiveId)->title] = NewsArchiveModel::findById($newsArchiveId)->id;
         }
+
+        natsort($choices);
 
         return $choices;
     }
