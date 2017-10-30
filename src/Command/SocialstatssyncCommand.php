@@ -232,7 +232,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
                 $this->logger->addError($provider . ': ' . $count['message']);
                 if ($count['code'] == AbstractCrawler::ERROR_BREAKING) {
                     $this->output->writeln('<fg=red>Stopping updating stats for current provider.</>');
-                    break;
+                    return;
                 } else {
                     continue;
                 }
