@@ -7,7 +7,7 @@
     "php": ">=5.6.0",
     "contao/core-bundle": "^4.3.1",
     "heimrichhannot/contao-news_categories": "^1.0",
-    "codefog/tags-bundle": "dev-alias-maxItems",
+    "heimrichhannot/tags-bundle": "^1.0",
     "heimrichhannot/contao-tagsinput": "^2.1",
     "google/apiclient": "^2.0",
     "abraham/twitteroauth": "^0.7",
