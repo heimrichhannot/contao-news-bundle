@@ -417,7 +417,7 @@ class NewsArticle extends \ModuleNews
         $this->container->get('huh.head.tag.og_locale')->setContent($this->container->get('request_stack')->getCurrentRequest()->getLocale());
         $this->container->get('huh.head.tag.og_type')->setContent('article');
         $this->container->get('huh.head.tag.og_title')->setContent(\StringUtil::stripInsertTags($this->article->headline));
-        $this->container->get('huh.head.tag.og_url')->setContent(\Environment::get('url') . '/' . $this->template->link);
+        $this->container->get('huh.head.tag.og_url')->setContent('{{news_category_url::' . $this->article->id . '}}');
         $this->container->get('huh.head.tag.og_description')->setContent(str_replace("\n", ' ', strip_tags(\Controller::replaceInsertTags($this->article->teaser))));
 
         if ($this->template->addImage) {
