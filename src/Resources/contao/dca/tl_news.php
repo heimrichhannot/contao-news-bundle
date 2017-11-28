@@ -79,7 +79,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['addContactBox'],
         'inputType' => 'checkbox',
         'exclude'   => true,
-        'sql'       => "varchar(255) NOT NULL default ''",
+        'sql'       => "char(1) NOT NULL default ''",
         'eval'      => ['submitOnChange' => true],
     ],
     'contactBox_members'         => [

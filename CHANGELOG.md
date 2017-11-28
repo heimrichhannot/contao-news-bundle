@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2017-11-28
+
+### Fixed
+* checkbox was to greedy (used a varchar(255) instead of char(1) to save it's value) -> needs database update to affect
+
 ## [1.0.1] - 2017-11-24
 
 ### Fixed
