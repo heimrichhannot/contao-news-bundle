@@ -3,8 +3,8 @@
 /**
  * Extend default palette
  */
-$GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = str_replace('newsfeedp', 'newsfeedp,newslists,newslistp;', $GLOBALS['TL_DCA']['tl_user']['palettes']['extend']);
-$GLOBALS['TL_DCA']['tl_user']['paettes']['custom'] = str_replace('newsfeedp', 'newsfeedp,newslists,newslistp;', $GLOBALS['TL_DCA']['tl_user']['palettes']['custom']);
+$GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = str_replace('newsfeeds', 'newslists,newslistp,newsfeeds', $GLOBALS['TL_DCA']['tl_user']['palettes']['extend']);
+$GLOBALS['TL_DCA']['tl_user']['paettes']['custom'] = str_replace('newsfeeds', 'newslists,newslistp,newsfeeds', $GLOBALS['TL_DCA']['tl_user']['palettes']['custom']);
 
 
 /**

@@ -4,7 +4,7 @@
  * Extend default palette
  */
 $GLOBALS['TL_DCA']['tl_user_group']['palettes']['default'] =
-    str_replace('newsfeedp', 'newsfeedp,newslists,newslistp;', $GLOBALS['TL_DCA']['tl_user_group']['palettes']['default']);
+    str_replace('newsfeeds', 'newslists,newslistp,newsfeeds', $GLOBALS['TL_DCA']['tl_user_group']['palettes']['default']);
 
 
 /**

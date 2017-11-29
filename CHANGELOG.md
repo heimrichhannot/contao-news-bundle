@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2017-11-29
+
+#### Fixed
+- wrong palette replacement in `tl_user_group`
+- wrong palette replacement in `tl_user`
+
 ## [1.0.3] - 2017-11-29
 
 #### Fixed
