@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_user_group']['fields']['newslists'] = [
     'label'      => &$GLOBALS['TL_LANG']['tl_user']['newslists'],
     'exclude'    => true,
     'inputType'  => 'checkbox',
-    'foreignKey' => 'tl_news_list.title',
+    'foreignKey' => 'tl_news_list_archive.title',
     'eval'       => ['multiple' => true],
     'sql'        => "blob NULL",
 ];
