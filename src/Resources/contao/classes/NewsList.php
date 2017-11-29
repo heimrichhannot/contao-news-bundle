@@ -358,6 +358,7 @@ class NewsList
                             return false;
                         }
 
+			$this->module->headline = $objNewsList->title;
                         $ids = $relations->fetchEach('news_list_news');
                     }
                     break;

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2017-11-29
+
+#### Added
+- when in `\HeimrichHannot\NewsBundle\Backend\NewsList::MODE_AUTO_ITEM` mode, set module headline from news list title
+
 ## [1.0.4] - 2017-11-29
 
 #### Fixed
