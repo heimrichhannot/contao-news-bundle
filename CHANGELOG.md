@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2017-11-30
+
+#### Fixed
+- added tl_class clr to infoBox_linkText and fixed typo
+
 ## [1.0.5] - 2017-11-29
 
 #### Added

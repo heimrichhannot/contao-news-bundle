@@ -395,6 +395,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['infoBox_linkText'],
         'inputType' => 'text',
         'exclude'   => true,
+        'eval'      => ['tl_class' => 'clr'],
         'sql'       => "varchar(255) NOT NULL DEFAULT ''",
     ],
     'add_related_news'           => [
