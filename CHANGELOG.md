@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2017-12-06
+
+#### Added
+- tags filter within backend news list 
+
 ## [1.0.7] - 2017-12-06
 
 #### Fixed

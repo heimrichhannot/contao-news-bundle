@@ -63,6 +63,7 @@ $fields = [
     'tags'                       => [
         'label'         => &$GLOBALS['TL_LANG']['tl_news']['tags'],
         'exclude'       => true,
+        'filter'        => true,
         'inputType'     => 'cfgTags',
         'eval'          => [
             'tagsManager' => 'app.news', // Manager, required
@@ -73,6 +74,7 @@ $fields = [
         'relation'      => [
             'relationTable' => 'tl_news_tags',
         ],
+        'foreignKey'    => 'tl_cfg_tag.name', // required for back end filter value to name conversion
         'sql'           => "blob NULL",
     ],
     'addContactBox'              => [
