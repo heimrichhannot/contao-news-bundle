@@ -620,27 +620,27 @@ class NewsArticle extends \ModuleNews
         }
 
         if ($this->article->google_analytic_updated_at > 0) {
-            $this->template->hasRatings = true;
+            $this->template->hasRatings = $this->template->hasRatings ?: $this->article->google_analytic_counter > 0;
             $this->template->viewRating = $this->article->google_analytic_counter;
         }
 
         if ($this->article->disqus_updated_at > 0) {
-            $this->template->hasRatings    = true;
+            $this->template->hasRatings    = $this->template->hasRatings ?: $this->article->disqus_counter > 0;
             $this->template->commentRating = $this->article->disqus_counter;
         }
 
         if ($this->article->facebook_updated_at > 0) {
-            $this->template->hasRatings  = true;
+            $this->template->hasRatings  = $this->template->hasRatings ?: $this->article->facebook_counter > 0;
             $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->facebook_counter;
         }
 
         if ($this->article->google_plus_updated_at > 0) {
-            $this->template->hasRatings  = true;
+            $this->template->hasRatings  = $this->template->hasRatings ?: $this->article->google_plus_counter > 0;
             $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->google_plus_counter;
         }
 
         if ($this->article->twitter_updated_at > 0) {
-            $this->template->hasRatings  = true;
+            $this->template->hasRatings  = $this->template->hasRatings ?: $this->article->twitter_counter > 0;
             $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->twitter_counter;
         }
     }

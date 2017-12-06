@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.7] - 2017-12-06
+
+#### Fixed
+- `hasRatings` template variable check
+
 ## [1.0.6] - 2017-11-30
 
 #### Fixed
