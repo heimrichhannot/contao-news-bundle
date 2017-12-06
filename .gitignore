@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.build/
+.buildpath
+.idea/
+nbproject/
+.project
+.settings/
+
+# composer
+vendor
+composer.phar
