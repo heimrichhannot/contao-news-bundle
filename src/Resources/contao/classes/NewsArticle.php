@@ -122,8 +122,7 @@ class NewsArticle extends \ModuleNews
             return;
         }
 
-        if($this->article->relocate == 'none' || !$this->article->relocate)
-        {
+        if ($this->article->relocate == 'none' || !$this->article->relocate) {
             return;
         }
 
@@ -681,6 +680,10 @@ class NewsArticle extends \ModuleNews
             return;
         }
 
+        if ($members->count() < 1) {
+            return;
+        }
+
         $writers = [];
 
         while ($members->next()) {
@@ -825,3 +828,4 @@ class NewsArticle extends \ModuleNews
         return $new;
     }
 }
+
