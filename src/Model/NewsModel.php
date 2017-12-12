@@ -10,6 +10,10 @@
 
 namespace HeimrichHannot\NewsBundle\Model;
 
+use Contao\Database;
+use HeimrichHannot\NewsBundle\News;
+use \Contao\Model\Collection;
+
 class NewsModel extends \Contao\NewsModel
 {
     /**
@@ -60,16 +64,13 @@ class NewsModel extends \Contao\NewsModel
      * @param int $limit
      * @param int $days
      * @param array $pids
-     * @param array $options
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return NewsModel|Collection|null A collection of models or null if there are no news
+     * @throws \Exception
      */
-    public static function findByFacebookCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
+    public static function findByFacebookCounterUpdateDate($limit = 20, $days = 180, $pids = [])
     {
-        $t                = static::$strTable;
-        $options['order'] = "$t.facebook_updated_at ASC";
-
-        return static::findForSocialStats($limit, $days, $pids, $options);
+        return static::findForSocialStats("facebook_updated_at", $limit, $days, $pids);
     }
 
     /**
@@ -78,16 +79,13 @@ class NewsModel extends \Contao\NewsModel
      * @param int $limit
      * @param int $days
      * @param array $pids
-     * @param array $options
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return NewsModel|Collection|null A collection of models or null if there are no news
+     * @throws \Exception
      */
-    public static function findByTwitterCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
+    public static function findByTwitterCounterUpdateDate($limit = 20, $days = 180, $pids = [])
     {
-        $t                = static::$strTable;
-        $options['order'] = "$t.twitter_updated_at ASC";
-
-        return static::findForSocialStats($limit, $days, $pids, $options);
+        return static::findForSocialStats("twitter_updated_at", $limit, $days, $pids);
     }
 
     /**
@@ -96,16 +94,13 @@ class NewsModel extends \Contao\NewsModel
      * @param int $limit
      * @param int $days
      * @param array $pids
-     * @param array $options
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return NewsModel|Collection|null A collection of models or null if there are no news
+     * @throws \Exception
      */
-    public static function findByGooglePlusCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
+    public static function findByGooglePlusCounterUpdateDate($limit = 20, $days = 180, $pids = [])
     {
-        $t                = static::$strTable;
-        $options['order'] = "$t.google_plus_updated_at ASC";
-
-        return static::findForSocialStats($limit, $days, $pids, $options);
+        return static::findForSocialStats("google_plus_updated_at", $limit, $days, $pids);
     }
 
     /**
@@ -114,69 +109,75 @@ class NewsModel extends \Contao\NewsModel
      * @param int $limit
      * @param int $days
      * @param array $pids
-     * @param array $options
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return NewsModel|Collection|null A collection of models or null if there are no news
+     * @throws \Exception
      */
-    public static function findByDisqusCounterUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
+    public static function findByDisqusCounterUpdateDate($limit = 20, $days = 180, $pids = [])
     {
-        $t                = static::$strTable;
-        $options['order'] = "$t.disqus_updated_at ASC";
-
-        return static::findForSocialStats($limit, $days, $pids, $options);
+        return static::findForSocialStats("disqus_updated_at", $limit, $days, $pids);
     }
 
     /**
-     * Find news items by oldest Google Analytics update da
+     * Find news items by oldest Google Analytics update date
      *
      * @param int $limit
      * @param int $days
      * @param array $pids
-     * @param array $options
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return NewsModel|Collection|null A collection of models or null if there are no news
+     * @throws \Exception
      */
-    public static function findByGoogleAnalyticsUpdateDate($limit = 20, $days = 180, $pids = [], $options = [])
+    public static function findByGoogleAnalyticsUpdateDate($limit = 20, $days = 180, $pids = [])
     {
-        $t                = static::$strTable;
-        $options['order'] = "$t.google_analytic_updated_at ASC";
-
-        return static::findForSocialStats($limit, $days, $pids, $options);
+        return static::findForSocialStats('google_analytic_updated_at', $limit, $days, $pids);
     }
 
     /**
      * Find news items for social stats
      *
+     * @param string $row Table row
      * @param int $limit
      * @param int $days
      * @param array $pids
-     * @param array $options
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return NewsModel|Collection|null A collection of models or null if there are no news
+     * @throws \Exception
      */
-    public static function findForSocialStats($limit = 20, $days = 180, $pids = [], $options = [])
+    public static function findForSocialStats($row, $limit = 20, $days = 180, $pids = [])
     {
-        $t          = static::$strTable;
-        $arrColumns = ["$t.published = 1"];
-        if ($options['order']) {
-            $options['order'] = $options['order'] . ", $t.date DESC";
-        } else {
-            $options['order'] = "$t.date DESC";
+        $allowedRows = [
+            'google_analytic_updated_at',
+            'disqus_updated_at',
+            'google_plus_updated_at',
+            'twitter_updated_at',
+            'facebook_updated_at'
+        ];
+        if (!in_array($row, $allowedRows))
+        {
+            throw new \Exception("Database row not allowed here.");
+        }
+        $period       = time() - (60 * 60 * 24 * $days);
+        $query = "SELECT *, ((`tstamp` > $row) * `tstamp` * ($row > 0)) AS `was_updated` "
+            ."FROM `tl_news` "
+            ."WHERE `published` = 1 "
+            ."AND `date` > ? ";
+        if (!empty($pids))
+        {
+            $query .= "AND `pid` IN (?) ";
+        }
+        $query .= "ORDER BY `was_updated` DESC, $row ASC, `tstamp` DESC "
+            ."LIMIT ? ";
+        $stmt = Database::getInstance()->prepare($query);
+        if (!empty($pids))
+        {
+            $result = $stmt->execute($period, implode(',', array_map('intval', $pids)), $limit);
+        } else
+        {
+            $result = $stmt->execute($period, $limit);
         }
 
-        if ($days > 0) {
-            $period       = time() - (60 * 60 * 24 * $days);
-            $arrColumns[] = "$t.date > $period";
-        }
-        if ($limit > 0) {
-            $options['limit'] = $limit;
-        }
-
-        if (!empty($pids)) {
-            $arrColumns[] = "$t.pid IN(" . implode(',', array_map('intval', $pids)) . ")";
-        }
-
-        return static::findBy($arrColumns, null, $options);
+        return static::createCollectionFromDbResult($result, static::$strTable);
     }
 
     /**

@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2017-12-12
+
+#### Changed
+- rewrote parts of social stats command due better handling of updated and new news entries and better command output
+
+#### Fixed
+- error in social stats command documentation for archive
+
 ## [1.0.9] - 2017-12-06
 
 #### Fixed

@@ -13,7 +13,6 @@ namespace HeimrichHannot\NewsBundle\Command;
 use Contao\CoreBundle\Command\AbstractLockedCommand;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
-use Contao\CoreBundle\Monolog\ContaoContext;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use Contao\System;
 use HeimrichHannot\NewsBundle\Command\Crawler\AbstractCrawler;
@@ -26,8 +25,8 @@ use GuzzleHttp\Client;
 use Model\Collection;
 use Monolog\Logger;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkAwareInterface
 {
@@ -46,19 +45,14 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     private $config;
 
     /**
-     * @var NewsModel|Collection
-     */
-    private $items;
-
-    /**
      * @var Client
      */
     private $httpClient;
 
     /**
-     * @var OutputInterface
+     * @var SymfonyStyle
      */
-    private $output;
+    private $io;
 
     /**
      * {@inheritdoc}
@@ -78,40 +72,42 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     protected function executeLocked(InputInterface $input, OutputInterface $output)
     {
         $this->framework->initialize();
-        $this->output  = $output;
         $route         = System::getContainer()->get('router')->getContext();
         $this->baseUrl = $route->getScheme() . $route->getHost();
         $this->logger  = System::getContainer()->get('monolog.logger.contao');
         $this->config  = System::getContainer()->getParameter('social_stats');
-        if ($input->getOption('no-chunksize') == 1) {
+        $io            = new SymfonyStyle($input, $output);
+        $this->io      = $io;
+        if ($input->getOption('no-chunksize') == 1)
+        {
             $this->config['chunksize'] = 0;
         }
-        if ($input->getOption('no-days') == 1) {
+        if ($input->getOption('no-days') == 1)
+        {
             $this->config['days'] = 0;
         }
-        $message = 'START updating social stats...';
-        $output->writeln($message);
-        $this->logger->info($message, ['contao' => new ContaoContext(__CLASS__ . '::' . __FUNCTION__, TL_CRON)]);
 
-        $this->items      = NewsModel::findMultipleByIds([2114, 1427, 2026]);
+        $io->title('Updating social stats...');
+
         $this->httpClient = new Client([
             'base_url'                  => $route->getScheme() . $route->getHost(),
             'social_stats'              => System::getContainer()->getParameter('social_stats'),
             'ssl.certificate_authority' => false
         ]);
-
-        try {
-            $this->updateGoogleAnalyticsCount();
+        try
+        {
+//            $this->updateGoogleAnalyticsCount();
             $this->updateFacebookCount();
             $this->updateTwitterCount();
             $this->updateGooglePlusCount();
             $this->updateDisqusCount();
-        } catch (\Exception $e) {
+        } catch (\Exception $e)
+        {
             $this->logger->critical($e->getMessage());
-            $this->output->writeln('<fg=red>Error: ' . $e->getMessage() . '</>');
+            $io->error($e->getMessage());
             return 1;
         }
-
+        $io->success('Finished updating social stats.');
         return 0;
     }
 
@@ -120,15 +116,16 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateGoogleAnalyticsCount()
     {
-        if (!array_key_exists('google_analytics', $this->config)) {
-            $message = "No Google Analytics config provided. Skipping...";
-            $this->output->writeln('<bg=red>' . $message . '</>');
-            $this->logger->addNotice($message);
+        if (!array_key_exists('google_analytics', $this->config))
+        {
+            $this->io->note("No Google Analytics config provided. Skipping...");
             return;
         }
-        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
-        $items = NewsModel::findByGoogleAnalyticsUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
-        $this->output->writeln("<fg=green;options=bold>Retriving Google Analytics counts</>");
+        $items = NewsModel::findByGoogleAnalyticsUpdateDate(
+            $this->config['chunksize'],
+            $this->config['days'],
+            $this->config['archives']
+        );
         $this->updateStats(
             new GoogleAnalyticsCrawler($this->httpClient, null, '', $this->config['google_analytics']),
             $items,
@@ -141,14 +138,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateFacebookCount()
     {
-        if (!array_key_exists('facebook', $this->config)) {
-            $this->output->writeln('<bg=red>No Facebook config provided. Skipping...</>');
-            $this->logger->addNotice('No Facebook config provided. Skipping...');
+        if (!array_key_exists('facebook', $this->config))
+        {
+            $this->io->note("No Facebook config provided. Skipping...");
             return;
         }
-        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByFacebookCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
-        $this->output->writeln("<fg=green;options=bold>Retriving Facebook counts</>");
         $this->updateStats(
             new FacebookCrawler($this->httpClient),
             $items,
@@ -161,14 +156,16 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateTwitterCount()
     {
-        if (!$this->config['twitter']) {
-            $this->output->writeln('<bg=red>No Twitter config provided. Skipping...</>');
-            $this->logger->addNotice('No Twitter config provided. Skipping...');
+        if (!$this->config['twitter'])
+        {
+            $this->io->note("No Twitter config provided. Skipping...");
             return;
         }
-        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
-        $items = NewsModel::findByTwitterCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
-        $this->output->writeln("<fg=green;options=bold>Retriving Twitter counts</>");
+        $items = NewsModel::findByTwitterCounterUpdateDate(
+            $this->config['chunksize'],
+            $this->config['days'],
+            $this->config['archives']
+        );
         $this->updateStats(
             new TwitterCrawler($this->httpClient, null, $this->baseUrl, $this->config['twitter']),
             $items,
@@ -181,14 +178,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateGooglePlusCount()
     {
-        if (!array_key_exists('google_plus', $this->config)) {
-            $this->output->writeln('<bg=red>No Google Plus config provided. Skipping...</>');
-            $this->logger->addNotice('No Google Plus config provided. Skipping...');
+        if (!array_key_exists('google_plus', $this->config))
+        {
+            $this->io->note("No Google Plus config provided. Skipping...");
             return;
         }
-        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByGooglePlusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
-        $this->output->writeln("<fg=green;options=bold>Retriving Google Plus counts</>");
         $this->updateStats(
             new GooglePlusCrawler($this->httpClient),
             $items,
@@ -201,14 +196,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateDisqusCount()
     {
-        if (!$this->config['disqus']) {
-            $this->output->writeln('<bg=red>No Disqus config provided. Skipping...</>');
-            $this->logger->addNotice('No Disqus config provided. Skipping...');
+        if (!$this->config['disqus'])
+        {
+            $this->io->note("No Disqus config provided. Skipping...");
             return;
         }
-        $this->output->writeln("<fg=green;options=bold>Chunk Size: " . $this->config['chunksize'] . "</>");
         $items = NewsModel::findByDisqusCounterUpdateDate($this->config['chunksize'], $this->config['days'], $this->config['archives']);
-        $this->output->writeln("<fg=green;options=bold>Retriving Disqus counts</>");
         $this->updateStats(
             new DisqusCrawler($this->httpClient, null, $this->baseUrl, $this->config['disqus']),
             $items,
@@ -222,24 +215,28 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateStats($crawler, $items, $provider)
     {
-        foreach ($items as $item) {
-            $this->output->writeln('Updating news article ' . $item->id . ' (' . $item->headline . ')');
+        $this->io->section("Retriving $provider counts");
+        foreach ($items as $item)
+        {
+            $this->io->text('Updating news article ' . $item->id . ' (' . $item->headline . ')');
             $crawler->setItem($item);
             $crawler->setBaseUrl($this->baseUrl);
             $count = $crawler->getCount();
-            if (is_array($count)) {
-                $this->output->writeln('<bg=red>Error: ' . $count['message'] . '</>');
-                $this->logger->addError($provider . ': ' . $count['message']);
-                if ($count['code'] == AbstractCrawler::ERROR_BREAKING) {
-                    $this->output->writeln('<fg=red>Stopping updating stats for current provider.</>');
+            if (is_array($count))
+            {
+                $this->io->note('Error: ' . $count['message']);
+                $this->logger->addNotice($provider . ': ' . $count['message']);
+                if ($count['code'] == AbstractCrawler::ERROR_BREAKING)
+                {
+                    $this->io->note("Stopping updating stats for current provider.");
                     return;
-                } else {
+                } else
+                {
                     continue;
                 }
             }
             $crawler->updateItem();
-            $this->output->writeln('Found ' . $count . ' shares for ' . $provider . '.');
-            $this->logger->addInfo('Found ' . $count . ' shares for ' . $provider . '.');
+            $this->io->text('Found ' . $count . ' shares for ' . $provider . '.');
         }
     }
 }
