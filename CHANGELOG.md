@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2017-12-13
+
+#### Changed
+- drop old bootstrapper datetimepicker connection, made compatible with new flatpickr 
+
 ## [1.1.0] - 2017-12-12
 
 #### Changed
