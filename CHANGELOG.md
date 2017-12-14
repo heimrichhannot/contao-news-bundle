@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2017-12-14
+
+#### Added
+- socialstats: only-current parameter to update only current news
+
+#### Changed
+- socialstats: better url handling for google analytics crawler
+- socialstats: optimized command code
+- socialstats: removed some debug code
+
+#### Fixed
+- socialstats: google analytics not crawled
+- socialstats: nolimit param not working
+
 ## [1.1.1] - 2017-12-13
 
 #### Changed

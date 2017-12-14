@@ -35,6 +35,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
      * @param  NewsModel $item
      * @param string $baseUrl
      * @param $config
+     * @throws \Google_Exception
      */
     public function __construct($client, $item = null, $baseUrl = '', $config)
     {
@@ -66,9 +67,9 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
         if (empty($urls = $this->getUrls())) {
             return $count;
         }
-//        $url = '/magazin/leben/freizeit-alltag/2115/tierquaelerei-wie-zeugen-helfen-koennen/';
-        foreach ($urls as $url) {
-
+        foreach ($urls as $url)
+        {
+            $url = str_replace($this->getBaseUrl(), '', $url);
             $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
             $body->setReportRequests([$this->prepareRequest($url)]);
 
@@ -119,29 +120,6 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
         $request->setDimensions($dimension);
         $request->setDimensionFilterClauses($dimensionFilterClause);
         return $request;
-
-
-//        $startdate  = '2005-01-01'; // Startdate of ga profile
-//        $maxResults = 10000;
-//        $result     = $this->service->data_ga->get(
-//            'ga:' . $this->gaProfileId,
-//            $startdate,
-//            date("Y-m-d"),
-//            'ga:pageviews',
-//            [
-//                'filters'     => 'ga:pagePath=~/magazin/(.*)/(.*)/([0-9]*)/(.*)/$',
-//                'dimensions'  => 'ga:pagePath,ga:hostname',
-//                'metrics'     => 'ga:pageviews',
-//                'max-results' => $maxResults,
-//                'sort'        => '-ga:pageviews',
-//            ]
-//        );
-//
-//        foreach ($result['rows'] as $row)
-//        {
-//            $url                 = 'https://' . $row[1] . $row[0];
-//            $this->results[$url] = $row[2];
-//        }
     }
 
     /**
@@ -152,14 +130,6 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
         $this->item->google_analytic_counter    = $this->count;
         $this->item->google_analytic_updated_at = time();
         $this->item->save();
-    }
-
-    /**
-     * @param string $baseUrl
-     */
-    public function setBaseUrl(string $baseUrl)
-    {
-        parent::setBaseUrl('');
     }
 
 

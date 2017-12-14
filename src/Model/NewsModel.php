@@ -157,7 +157,18 @@ class NewsModel extends \Contao\NewsModel
         {
             throw new \Exception("Database row not allowed here.");
         }
-        $period       = time() - (60 * 60 * 24 * $days);
+        if ($days > 0)
+        {
+            $period = time() - (60 * 60 * 24 * $days);
+        } else
+        {
+            $period = 0;
+        }
+
+        if (0 === $limit)
+        {
+            $limit = 10000;
+        }
         $query = "SELECT *, ((`tstamp` > $row) * `tstamp` * ($row > 0)) AS `was_updated` "
             ."FROM `tl_news` "
             ."WHERE `published` = 1 "

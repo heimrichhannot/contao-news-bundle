@@ -54,6 +54,7 @@ abstract class AbstractCrawler implements CrawlerInterface
         $this->client  = $client;
         $this->item    = $item;
         $this->baseUrl = $baseUrl;
+        $this->count   = 0;
     }
 
     /**
