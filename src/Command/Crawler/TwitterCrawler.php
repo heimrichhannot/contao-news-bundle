@@ -66,5 +66,3 @@ class TwitterCrawler extends AbstractCrawler
         $this->item->save();
     }
 }
-
-?>

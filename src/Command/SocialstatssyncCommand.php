@@ -58,6 +58,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private $items = null;
 
+    private $debug = null;
+
     /**
      * {@inheritdoc}
      */
@@ -68,7 +70,9 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             ->setDescription('Updates the database with social stats.')
             ->addOption('no-chunksize', null, null, "Set to 1 to ignore the limit set in options (means all results). Default 0.")
             ->addOption('no-days', null, null, "Set to 1 to ignore the days settings (means there is no limit due age of the news).")
-            ->addOption('only-current', null, null, "Update latest articles.");
+            ->addOption('only-current', null, null, "Update latest articles.")
+            ->addOption('debug-mode', null, null, "Add debug informations to console output.")
+            ;
 
     }
 
@@ -84,35 +88,16 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $this->config  = System::getContainer()->getParameter('social_stats');
         $io            = new SymfonyStyle($input, $output);
         $this->io      = $io;
-        if ($input->getOption('no-chunksize') == 1)
-        {
-            $this->config['chunksize'] = 0;
-        }
-        if ($input->getOption('no-days') == 1)
-        {
-            $this->config['days'] = 0;
-        }
 
         $io->title('Updating social stats...');
 
         $this->httpClient = new Client([
-            'base_url'                  => $route->getScheme() . $route->getHost(),
+            'base_url'                  => $this->baseUrl,
             'social_stats'              => System::getContainer()->getParameter('social_stats'),
             'ssl.certificate_authority' => false
         ]);
 
-        if ($input->getOption('only-current') == 1)
-        {
-            /**
-             * @var NewsModel $model
-             */
-            $model = $this->framework->getAdapter(NewsModel::class);
-            if ($model)
-            {
-                $this->items = $model->findPublishedFromToByPids(0, time(), $this->config['archives'], $this->config['chunksize']);
-            }
-
-        }
+        $this->applyOptions($input);
 
         try
         {
@@ -132,6 +117,43 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     }
 
     /**
+     * Check and apply command options
+     *
+     * @param InputInterface $input
+     */
+    private function applyOptions ($input)
+    {
+        if ($input->getOption('no-chunksize') == 1)
+        {
+            $this->config['chunksize'] = 0;
+            $this->io->note('Ignoring chunksize.');
+        }
+        if ($input->getOption('no-days') == 1)
+        {
+            $this->config['days'] = 0;
+            $this->io->note('Ignoring days config.');
+        }
+        if ($input->getOption('debug-mode'))
+        {
+            $this->debug = $this->io;
+            $this->io->note('Activated debug mode');
+            $this->io->text('Base-Url: '.$this->baseUrl);
+        }
+        if ($input->getOption('only-current') == 1)
+        {
+            /**
+             * @var NewsModel $model
+             */
+            $model = $this->framework->getAdapter(NewsModel::class);
+            if ($model)
+            {
+                $this->items = $model->findPublishedFromToByPids(0, time(), $this->config['archives'], $this->config['chunksize']);
+            }
+            $this->io->note('Retriving stats for newest items.');
+        }
+    }
+
+    /**
      *
      */
     private function updateGoogleAnalyticsCount()
@@ -142,7 +164,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             'method' => 'findByGoogleAnalyticsUpdateDate'
         ];
         $this->updateStats(
-            new GoogleAnalyticsCrawler($this->httpClient, null, '', $this->config['google_analytics']),
+            new GoogleAnalyticsCrawler(
+                $this->httpClient,
+                null,
+                '',
+                $this->config['google_analytics']
+            ),
             $crawlerConfig
         );
     }
@@ -206,7 +233,12 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             'method' => 'findByDisqusCounterUpdateDate'
         ];
         $this->updateStats(
-            new DisqusCrawler($this->httpClient, null, $this->baseUrl, $this->config['disqus']),
+            new DisqusCrawler(
+                $this->httpClient,
+                null,
+                $this->baseUrl,
+                $this->config['disqus'],
+                $this->getOpti),
             $crawlerConfig
         );
     }
@@ -242,6 +274,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->io->text('Updating news article ' . $item->id . ' (' . $item->headline . ')');
             $crawler->setItem($item);
             $crawler->setBaseUrl($this->baseUrl);
+            $crawler->setIo($this->debug);
             $count = $crawler->getCount();
             if (is_array($count))
             {

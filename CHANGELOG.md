@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2017-12-15
+
+#### Added
+- socialstats: debug-option to command
+- socialstats: console print informations about set options
+
+#### Changed
+- marked CrawlerInterface deprecated
+
 ## [1.2.0] - 2017-12-14
 
 #### Added

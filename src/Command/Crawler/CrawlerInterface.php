@@ -7,6 +7,8 @@ namespace  HeimrichHannot\NewsBundle\Command\Crawler;
  * User: kwagner
  * Date: 26.07.17
  * Time: 10:16
+ *
+ * @deprecated Replaced by abstract crawler
  */
 interface CrawlerInterface
 {

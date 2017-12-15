@@ -63,12 +63,12 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
      */
     public function getCount()
     {
-        $count = 0;
         if (empty($urls = $this->getUrls())) {
-            return $count;
+            return $this->count;
         }
         foreach ($urls as $url)
         {
+            $count = 0;
             $url = str_replace($this->getBaseUrl(), '', $url);
             $body = new Google_Service_AnalyticsReporting_GetReportsRequest();
             $body->setReportRequests([$this->prepareRequest($url)]);
@@ -89,8 +89,12 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
                 $values  = $metrics[0]->getValues();
                 $count   += $values[0];
             }
+            $this->count += $count;
+            if ($this->io)
+            {
+                $this->io->text($url.': '.$count);
+            }
         }
-        $this->count = $count;
         return $count;
     }
 

@@ -10,6 +10,7 @@ namespace HeimrichHannot\NewsBundle\Command\Crawler;
 
 use Contao\NewsModel;
 use GuzzleHttp\Client;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class AbstractCrawler implements CrawlerInterface
 {
@@ -44,17 +45,24 @@ abstract class AbstractCrawler implements CrawlerInterface
     ];
 
     /**
+     * @var null|SymfonyStyle
+     */
+    protected $io = null;
+
+    /**
      * AbstractCrawler constructor.
      * @param Client $client
      * @param NewsModel $item
      * @param string $baseUrl
+     * @param null|SymfonyStyle $io
      */
-    public function __construct($client, $item = null, $baseUrl = '')
+    public function __construct($client, $item = null, $baseUrl = '', $io = null)
     {
         $this->client  = $client;
         $this->item    = $item;
         $this->baseUrl = $baseUrl;
         $this->count   = 0;
+        $this->io = $io;
     }
 
     /**
@@ -75,8 +83,19 @@ abstract class AbstractCrawler implements CrawlerInterface
                 );
             }
         }
+        if ($this->io)
+        {
+            $this->io->text($urls);
+        }
         return $urls;
     }
+
+    /**
+     * Return a count for the current item at crawler provider or an error.
+     *
+     * @return int|array
+     */
+    abstract function getCount();
 
     /**
      * Update the current item
@@ -137,7 +156,21 @@ abstract class AbstractCrawler implements CrawlerInterface
         return $this->error;
     }
 
+    /**
+     * @return null|SymfonyStyle
+     */
+    public function getIo(): SymfonyStyle
+    {
+        return $this->io;
+    }
 
+    /**
+     * @param null|SymfonyStyle $io
+     */
+    public function setIo($io)
+    {
+        $this->io = $io;
+    }
 
 
 }
