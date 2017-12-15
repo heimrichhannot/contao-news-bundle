@@ -237,8 +237,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
                 $this->httpClient,
                 null,
                 $this->baseUrl,
-                $this->config['disqus'],
-                $this->getOpti),
+                $this->config['disqus']),
             $crawlerConfig
         );
     }

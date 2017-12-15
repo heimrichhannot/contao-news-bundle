@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2017-12-15
+
+#### Fixed
+- socialstats: no debug output for disqus
+- socialstats: umlauts etc. mot handled in urls
+- socialstats: wrong method call
+
 ## [1.3.0] - 2017-12-15
 
 #### Added

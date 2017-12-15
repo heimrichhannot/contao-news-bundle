@@ -35,6 +35,10 @@ class DisqusCrawler extends AbstractCrawler
      */
     public function getCount()
     {
+        if ($this->io)
+        {
+            $this->io->text('Forum: '.$this->forum.' | Thread: '.$this->identifier);
+        }
         $count = 0;
         try {
             $response = $this->client->request(
