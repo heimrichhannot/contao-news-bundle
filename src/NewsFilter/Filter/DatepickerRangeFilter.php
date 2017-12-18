@@ -8,6 +8,7 @@
 
 namespace HeimrichHannot\NewsBundle\NewsFilter\Filter;
 
+use HeimrichHannot\Haste\DateUtil;
 use \Symfony\Component\Form\Extension\Core\Type\TextType;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterInterface;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
@@ -20,7 +21,7 @@ class DatepickerRangeFilter implements NewsFilterInterface
      * Build the filter query
      *
      * @param NewsFilterQueryBuilder $builder The query builder
-     * @param boolean                $count   Distinguish between count or fetch query
+     * @param boolean $count Distinguish between count or fetch query
      */
     public function buildQuery(NewsFilterQueryBuilder $builder, array $data = [], $count = false)
     {
@@ -42,7 +43,7 @@ class DatepickerRangeFilter implements NewsFilterInterface
      * @see FormTypeExtensionInterface::buildForm()
      *
      * @param FormBuilderInterface $builder The form builder
-     * @param NewsFilterModule     $filter  The current filter module
+     * @param NewsFilterModule $filter The current filter module
      */
     public function buildForm(FormBuilderInterface $builder, NewsFilterModule $filter)
     {
@@ -50,14 +51,20 @@ class DatepickerRangeFilter implements NewsFilterInterface
             'required' => false,
             'label'    => false,
             'attr'     => [
-                'placeholder' => 'news.form.filter.placeholder.datepicker.start',
+                'placeholder'             => 'news.form.filter.placeholder.datepicker.start',
+                'data-date-format'        => \Config::get('dateFormat'),
+                'data-moment-date-format' => DateUtil::formatPhpDateToJsDate(\Config::get('dateFormat')),
+                'data-linked-end'         => '#' . $builder->getFormConfig()->getName() . '_' . static::getName()
             ],
         ]);
         $builder->add(static::getName(), TextType::class, [
             'required' => false,
             'label'    => false,
             'attr'     => [
-                'placeholder' => 'news.form.filter.placeholder.datepicker.end',
+                'placeholder'             => 'news.form.filter.placeholder.datepicker.end',
+                'data-date-format'        => \Config::get('dateFormat'),
+                'data-moment-date-format' => DateUtil::formatPhpDateToJsDate(\Config::get('dateFormat')),
+                'data-linked-start'       => '#' . $builder->getFormConfig()->getName() . '_' . DatepickerFilter::getName()
             ],
         ]);
     }

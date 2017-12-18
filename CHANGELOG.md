@@ -6,6 +6,49 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - using "heimrichhannot/contao-categories-bundle"
 
+## [1.3.1] - 2017-12-15
+
+#### Fixed
+- socialstats: no debug output for disqus
+- socialstats: umlauts etc. mot handled in urls
+- socialstats: wrong method call
+
+## [1.3.0] - 2017-12-15
+
+#### Added
+- socialstats: debug-option to command
+- socialstats: console print informations about set options
+
+#### Changed
+- marked CrawlerInterface deprecated
+
+## [1.2.0] - 2017-12-14
+
+#### Added
+- socialstats: only-current parameter to update only current news
+
+#### Changed
+- socialstats: better url handling for google analytics crawler
+- socialstats: optimized command code
+- socialstats: removed some debug code
+
+#### Fixed
+- socialstats: google analytics not crawled
+- socialstats: nolimit param not working
+
+## [1.1.1] - 2017-12-13
+
+#### Changed
+- drop old bootstrapper datetimepicker connection, made compatible with new flatpickr 
+
+## [1.1.0] - 2017-12-12
+
+#### Changed
+- rewrote parts of social stats command due better handling of updated and new news entries and better command output
+
+#### Fixed
+- error in social stats command documentation for archive
+
 ## [1.0.9] - 2017-12-06
 
 #### Fixed
