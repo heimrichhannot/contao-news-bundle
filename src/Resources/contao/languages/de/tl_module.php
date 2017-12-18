@@ -23,6 +23,8 @@ $lang['sortClause']                 = ['ORDER-Bedingung überschreiben', 'Geben 
 $lang['useTeaserImage']             = ['Teaserbild verwenden', 'Sofern vorhanden, verwende das Teaserbild anstatt des Beitragsbildes.'];
 $lang['posterSRC']                  = ['Vorschaubild', 'Das Bild statt des ersten Frame des Videos vor dem Abspielen anzeigen.'];
 
+$lang['news_filterCategories'] = ['Nach Kategorien filtern', 'Filtert die Nachrichten-Liste nach Kategorien.'];
+
 /**
  * Legends
  */

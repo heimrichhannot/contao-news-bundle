@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2017-12-18
+
+#### Changed
+- using "heimrichhannot/contao-categories-bundle"
+
 ## [1.0.9] - 2017-12-06
 
 #### Fixed

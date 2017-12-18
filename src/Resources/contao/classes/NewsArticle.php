@@ -111,6 +111,31 @@ class NewsArticle extends \ModuleNews
         $this->addNavigation();
         $this->replaceTokens();
         $this->relocate();
+        $this->redirectToExternalSource();
+    }
+
+    /**
+     * Add redirect support for news with external source
+     */
+    protected function redirectToExternalSource()
+    {
+        if (!$this->module instanceof \ModuleNewsReader) {
+            return;
+        }
+
+        if ($this->article->source !== 'external' || !$this->article->url || !\Contao\Validator::isUrl($this->article->url)) {
+            return;
+        }
+
+        $url = str_replace('{{news_url::', '{{news_category_url::', $this->article->relocateUrl);
+        $url = \Controller::replaceInsertTags($url, false);
+
+        if($url === $this->article->url)
+        {
+            return;
+        }
+
+        \Controller::redirect($this->article->url, 301);
     }
 
     /**
@@ -135,7 +160,7 @@ class NewsArticle extends \ModuleNews
 
         switch ($this->article->relocate) {
             case 'deindex':
-                \Controller::redirect($url);
+                \Controller::redirect($url, 301);
                 break;
             case 'redirect':
                 // news article is still available, but google index will transfer page rank to new url

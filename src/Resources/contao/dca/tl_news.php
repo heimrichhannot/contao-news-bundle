@@ -23,12 +23,8 @@ $dc['palettes']['__selector__'][] = 'relocate';
 /**
  * Palettes
  */
-$dc['palettes']['default'] = str_replace('author;', 'author;{writers_legend:hide},writers;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace(
-    '{date_legend}',
-    '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}',
-    $dc['palettes']['default']
-);
+$dc['palettes']['default'] = str_replace('author;', 'author,categories;{writers_legend:hide},writers;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('{date_legend}', '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
@@ -477,14 +473,14 @@ $fields = [
         'options'   => ['none', 'internal', 'external'],
         'reference' => &$GLOBALS['TL_LANG']['tl_news']['reference']['player'],
         'eval'      => ['chosen' => true, 'submitOnChange' => true],
-        'sql'       => "varchar(32) NOT NULL default ''"
+        'sql'       => "varchar(32) NOT NULL default ''",
     ],
     'playerSRC'                  => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['playerSRC'],
         'exclude'   => true,
         'inputType' => 'fileTree',
         'eval'      => ['multiple' => true, 'fieldType' => 'checkbox', 'files' => true, 'mandatory' => true],
-        'sql'       => "blob NULL"
+        'sql'       => "blob NULL",
     ],
     'playerUrl'                  => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['playerUrl'],
@@ -492,14 +488,14 @@ $fields = [
         'search'    => true,
         'inputType' => 'text',
         'eval'      => ['mandatory' => false, 'decodeEntities' => true, 'maxlength' => 255],
-        'sql'       => "varchar(255) NOT NULL default ''"
+        'sql'       => "varchar(255) NOT NULL default ''",
     ],
     'posterSRC'                  => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['posterSRC'],
         'exclude'   => true,
         'inputType' => 'fileTree',
         'eval'      => ['filesOnly' => true, 'fieldType' => 'radio'],
-        'sql'       => "binary(16) NULL"
+        'sql'       => "binary(16) NULL",
     ],
     'copyright'                  => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['copyright'],
@@ -507,7 +503,7 @@ $fields = [
         'search'    => true,
         'inputType' => 'text',
         'eval'      => ['maxlength' => 255, 'tl_class' => 'long'],
-        'sql'       => "varchar(255) NOT NULL default ''"
+        'sql'       => "varchar(255) NOT NULL default ''",
     ],
     'relocate'                   => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['relocate'],
@@ -524,8 +520,14 @@ $fields = [
         'search'    => true,
         'inputType' => 'text',
         'eval'      => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 255, 'dcaPicker' => true, 'tl_class' => 'full wizard'],
-        'sql'       => "varchar(255) NOT NULL default ''"
-    ]
+        'sql'       => "varchar(255) NOT NULL default ''",
+    ],
 ];
 
 $dc['fields'] = array_merge($dc['fields'], $fields);
+
+// this call automatically adds the field "<categoriesFieldname>_primary" which is a simple integer field that contains the reference to the category marked as primary
+\HeimrichHannot\CategoriesBundle\Backend\Category::addMultipleCategoriesFieldToDca('tl_news', 'categories', [
+    'addPrimaryCategory'  => false,
+    'parentsUnselectable' => true // default false
+]);

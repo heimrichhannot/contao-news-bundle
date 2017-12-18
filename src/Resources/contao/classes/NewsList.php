@@ -13,17 +13,15 @@ namespace HeimrichHannot\NewsBundle;
 
 use Contao\Module;
 use Haste\Util\Url;
+use HeimrichHannot\CategoriesBundle\Backend\Category;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
-use HeimrichHannot\NewsBundle\Module\ModuleNewsListFilter;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
 use HeimrichHannot\NewsBundle\QueryBuilder\NewsFilterQueryBuilder;
-use NewsCategories\CategoryHelper;
-use NewsCategories\NewsCategories;
-use NewsCategories\NewsCategoryModel;
+use HeimrichHannot\Request\Request;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class NewsList
@@ -90,9 +88,9 @@ class NewsList
     /**
      * NewsList constructor.
      *
-     * @param array $newsArchives
+     * @param array     $newsArchives
      * @param bool|null $featured
-     * @param \Module $module
+     * @param \Module   $module
      */
     public function __construct(array $newsArchives, $featured, Module $module)
     {
@@ -113,11 +111,13 @@ class NewsList
 
         $total                         = NewsModel::countBy($this->getFilterColumns(), $this->getFilterValues(), $this->getFilterOptions());
         $this->module->Template->total = $total; // store total news count
+
         return $total;
     }
 
     /**
      * Init the count columns, values and options
+     *
      * @param array $options
      */
     public function initCount(array $options = [])
@@ -178,7 +178,7 @@ class NewsList
     /**
      * Fetch news items
      *
-     * @param integer $limit Current limit from pagination
+     * @param integer $limit  Current limit from pagination
      * @param integer $offset Current offset from pagination
      *
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null Return a collection it news items of false for the default fetch behavior
@@ -189,7 +189,7 @@ class NewsList
 
         $this->initFetch([
             'limit'  => $limit,
-            'offset' => $offset
+            'offset' => $offset,
         ]);
 
         if (!isset($this->filterOptions['order'])) {
@@ -201,6 +201,7 @@ class NewsList
 
     /**
      * Init the fetch columns, values and options
+     *
      * @param array $options
      */
     public function initFetch(array $options = [])
@@ -358,8 +359,8 @@ class NewsList
                             return false;
                         }
 
-			$this->module->headline = $objNewsList->title;
-                        $ids = $relations->fetchEach('news_list_news');
+                        $this->module->headline = $objNewsList->title;
+                        $ids                    = $relations->fetchEach('news_list_news');
                     }
                     break;
             }
@@ -407,77 +408,24 @@ class NewsList
 
     /**
      * Filter by news categories
+     *
      * @return null
      */
     private function addCategoryFilter()
     {
         $t = static::$table;
 
-        $GLOBALS['NEWS_FILTER_CATEGORIES'] = $this->module->news_filterCategories ? true : false;
-        $GLOBALS['NEWS_FILTER_DEFAULT']    = deserialize($this->module->news_filterDefault, true);
-        $GLOBALS['NEWS_FILTER_PRESERVE']   = $this->module->news_filterPreserve;
-        $GLOBALS['NEWS_FILTER_PRIMARY']    = $this->module->news_filterPrimaryCategory;
-        $GLOBALS['NEWS_FILTER_STOP_LEVEL'] = intval($this->module->news_filterStopLevel);
+        $strParam = Category::getUrlParameterName();
 
-        // Use the default filter
-        if (is_array($GLOBALS['NEWS_FILTER_DEFAULT']) && !empty($GLOBALS['NEWS_FILTER_DEFAULT'])) {
-            $arrCategories = \NewsCategories\NewsModel::getCategoriesCache();
+        // Try to find by category and parent table
+        if ($this->module->news_filterCategories && Request::getGet($strParam)) {
+            $arrEntityIds = \System::getContainer()->get('huh.categories.manager')->getEntityIdsByCategoryAndParentTable(Request::getGet($strParam), NewsModel::getTable());
 
-            if (!empty($arrCategories)) {
-                $arrIds = [];
-
-                $filterCategories = $GLOBALS['NEWS_FILTER_DEFAULT'];
-
-                if ($GLOBALS['NEWS_FILTER_STOP_LEVEL'] > 0) {
-                    foreach ($GLOBALS['NEWS_FILTER_DEFAULT'] as $category) {
-                        $filterCategories = array_merge($filterCategories, CategoryHelper::getCategoryIdTree($category, $GLOBALS['NEWS_FILTER_STOP_LEVEL'], true));
-                    }
-                }
-
-                $filterCategories = array_unique($filterCategories);
-
-                // Get the news IDs for particular categories
-                foreach ($filterCategories as $category) {
-                    if (isset($arrCategories[$category])) {
-                        $arrIds = array_merge($arrCategories[$category], $arrIds);
-                    }
-                }
-
-                $strKey = 'category';
-
-                // Preserve the default category
-                if ($GLOBALS['NEWS_FILTER_PRESERVE']) {
-                    $strKey = 'category_default';
-                }
-                https://anwaltauskunft.de/magazin/leben/gesundheit/
-
-                $strQuery = "$t.id IN (" . implode(',', (empty($arrIds) ? [0] : array_unique($arrIds))) . ")";
-
-                if ($GLOBALS['NEWS_FILTER_PRIMARY']) {
-                    $strQuery .= " AND $t.primaryCategory IN (" . implode(',', $filterCategories) . ")";
-                }
-
-                $this->filterColumns[$strKey] = $strQuery;
-            }
-        }
-
-        // Exclude particular news items
-        if (is_array($GLOBALS['NEWS_FILTER_EXCLUDE']) && !empty($GLOBALS['NEWS_FILTER_EXCLUDE'])) {
-            $this->filterColumns[] = "$t.id NOT IN (" . implode(',', array_map('intval', $GLOBALS['NEWS_FILTER_EXCLUDE'])) . ")";
-        }
-
-        $strParam = NewsCategories::getParameterName();
-
-        // Try to find by category
-        if ($GLOBALS['NEWS_FILTER_CATEGORIES'] && \Input::get($strParam)) {
-            $objCategory = NewsCategoryModel::findPublishedByIdOrAlias(\Input::get($strParam));
-
-            if ($objCategory === null) {
+            if ($arrEntityIds === null) {
                 return null;
             }
 
-            $arrCategories                   = \NewsCategories\NewsModel::getCategoriesCache();
-            $this->filterColumns['category'] = "$t.id IN (" . implode(',', (empty($arrCategories[$objCategory->id]) ? [0] : $arrCategories[$objCategory->id])) . ")";
+            $this->filterColumns['category'] = "$t.id IN (" . implode(',', $arrEntityIds) . ")";
         }
     }
 
@@ -485,7 +433,7 @@ class NewsList
     /**
      * Add news to list of already seen for current page
      *
-     * @param integer $id News id
+     * @param integer $id     News id
      * @param integer $pageId Page id
      */
     public static function addSeen($id, $pageId = null)

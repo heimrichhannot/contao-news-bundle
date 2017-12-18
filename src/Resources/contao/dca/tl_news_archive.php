@@ -18,6 +18,6 @@ array_insert($GLOBALS['TL_DCA']['tl_news_archive']['list']['global_operations'],
         'label'      => &$GLOBALS['TL_LANG']['tl_news_archive']['lists'],
         'href'       => 'table=tl_news_list_archive',
         'icon'       => 'folderC.svg',
-        'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="c"'
-    ]
+        'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="c"',
+    ],
 ]);

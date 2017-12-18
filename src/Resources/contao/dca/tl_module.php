@@ -1,7 +1,7 @@
 <?php
 
-$table = 'tl_module';
-$dca = &$GLOBALS['TL_DCA'][$table];
+$table       = 'tl_module';
+$dca         = &$GLOBALS['TL_DCA'][$table];
 $bundleClass = new \HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
 
 /**
@@ -29,19 +29,16 @@ $dca['palettes']['news_readers_survey_result'] = '{title_legend},name,headline,t
 
 $dca['palettes']['news_info_box'] = '{title_legend},name,headline,type;{config_legend},news_archives;{redirect_legend},jumpTo;{template_legend:hide},customTpl;{image_legend:hide},imgSize;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
-$dca['palettes'][$bundleClass::MODULE_NEWSLIST] = str_replace('news_archives', 'news_archives,newsListFilterModule,use_news_lists,skipPreviousNews,addCustomSort', $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
+$dca['palettes'][$bundleClass::MODULE_NEWSLIST] = str_replace('news_archives', 'news_archives,news_filterCategories,news_relatedCategories,news_filterDefault,news_filterStopLevel,news_filterPreserve,news_filterPrimaryCategory,newsListFilterModule,use_news_lists,skipPreviousNews,addCustomSort', $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
 
 $dca['palettes'][$bundleClass::MODULE_NEWSLIST] = str_replace('{template_legend', '{tags_legend},addNewsTagFilter,newsTagFilterJumpTo;{news_related_legend},add_related_news;{modal_legend},useModal,useModalExplanation;{template_legend', $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
 
-$dca['palettes'][$bundleClass::MODULE_NEWSLIST]    = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
+$dca['palettes'][$bundleClass::MODULE_NEWSLIST] = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
 
 $dca['palettes']['newsreader']  = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes']['newsreader']);
 $dca['palettes']['newsarchive'] = str_replace(',imgSize', ',imgSize,useTeaserImage,posterSRC', $dca['palettes']['newsarchive']);
 
-$dca['palettes']['newslist_related'] = str_replace(
-    '{news_related_legend},add_related_news;',
-    '',
-    $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
+$dca['palettes']['newslist_related'] = str_replace('{news_related_legend},add_related_news;', '', $dca['palettes'][$bundleClass::MODULE_NEWSLIST]);
 
 $dca['palettes']['newsreader'] = str_replace('customTpl;', 'customTpl;{news_navigation_legend},newsNavigationModule;{news_info_box_legend},newsInfoBoxModule;', $dca['palettes']['newsreader']);
 
@@ -210,7 +207,7 @@ $fields = [
         'eval'             => ['tl_class' => 'wizard', 'multiple' => true],
         'sql'              => "blob NULL",
     ],
-    'newsListModule'       => [
+    'newsListModule'             => [
         'label'            => &$GLOBALS['TL_LANG']['tl_module']['newsListModule'],
         'exclude'          => true,
         'inputType'        => 'select',
@@ -226,6 +223,7 @@ $fields = [
         'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true],
         'sql'              => "int(10) NOT NULL default '0'",
     ],
+    'news_filterCategories'      => HeimrichHannot\CategoriesBundle\Backend\Category::getCategoryFilterListFieldDca(),
 ];
 
 $dca['fields']['news_metaFields']['options'][] = 'writers';
