@@ -8,6 +8,11 @@ System::loadLanguageFile('tl_content');
 $dc = &$GLOBALS['TL_DCA']['tl_news'];
 
 /**
+ * Config
+ */
+$dc['config']['onload_callback'][] = ['HeimrichHannot\NewsBundle\News', 'initCustomPalette'];
+
+/**
  * Selectors
  */
 $dc['palettes']['__selector__'][] = 'addContactBox';

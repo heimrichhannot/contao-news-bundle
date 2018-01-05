@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2018-01-05
+
+#### Added
+- add a custom news palettes to tl_news and overwrite the default palettes for selected news archives
+
 ## [2.0.0] - 2017-12-18
 
 #### Changed
