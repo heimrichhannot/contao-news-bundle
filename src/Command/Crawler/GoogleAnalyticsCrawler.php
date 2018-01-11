@@ -63,6 +63,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
      */
     public function getCount()
     {
+        $this->count = 0;
         if (empty($urls = $this->getUrls())) {
             return $this->count;
         }

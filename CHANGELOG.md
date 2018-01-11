@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2018-01-11
+
+#### Fixed
+- bug resulting in not resetting google analytics counter between articles
+
 ## [1.4.0] - 2018-01-11
 
 #### Added
