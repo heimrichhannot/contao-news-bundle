@@ -26,6 +26,7 @@ use Monolog\Logger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Debug\Exception\ClassNotFoundException;
 
 class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkAwareInterface
 {
@@ -72,6 +73,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             ->addOption('no-days', null, null, "Set to 1 to ignore the days settings (means there is no limit due age of the news).")
             ->addOption('only-current', null, null, "Update latest articles.")
             ->addOption('debug-mode', null, null, "Add debug informations to console output.")
+            ->addOption('article', null, null, "Update stats for a single news article")
             ;
 
     }
@@ -82,7 +84,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     protected function executeLocked(InputInterface $input, OutputInterface $output)
     {
         $this->framework->initialize();
-        $route         = System::getContainer()->get('router')->getContext();
+        $route         = $this->getContainer()->get('router')->getContext();
         $this->baseUrl = $route->getScheme() . $route->getHost();
         $this->logger  = System::getContainer()->get('monolog.logger.contao');
         $this->config  = System::getContainer()->getParameter('social_stats');
@@ -91,13 +93,16 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 
         $io->title('Updating social stats...');
 
-        $this->httpClient = new Client([
-            'base_url'                  => $this->baseUrl,
-            'social_stats'              => System::getContainer()->getParameter('social_stats'),
-            'ssl.certificate_authority' => false
-        ]);
-
-        $this->applyOptions($input);
+        $this->httpClient = $this->setUpHttpClient();
+        try
+        {
+            $this->applyOptions($input);
+        } catch (ClassNotFoundException $e)
+        {
+            $this->logger->critical($e->getMessage());
+            $io->error($e->getMessage());
+            return 0;
+        }
 
         try
         {
@@ -117,12 +122,63 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     }
 
     /**
+     * Creates the http client
+     *
+     * @return Client
+     */
+    private function setUpHttpClient()
+    {
+        return new Client([
+            'base_url'                  => $this->baseUrl,
+            'social_stats'              => System::getContainer()->getParameter('social_stats'),
+            'ssl.certificate_authority' => false
+        ]);
+    }
+
+    /**
      * Check and apply command options
      *
      * @param InputInterface $input
+     * @throws ClassNotFoundException
      */
     private function applyOptions ($input)
     {
+        if ($input->getOption('debug-mode'))
+        {
+            $this->debug = $this->io;
+            $this->io->note('Activated debug mode');
+            $this->io->text('Base-Url: '.$this->baseUrl);
+        }
+        if ($articleId = $input->getOption('article'))
+        {
+            /**
+             * @var NewsModel $model
+             */
+            $model = $this->framework->getAdapter(NewsModel::class);
+            if ($model)
+            {
+                if ($items = $model->findMultipleByIds([$articleId]))
+                {
+                    $this->items = $items;
+                    $this->io->note([
+                        'Retriving stats only for article with id '.$articleId.'.',
+                        'Other article related settings will be skipped.'
+                    ]);
+                    return;
+                }
+                else {
+                    $this->io->warning([
+                        "No news article with id $articleId found.",
+                        "Continue by ignoring article setting."
+                    ]);
+                }
+            } else {
+                throw new ClassNotFoundException("NewsModel could not be found (while applying article option).");
+            }
+
+        }
+
+
         if ($input->getOption('no-chunksize') == 1)
         {
             $this->config['chunksize'] = 0;
@@ -133,12 +189,6 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->config['days'] = 0;
             $this->io->note('Ignoring days config.');
         }
-        if ($input->getOption('debug-mode'))
-        {
-            $this->debug = $this->io;
-            $this->io->note('Activated debug mode');
-            $this->io->text('Base-Url: '.$this->baseUrl);
-        }
         if ($input->getOption('only-current') == 1)
         {
             /**
@@ -148,6 +198,9 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             if ($model)
             {
                 $this->items = $model->findPublishedFromToByPids(0, time(), $this->config['archives'], $this->config['chunksize']);
+            }
+            else {
+                throw new ClassNotFoundException("NewsModel could no be found (while applying only-current option).");
             }
             $this->io->note('Retriving stats for newest items.');
         }
@@ -258,7 +311,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         if (!$this->items)
         {
             $method = $crawlerConfig["method"];
-            $items = NewsModel::$method(
+            $item = $this->framework->getAdapter(NewsModel::class)->$method(
                 $this->config['chunksize'],
                 $this->config['days'],
                 $this->config['archives']
