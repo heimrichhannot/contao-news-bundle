@@ -1,11 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2018-01-11
+
+#### Added
+- socialstats: article option to get stats for a single article
+
+#### Changed
+- socialstats: better readable debug output1
+
+#### Fixed
+- socialstats: returned only last url count from google analytics
+
 ## [1.3.1] - 2017-12-15
 
 #### Fixed
 - socialstats: no debug output for disqus
-- socialstats: umlauts etc. mot handled in urls
+- socialstats: umlauts etc. not handled in urls
 - socialstats: wrong method call
 
 ## [1.3.0] - 2017-12-15

@@ -90,7 +90,7 @@ abstract class AbstractCrawler implements CrawlerInterface
         }
 
         if ($this->io) {
-            $this->io->text($urls);
+            $this->io->listing($urls);
         }
 
         return $urls;

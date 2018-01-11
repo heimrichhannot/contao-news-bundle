@@ -95,7 +95,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
                 $this->io->text($url.': '.$count);
             }
         }
-        return $count;
+        return $this->count;
     }
 
     public function prepareRequest($url)

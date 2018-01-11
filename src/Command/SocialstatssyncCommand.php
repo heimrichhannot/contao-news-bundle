@@ -24,6 +24,7 @@ use HeimrichHannot\NewsBundle\Command\Crawler\TwitterCrawler;
 use GuzzleHttp\Client;
 use Monolog\Logger;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
@@ -73,7 +74,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             ->addOption('no-days', null, null, "Set to 1 to ignore the days settings (means there is no limit due age of the news).")
             ->addOption('only-current', null, null, "Update latest articles.")
             ->addOption('debug-mode', null, null, "Add debug informations to console output.")
-            ->addOption('article', null, null, "Update stats for a single news article")
+            ->addOption('article', null, InputOption::VALUE_OPTIONAL, "Update stats for a single news article")
             ;
 
     }
@@ -302,6 +303,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateStats(AbstractCrawler $crawler, array $crawlerConfig)
     {
+        $crawler->setIo($this->io);
         if (!array_key_exists($crawlerConfig['alias'], $this->config))
         {
             $this->io->note("No ".$crawlerConfig['name']." config provided. Skipping...");
@@ -311,7 +313,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         if (!$this->items)
         {
             $method = $crawlerConfig["method"];
-            $item = $this->framework->getAdapter(NewsModel::class)->$method(
+            $items = $this->framework->getAdapter(NewsModel::class)->$method(
                 $this->config['chunksize'],
                 $this->config['days'],
                 $this->config['archives']
@@ -342,7 +344,8 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
                 }
             }
             $crawler->updateItem();
-            $this->io->text('Found ' . $count . ' shares for ' . $crawlerConfig['name'] . '.');
+            $this->io->text('Found <bg=green;fg=white> ' . $count . ' </> shares on ' . $crawlerConfig['name'] . '.');
+            $this->io->newLine();
         }
     }
 }
