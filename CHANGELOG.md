@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.3] - 2018-01-12
+
+#### Added
+- added linkedMember to tl_news. link a member to a news
+
 ## [2.2.2] - 2018-01-12
 
 #### Fixed

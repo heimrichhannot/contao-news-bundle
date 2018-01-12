@@ -29,7 +29,7 @@ $dc['palettes']['__selector__'][] = 'relocate';
  * Palettes
  */
 $dc['palettes']['default'] = str_replace('author;', 'author,categories;{writers_legend:hide},writers;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('{date_legend}', '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('{date_legend}', '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{linkedMembers_legend:hide},linkedMembers;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
@@ -526,6 +526,26 @@ $fields = [
         'inputType' => 'text',
         'eval'      => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 255, 'dcaPicker' => true, 'tl_class' => 'full wizard'],
         'sql'       => "varchar(255) NOT NULL default ''",
+    ],
+    'linkedMembers'              => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['linkedMembers'],
+        'inputType' => 'tagsinput',
+        'sql'       => "blob NULL",
+        'eval'      => [
+            'placeholder'   => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['linkedMembers'],
+            'freeInput'     => false,
+            'multiple'      => true,
+            'mode'          => \TagsInput::MODE_REMOTE,
+            'tags_callback' => [['huh.news.backend.tl_news', 'getMembers']],
+            'remote'        => [
+                'fields'       => ['firstname', 'lastname', 'id'],
+                'format'       => '%s %s [ID:%s]',
+                'queryField'   => 'lastname',
+                'queryPattern' => '%QUERY%',
+                'foreignKey'   => 'tl_member.id',
+                'limit'        => 10,
+            ],
+        ],
     ],
 ];
 

@@ -11,6 +11,8 @@
 namespace HeimrichHannot\NewsBundle\Backend;
 
 
+use HeimrichHannot\Haste\Model\MemberModel;
+
 class News extends \Backend
 {
     /**
@@ -31,6 +33,23 @@ class News extends \Backend
      * @return null
      */
     public function getRelatedNews($arrOption, \DataContainer $dc)
+    {
+        if ($arrOption['value'] == $dc->id) {
+            return null;
+        }
+
+        return $arrOption;
+    }
+
+
+    /**
+     * get member by last name from input
+     *
+     * @param \DataContainer $dc
+     *
+     * @return array
+     */
+    public function getMembers($arrOption, \DataContainer $dc)
     {
         if ($arrOption['value'] == $dc->id) {
             return null;

@@ -44,6 +44,8 @@ $lang['posterSRC']               = ['Vorschaubild', 'Das Bild statt des ersten F
 $lang['copyright']               = ['Urheberrechte', 'Geben Sie hier eventuelle Hinweise zu den Urheberrechten ein.'];
 $lang['relocate']                = ['Nachricht umziehen', 'Die Nachricht wird auf einen anderen Inhalt umgeleitet.'];
 $lang['relocateUrl']             = ['Umleitungsziel', 'Geben Sie die Ziel-URL für die Weiterleitung ein.'];
+$lang['linkedMembers']           = ['Mitglieder verknüpfen', 'Geben Sie den Nachnamen eines Mitglieds ein um es mit der Nachricht zu verknüpfen.'];
+
 
 /**
  * Legends
@@ -58,6 +60,7 @@ $lang['meta_legend']           = 'Metadaten';
 $lang['twitter_legend']        = 'Twitter';
 $lang['player_legend']         = 'Player-Einstellungen';
 $lang['copyright_legend']      = 'Urheberrechte';
+$lang['linkedMembers_legend']  = 'Mitglieder-Verknüpfung';
 
 
 /**
@@ -65,6 +68,7 @@ $lang['copyright_legend']      = 'Urheberrechte';
  */
 $lang['placeholders']['contactBox_members'] = 'E-Mail eingeben';
 $lang['placeholders']['metaKeywords']       = 'Keywords eingeben';
+$lang['placeholders']['linkedMembers']      = 'Nachnamen eingeben';
 
 /**
  * References
