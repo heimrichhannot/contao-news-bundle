@@ -11,7 +11,6 @@ namespace HeimrichHannot\NewsBundle\Module;
 
 use Contao\CoreBundle\Exception\PageNotFoundException;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
-use NewsCategories\CategoryHelper;
 
 class ModuleNewsReader extends \ModuleNewsReader
 {
@@ -32,13 +31,6 @@ class ModuleNewsReader extends \ModuleNewsReader
 
         if (null === $objArticle) {
             throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
-        }
-
-        // redirect permanently to primary category related news archive jumpTo news url
-        if (($primaryCategory = CategoryHelper::getPrimaryNewsCategory($objArticle)) !== null) {
-            if (($categoryPage = CategoryHelper::getCategoryNewsPage($primaryCategory, $objArticle->pid)) !== null && $categoryPage->id !== $objPage->id) {
-                \Controller::redirect(CategoryHelper::getCategoryNewsUrl($objArticle), 301);
-            }
         }
 
         $arrArticle               = $this->parseArticle($objArticle);

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.2] - 2017-12-18
+
+#### Fixed
+- removed old news categories code from ModuleNewsReader
+
 ## [2.1.0] - 2018-01-05
 
 #### Added
