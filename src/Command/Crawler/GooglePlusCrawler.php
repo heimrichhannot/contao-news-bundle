@@ -23,6 +23,7 @@ class GooglePlusCrawler extends AbstractCrawler
      */
     public function getCount()
     {
+        $this->count = 0;
         $count = 0;
         foreach ($this->getUrls() as $url)
         {

@@ -1,10 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.1.2] - 2017-12-18
+## [2.2.2] - 2018-01-12
 
 #### Fixed
 - removed old news categories code from ModuleNewsReader
+
+## [2.2.1] - 2018-01-11
+
+#### Fixed 
+- bug resulting in not resetting google analytics counter between articles
+
+## [2.2.0] - 2018-01-11
+
+#### Added
+- socialstats: article option to get stats for a single article
+
+#### Changed
+- socialstats: better readable debug output1
+
+#### Fixed
+- socialstats: returned only last url count from google analytics
+
 
 ## [2.1.0] - 2018-01-05
 

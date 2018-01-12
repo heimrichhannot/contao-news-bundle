@@ -63,6 +63,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
      */
     public function getCount()
     {
+        $this->count = 0;
         if (empty($urls = $this->getUrls())) {
             return $this->count;
         }
@@ -95,7 +96,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
                 $this->io->text($url.': '.$count);
             }
         }
-        return $count;
+        return $this->count;
     }
 
     public function prepareRequest($url)
