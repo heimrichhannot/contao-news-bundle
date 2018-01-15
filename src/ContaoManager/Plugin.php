@@ -8,6 +8,7 @@ use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Contao\NewsBundle\ContaoNewsBundle;
+use HeimrichHannot\CategoriesBundle\CategoriesBundle;
 use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -22,7 +23,11 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     {
         return [
             BundleConfig::create(HeimrichHannotContaoNewsBundle::class)
-                ->setLoadAfter([CodefogTagsBundle::class, ContaoNewsBundle::class])
+                ->setLoadAfter([
+                    CodefogTagsBundle::class,
+                    ContaoNewsBundle::class,
+                    CategoriesBundle::class
+                ])
         ];
     }
 

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.4] - 2018-01-15
+
+#### Added
+- added CategoriesBundle to `setLoadAfter`
+
 ## [2.2.3] - 2018-01-12
 
 #### Added
