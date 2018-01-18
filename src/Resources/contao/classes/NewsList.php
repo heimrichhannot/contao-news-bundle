@@ -449,7 +449,6 @@ class NewsList
                 if ($GLOBALS['NEWS_FILTER_PRESERVE']) {
                     $strKey = 'category_default';
                 }
-                https://anwaltauskunft.de/magazin/leben/gesundheit/
 
                 $strQuery = "$t.id IN (" . implode(',', (empty($arrIds) ? [0] : array_unique($arrIds))) . ")";
 
