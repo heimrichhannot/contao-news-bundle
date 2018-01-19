@@ -2,7 +2,7 @@
   "name": "heimrichhannot/contao-news-bundle",
   "type": "contao-bundle",
   "description": "This module contains enhancements for the contao news entity.",
-  "license": "LGPL-3.0+",
+  "license": "LGPL-3.0-or-later",
   "require": {
     "php": ">=5.6.0",
     "contao/core-bundle": "^4.3.1",
