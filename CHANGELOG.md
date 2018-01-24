@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.6] - 2018-01-24
+
+#### Changed
+- `tl_news.categories` should be non mandatory
+
 ## [2.2.5] - 2018-01-19
 
 #### Changed
