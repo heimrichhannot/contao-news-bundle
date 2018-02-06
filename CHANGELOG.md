@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.7] - 2018-02-06
+
+#### Changed
+- refacored module callback class to bundle structure
+
 ## [2.2.6] - 2018-01-24
 
 #### Changed

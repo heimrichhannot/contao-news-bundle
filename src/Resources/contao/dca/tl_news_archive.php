@@ -44,7 +44,7 @@ $fields = [
     'customNewsPalettes'    => [
         'label'            => &$GLOBALS['TL_LANG']['tl_news_archive']['customNewsPalettes'],
         'inputType'        => 'select',
-        'options_callback' => ['HeimrichHannot\NewsBundle\Module', 'getNewsPalettes'],
+        'options_callback' => ['huh.news.listener.callback.news', 'getNewsPalettes'],
         'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
         'exclude'          => true,
         'sql'              => "varchar(50) NOT NULL default ''",

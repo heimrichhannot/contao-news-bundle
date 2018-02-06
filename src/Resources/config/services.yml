@@ -16,6 +16,12 @@ services:
             - "tags"
         tags:
             - { name: codefog_tags.manager, alias: app.news }
+
+    huh.news.listener.callback.news:
+      class: HeimrichHannot\NewsBundle\EventListener\NewsCallbackListener
+      arguments: ["@contao.framework"]
+
+
     huh.news.backend.tl_news:
         class: HeimrichHannot\NewsBundle\Backend\News
     huh.news.list_filter.registry:
