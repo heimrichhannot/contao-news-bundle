@@ -5,7 +5,7 @@ namespace HeimrichHannot\NewsBundle\EventListener;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\StringUtil;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
-use HeimrichHannot\NewsBundle\Model\CfgTagModel;
+use HeimrichHannot\UtilsBundle\Model\CfgTagModel;
 use HeimrichHannot\NewsBundle\Model\NewsListArchiveModel;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Model\NewsTagsModel;

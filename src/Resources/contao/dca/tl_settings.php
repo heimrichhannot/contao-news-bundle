@@ -23,7 +23,7 @@ $fields = [
                         'exclude'    => true,
                         'filter'     => true,
                         'inputType'  => 'select',
-                        'options_callback' => ['HeimrichHannot\NewsBundle\Model\CfgTagModel', 'getSourcesAsOptions'],
+                        'options_callback' => ['HeimrichHannot\UtilsBundle\Model\CfgTagModel', 'getSourcesAsOptions'],
                         'eval'       => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 200px'],
                         'sql'        => "varchar(64) NOT NULL default ''"
                     ],

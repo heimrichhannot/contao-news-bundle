@@ -3,7 +3,7 @@
 namespace HeimrichHannot\NewsBundle\Backend;
 
 use HeimrichHannot\Haste\Dca\General;
-use HeimrichHannot\NewsBundle\Model\CfgTagModel;
+use HeimrichHannot\UtilsBundle\Model\CfgTagModel;
 
 class CfgTag extends \Backend
 {
