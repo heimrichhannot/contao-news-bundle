@@ -1,10 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.9] - 2018-02-19
+
+#### Fixed
+- changelog
+
+## [2.2.8] - 2018-02-19
+
+#### Changed
+- removed CfgTagModel and added utils-bundle dep
+
 ## [2.2.7] - 2018-02-06
 
 #### Changed
-- refacored module callback class to bundle structure
+- refactored module callback class to bundle structure
 
 ## [2.2.6] - 2018-01-24
 
