@@ -1,11 +1,6 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.2.9] - 2018-02-19
-
-#### Fixed
-- changelog
-
 ## [2.2.8] - 2018-02-19
 
 #### Changed
