@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.9] - 2018-03-02
+
+#### Changed
+- removed tl_member dca fields title and organization, use headline and company instead with `heimrichhannot/contao-member_plus`
+
 ## [2.2.8] - 2018-02-19
 
 #### Changed
