@@ -30,7 +30,7 @@ $dc['palettes']['default'] = str_replace(
     $dc['palettes']['default']
 );
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,robots,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('cssClass,', 'relocate,cssClass,', $dc['palettes']['default']);
 
@@ -450,6 +450,15 @@ $fields = [
             'multiple'    => true,
         ],
         'sql'       => "blob NULL",
+    ],
+    'robots'                     => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['robots'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'select',
+        'options'   => ['index,follow', 'index,nofollow', 'noindex,follow', 'noindex,nofollow'],
+        'eval'      => ['tl_class' => 'w50', 'doNotCopy' => true],
+        'sql'       => "varchar(32) NOT NULL default ''"
     ],
     'twitterCard'                => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['twitterCard'],
