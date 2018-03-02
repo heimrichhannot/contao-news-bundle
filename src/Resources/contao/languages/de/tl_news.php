@@ -35,6 +35,7 @@ $lang['related_news']            = [
 $lang['pageTitle']               = ['Seitentitel', 'Vergeben Sie einen individuellen Seitentitel &lt;title&gt; für diese Nachricht. (Standard: Titel)'];
 $lang['metaDescription']         = ['Meta-Description', 'Vergeben Sie eine individuellen &lt;meta name="description"&gt; für diese Nachricht. (Standard: Teasertext)'];
 $lang['metaKeywords']            = ['Meta-Keywords', 'Vergeben Sie individuelle &lt;meta type="keywords"&gt; für diese Nachricht. (Standard: Keine)'];
+$lang['robots']                  = ['Robots-Tag', 'Hier legen Sie fest, wie Suchmaschinen die Seite behandeln.'];
 $lang['twitterCard']             = ['Twitter Karte', 'Wählen Sie eine Twitter Karte aus, die bei Tweets angehängt werden soll.'];
 $lang['twitterCreator']          = ['Author Twitter @username', 'Geben Sie den Twitter @username des Authors dieses Artikels ans.'];
 $lang['player']                  = ['Video-/Audio-Dateien', 'Hier können Sie die Video-/Audio-Datei hinzufügen.'];

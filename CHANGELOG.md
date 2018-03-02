@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.11] - 2018-03-02
+
+#### Added
+- custom `robots` tag for news articles, can be set for each article (`default: index,follow` even if parent page has for example, `noindex,follow`)
+
 ## [2.2.10] - 2018-03-02
 
 #### Changed

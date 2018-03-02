@@ -436,6 +436,7 @@ class NewsArticle extends \ModuleNews
 
         global $objPage;
 
+        $this->container->get('huh.head.tag.meta_robots')->setContent($this->article->robots ?: 'index,follow');
         $this->container->get('huh.head.tag.meta_date')->setContent(\Date::parse('c', $this->article->date));
         $this->container->get('huh.head.tag.og_site_name')->setContent($objPage->rootPageTitle);
         $this->container->get('huh.head.tag.og_locale')->setContent($this->container->get('request_stack')->getCurrentRequest()->getLocale());

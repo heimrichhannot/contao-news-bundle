@@ -31,7 +31,7 @@ $dc['palettes']['__selector__'][] = 'relocate';
 $dc['palettes']['default'] = str_replace('author;', 'author,categories;{writers_legend:hide},writers;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{date_legend}', '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{linkedMembers_legend:hide},linkedMembers;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,robots,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('cssClass,', 'relocate,cssClass,', $dc['palettes']['default']);
 
@@ -451,6 +451,15 @@ $fields = [
             'multiple'    => true,
         ],
         'sql'       => "blob NULL",
+    ],
+    'robots'                     => [
+        'label'     => &$GLOBALS['TL_LANG']['tl_news']['robots'],
+        'exclude'   => true,
+        'search'    => true,
+        'inputType' => 'select',
+        'options'   => ['index,follow', 'index,nofollow', 'noindex,follow', 'noindex,nofollow'],
+        'eval'      => ['tl_class' => 'w50', 'doNotCopy' => true],
+        'sql'       => "varchar(32) NOT NULL default ''"
     ],
     'twitterCard'                => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['twitterCard'],
