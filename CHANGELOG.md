@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.2.10] - 2018-03-02
+
+#### Changed
+- `heimrichhannot/contao-utils` bundle dependency changed from `dev-master` to `^1.0`
+
 ## [2.2.9] - 2018-03-02
 
 #### Changed
