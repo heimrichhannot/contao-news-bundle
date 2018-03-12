@@ -83,3 +83,8 @@ Name | Description | Arguments | Example
 news_list | prints the link to a certain news list | id or alias of a news list | {{news_list::1}}
 news_list_url | prints the url to a certain news list | id or alias of a news list | {{news_list_url::1}}
 news_list_title | prints the title of a certain news list | id or alias of a news list | {{news_list_title::1}}
+
+## More
+
+### Extension
+[Contao News Leisure Bundle](https://github.com/heimrichhannot/contao-news-leisure-bundle) - Add Leisure tipps to news
