@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2018-03-12
+
+#### Changed
+* utils bundle 2.0 dependency
+
+## [2.2.12] - 2018-03-12
+
+#### Changed
+* Utils bundle dependency
+
 ## [2.2.11] - 2018-03-02
 
 #### Added
