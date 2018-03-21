@@ -680,11 +680,11 @@ class NewsArticle extends \ModuleNews
             $this->article->title     = $this->article->headline;
             $this->template->addShare = true;
             $objShare                 = new Share($this->module->getModel(), $this->article);
+            $this->template->share    = $objShare->generate();
             if ($this->module->share_addTemplateLinks)
             {
                 $this->template->shareUrls = $objShare->generateShareUrls();
             }
-            $this->template->share    = $objShare->generate();
         }
     }
 

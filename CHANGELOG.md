@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.1] - 2018-03-21
+
+#### Fixed
+* shareUrls null
+
 ## [2.4.0] - 2018-03-21
 
 #### Added
