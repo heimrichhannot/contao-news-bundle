@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2018-03-22
+
+#### Added
+* support for contao-share shareUrls template variable
+
 ## [1.4.4] - 2018-03-02
 
 #### Added

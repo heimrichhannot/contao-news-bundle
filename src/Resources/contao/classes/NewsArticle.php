@@ -21,6 +21,7 @@ use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated;
 use HeimrichHannot\NewsBundle\Module\ModuleNewsNavigation;
+use HeimrichHannot\Share\Share;
 use Psr\Log\LogLevel;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
@@ -655,8 +656,12 @@ class NewsArticle extends \ModuleNews
         if ($this->module->addShare) {
             $this->article->title     = $this->article->headline;
             $this->template->addShare = true;
-            $objShare                 = new \HeimrichHannot\Share\Share($this->module->getModel(), $this->article);
+            $objShare                 = new Share($this->module->getModel(), $this->article);
             $this->template->share    = $objShare->generate();
+            if ($this->module->share_addTemplateLinks)
+            {
+                $this->template->shareUrls = $objShare->generateShareUrls();
+            }
         }
     }
 
