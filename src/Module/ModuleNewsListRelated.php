@@ -24,7 +24,18 @@ class ModuleNewsListRelated extends \ModuleNewsList
     public function generate()
     {
         if (TL_MODE == 'FE' && !$this->news) {
-            return '';
+
+            $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($this->news_archives));
+
+            // Return if there are no archives
+            if (empty($this->news_archives) || !\is_array($this->news_archives)) {
+                return '';
+            }
+
+            // Get the news item from auto_item
+            if (null === ($this->news = \NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives))) {
+                return '';
+            }
         }
 
         $this->news->related_news = deserialize($this->news->related_news, true);
@@ -57,8 +68,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
 
         $options = [];
 
-        if (!empty($this->news->related_news))
-        {
+        if (!empty($this->news->related_news)) {
             $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
             return NewsModel::countPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $options);
         }
@@ -94,8 +104,7 @@ class ModuleNewsListRelated extends \ModuleNewsList
 
         $options = [];
 
-        if (!empty($this->news->related_news))
-        {
+        if (!empty($this->news->related_news)) {
             $options = ['order' => "FIELD(tl_news.id, " . implode(',', array_map('intval', $this->news->related_news)) . ")"];
             return NewsModel::findPublishedByPidsAndIds($newsArchives, $this->news->related_news, $blnFeatured, $limit, $offset, $options);
         }
