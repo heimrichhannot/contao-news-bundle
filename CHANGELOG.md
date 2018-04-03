@@ -1,10 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.4.5] - 2018-03-02
+## [1.5.1] - 2018-04-03
 
 #### Changed
 - `ModuleNewsListRelated` fallback for current news from `auto_item`
+
+## [1.5.0] - 2018-03-22
+
+#### Added
+* support for contao-share shareUrls template variable
 
 ## [1.4.4] - 2018-03-02
 
