@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.5] - 2018-03-02
+
+#### Changed
+- `ModuleNewsListRelated` fallback for current news from `auto_item`
+
 ## [1.4.4] - 2018-03-02
 
 #### Added
