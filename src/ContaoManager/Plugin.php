@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace HeimrichHannot\NewsBundle\ContaoManager;
 
 use Codefog\TagsBundle\CodefogTagsBundle;
@@ -29,8 +35,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface, Extension
                 ->setLoadAfter([
                     CodefogTagsBundle::class,
                     ContaoNewsBundle::class,
-                    CategoriesBundle::class
-                ])
+                    CategoriesBundle::class,
+                ]),
         ];
     }
 
@@ -38,19 +44,19 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface, Extension
      * Returns a collection of routes for this bundle.
      *
      * @param LoaderResolverInterface $resolver
-     * @param KernelInterface $kernel
+     * @param KernelInterface         $kernel
      *
      * @return null|RouteCollection
      */
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
-            ->resolve(__DIR__ . '/../Resources/config/routing.yml')
-            ->load(__DIR__ . '/../Resources/config/routing.yml');
+            ->resolve(__DIR__.'/../Resources/config/routing.yml')
+            ->load(__DIR__.'/../Resources/config/routing.yml');
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
     {
@@ -58,14 +64,14 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface, Extension
             'huh_list',
             $extensionName,
             $extensionConfigs,
-            __DIR__ . '/../Resources/config/config_list.yml'
+            __DIR__.'/../Resources/config/config_list.yml'
         );
 
         $extensionConfigs = ContainerUtil::mergeConfigFile(
             'huh_reader',
             $extensionName,
             $extensionConfigs,
-            __DIR__ . '/../Resources/config/config_reader.yml'
+            __DIR__.'/../Resources/config/config_reader.yml'
         );
 
         return $extensionConfigs;

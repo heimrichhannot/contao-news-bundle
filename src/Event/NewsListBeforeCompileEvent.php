@@ -1,14 +1,15 @@
 <?php
-/**
- * Copyright (c) 2017 Heimrich & Hannot GmbH
- * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Event;
 
-use Contao\ModuleNewsList;
 use Contao\FrontendTemplate;
+use Contao\ModuleNewsList;
 use Symfony\Component\EventDispatcher\Event;
 
 class NewsListBeforeCompileEvent extends Event
@@ -27,16 +28,18 @@ class NewsListBeforeCompileEvent extends Event
 
     /**
      * NewsListParseEvent constructor.
+     *
      * @param ModuleNewsList $module
      */
     public function __construct(ModuleNewsList $module)
     {
-        $this->module   = $module;
+        $this->module = $module;
         $this->template = $module->Template;
     }
 
     /**
-     * Get the current news list module object
+     * Get the current news list module object.
+     *
      * @return ModuleNewsList
      */
     public function getModule(): ModuleNewsList
@@ -45,7 +48,8 @@ class NewsListBeforeCompileEvent extends Event
     }
 
     /**
-     * Get the current template object
+     * Get the current template object.
+     *
      * @return FrontendTemplate
      */
     public function getTemplate(): FrontendTemplate

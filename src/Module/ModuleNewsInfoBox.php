@@ -1,13 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kwagner
- * Date: 25.07.17
- * Time: 17:06
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Module;
-
 
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use Patchwork\Utf8;
@@ -15,20 +14,21 @@ use Patchwork\Utf8;
 class ModuleNewsInfoBox extends \ModuleNews
 {
     /**
-     * Template
+     * Template.
      *
      * @var string
      */
     protected $strTemplate = 'mod_news_info_box';
 
     /**
-     * Current News
+     * Current News.
+     *
      * @var \Contao\NewsModel|null
      */
     protected $article;
 
     /**
-     * Display a wildcard in the back end
+     * Display a wildcard in the back end.
      *
      * @return string
      */
@@ -38,11 +38,11 @@ class ModuleNewsInfoBox extends \ModuleNews
             /** @var \BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['newsreader'][0]) . ' ###';
-            $objTemplate->title    = $this->headline;
-            $objTemplate->id       = $this->id;
-            $objTemplate->link     = $this->name;
-            $objTemplate->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['newsreader'][0]).' ###';
+            $objTemplate->title = $this->headline;
+            $objTemplate->id = $this->id;
+            $objTemplate->link = $this->name;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -67,7 +67,7 @@ class ModuleNewsInfoBox extends \ModuleNews
         // Get the news item
         $this->article = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
 
-        if ($this->article === null || $this->article->infoBox == 'none') {
+        if (null === $this->article || 'none' == $this->article->infoBox) {
             return '';
         }
 
@@ -91,14 +91,14 @@ class ModuleNewsInfoBox extends \ModuleNews
 
     protected function getInfoBoxText()
     {
-        $infoBox             = null;
-        $infoBox['header']   = $this->article->infoBox_header;
-        $infoBox['text']     = $this->article->infoBox_text;
-        $infoBox['link']     = $this->article->infoBox_link == '' ? null : $this->article->infoBox_link;
-        $infoBox['linkText'] = $this->article->infoBox_linkText == '' ? null : $this->article->infoBox_linkText;
+        $infoBox = null;
+        $infoBox['header'] = $this->article->infoBox_header;
+        $infoBox['text'] = $this->article->infoBox_text;
+        $infoBox['link'] = '' == $this->article->infoBox_link ? null : $this->article->infoBox_link;
+        $infoBox['linkText'] = '' == $this->article->infoBox_linkText ? null : $this->article->infoBox_linkText;
 
         /**
-         * @var \Twig_Environment $twig
+         * @var \Twig_Environment
          */
         $twig = \System::getContainer()->get('twig');
 
@@ -109,8 +109,10 @@ class ModuleNewsInfoBox extends \ModuleNews
     }
 
     /**
-     * Custom info box hook
+     * Custom info box hook.
+     *
      * @param $objArticle
+     *
      * @return bool
      */
     protected function getInfoBoxCustom()
@@ -118,7 +120,7 @@ class ModuleNewsInfoBox extends \ModuleNews
         // HOOK: add custom logic
         if (isset($GLOBALS['TL_HOOKS']['getCustomNewsInfoBox']) && is_array($GLOBALS['TL_HOOKS']['getCustomNewsInfoBox'])) {
             foreach ($GLOBALS['TL_HOOKS']['getCustomNewsInfoBox'] as $callback) {
-                if (($infoBox = \System::importStatic($callback[0])->{$callback[1]}($this->article, $this)) === false) {
+                if (false === ($infoBox = \System::importStatic($callback[0])->{$callback[1]}($this->article, $this))) {
                     continue;
                 }
 

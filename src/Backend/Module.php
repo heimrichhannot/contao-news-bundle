@@ -1,13 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kwagner
- * Date: 08.06.17
- * Time: 13:42
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Backend;
-
 
 use Contao\DataContainer;
 use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
@@ -15,7 +14,7 @@ use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
 class Module extends \Backend
 {
     /**
-     * Modify data container config
+     * Modify data container config.
      *
      * @param \DataContainer $dc
      */
@@ -23,7 +22,7 @@ class Module extends \Backend
     {
         $objModule = \ModuleModel::findByPk($dc->id);
 
-        if ($objModule === null) {
+        if (null === $objModule) {
             return;
         }
 
@@ -42,8 +41,10 @@ class Module extends \Backend
     }
 
     /**
-     * Get all news list filters as list
+     * Get all news list filters as list.
+     *
      * @param \DataContainer $dc
+     *
      * @return array List of all news filters
      */
     public function getNewsListFilters(\DataContainer $dc)
@@ -52,8 +53,7 @@ class Module extends \Backend
 
         $options = [];
 
-        foreach ($filters as $alias)
-        {
+        foreach ($filters as $alias) {
             $options[$alias] = $alias;
         }
 
@@ -61,8 +61,10 @@ class Module extends \Backend
     }
 
     /**
-     * Get all news list modules as list
+     * Get all news list modules as list.
+     *
      * @param \DataContainer $dc
+     *
      * @return array List of all news list modules
      */
     public function getNewsListFilterModules(\DataContainer $dc)
@@ -75,8 +77,10 @@ class Module extends \Backend
     }
 
     /**
-     * Get all related modules as list
+     * Get all related modules as list.
+     *
      * @param \DataContainer $dc
+     *
      * @return array List of all related modules
      */
     public function getNewsListRelatedModules(\DataContainer $dc)
@@ -89,8 +93,10 @@ class Module extends \Backend
     }
 
     /**
-     * Get all news reader survey modules as list
+     * Get all news reader survey modules as list.
+     *
      * @param \DataContainer $dc
+     *
      * @return array List of all reader survey modules
      */
     public function getNewsReadersSurveyModules(\DataContainer $dc)
@@ -99,8 +105,10 @@ class Module extends \Backend
     }
 
     /**
-     * Get all news reader survey result modules as list
+     * Get all news reader survey result modules as list.
+     *
      * @param \DataContainer $dc
+     *
      * @return array List of all reader survey result modules
      */
     public function getNewsReadersSurveyResultModules(\DataContainer $dc)
@@ -109,8 +117,10 @@ class Module extends \Backend
     }
 
     /**
-     * Get all news info box modules as list
+     * Get all news info box modules as list.
+     *
      * @param \DataContainer $dc
+     *
      * @return array List of all news info box modules
      */
     public function getNewsInfoBoxModules(\DataContainer $dc)
@@ -122,13 +132,15 @@ class Module extends \Backend
     {
         return static::getModuleOptions(HeimrichHannotContaoNewsBundle::MODULE_NEWSLIST);
     }
+
     public function getNewsNavigationModules(DataContainer $dc)
     {
         return static::getModuleOptions(HeimrichHannotContaoNewsBundle::MODULE_NEWSNAVIGATION);
     }
 
     /**
-     * Get all modules for a given type as list
+     * Get all modules for a given type as list.
+     *
      * @param string $strType The module type
      *
      * @return array List of modules
@@ -139,11 +151,10 @@ class Module extends \Backend
 
         $objModules = \ModuleModel::findByType($strType);
 
-        if ($objModules === null) {
+        if (null === $objModules) {
             return $arrOptions;
         }
 
         return $objModules->fetchEach('name');
     }
-
 }

@@ -1,13 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kwagner
- * Date: 25.07.17
- * Time: 17:06
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Module;
-
 
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
@@ -15,14 +14,14 @@ use HeimrichHannot\NewsBundle\Model\NewsModel;
 class ModuleNewsReadersSurveyResult extends \ModuleNews
 {
     /**
-     * Template
+     * Template.
      *
      * @var string
      */
     protected $strTemplate = 'mod_news_readers_survey_result';
 
     /**
-     * Display a wildcard in the back end
+     * Display a wildcard in the back end.
      *
      * @return string
      */
@@ -31,8 +30,7 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
         $this->news_archives = $this->sortOutProtected(\StringUtil::deserialize($this->news_archives));
 
         // Do not index or cache the page if there are no archives
-        if (!is_array($this->news_archives) || empty($this->news_archives))
-        {
+        if (!is_array($this->news_archives) || empty($this->news_archives)) {
             return '';
         }
 
@@ -43,12 +41,11 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
     {
         // Get the news item
         $objArticle = NewsModel::findPublishedByParentAndIdOrAlias(\Input::get('items'), $this->news_archives);
-        if ($objArticle === null || !$objArticle->add_readers_survey)
-        {
+        if (null === $objArticle || !$objArticle->add_readers_survey) {
             return '';
         }
         /**
-         * @var \Twig_Environment $twig
+         * @var \Twig_Environment
          */
         $twig = \System::getContainer()->get('twig');
 
@@ -65,19 +62,17 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
     protected function getReadersSurvey($objArticle)
     {
         $readersSurvey = null;
-        $surveys       = unserialize($objArticle->readers_survey);
-        foreach ($surveys as $survey)
-        {
+        $surveys = unserialize($objArticle->readers_survey);
+        foreach ($surveys as $survey) {
             $fieldPaletteQuestion = FieldPaletteModel::findById($survey);
-            $answers              = [];
-            foreach (unserialize($fieldPaletteQuestion->news_answers) as $answerId)
-            {
+            $answers = [];
+            foreach (unserialize($fieldPaletteQuestion->news_answers) as $answerId) {
                 $fieldPaletteAnswer = FieldPaletteModel::findById($answerId);
-                $answers[]          = [$fieldPaletteAnswer->news_answer => $fieldPaletteAnswer->id];
+                $answers[] = [$fieldPaletteAnswer->news_answer => $fieldPaletteAnswer->id];
             }
             $readersSurvey = [
                 'question' => $fieldPaletteQuestion->news_question,
-                'answers'  => $answers,
+                'answers' => $answers,
             ];
         }
 
@@ -86,29 +81,25 @@ class ModuleNewsReadersSurveyResult extends \ModuleNews
 
     protected function getAnswersVote($objArticle)
     {
-        $result  = null;
+        $result = null;
         $surveys = unserialize($objArticle->readers_survey);
         $answers = [];
-        $sum     = 0;
-        foreach ($surveys as $survey)
-        {
+        $sum = 0;
+        foreach ($surveys as $survey) {
             $fieldPaletteQuestion = FieldPaletteModel::findById($survey);
-            $answers              = [];
-            foreach (unserialize($fieldPaletteQuestion->news_answers) as $answerId)
-            {
-                $fieldPaletteAnswer                        = FieldPaletteModel::findById($answerId);
+            $answers = [];
+            foreach (unserialize($fieldPaletteQuestion->news_answers) as $answerId) {
+                $fieldPaletteAnswer = FieldPaletteModel::findById($answerId);
                 $answers[$fieldPaletteAnswer->news_answer] = $fieldPaletteAnswer->news_answer_vote;
-                $sum                                       += $fieldPaletteAnswer->news_answer_vote;
+                $sum += $fieldPaletteAnswer->news_answer_vote;
             }
         }
 
-        foreach ($answers as $key => $value)
-        {
-            $vote         = (intval($value) / intval($sum)) * 100;
+        foreach ($answers as $key => $value) {
+            $vote = ((int) $value / (int) $sum) * 100;
             $result[$key] = round($vote);
         }
 
         return $result;
     }
-
 }

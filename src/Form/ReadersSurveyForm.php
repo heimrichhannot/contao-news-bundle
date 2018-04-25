@@ -1,13 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kwagner
- * Date: 28.07.17
- * Time: 12:16
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Form;
-
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -17,7 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 class ReadersSurveyForm extends AbstractType
 {
     const ANSWERS = 'answers';
-    const SUBMIT  = 'submit';
+    const SUBMIT = 'submit';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -27,11 +26,11 @@ class ReadersSurveyForm extends AbstractType
             static::ANSWERS,
             ChoiceType::class,
             [
-                'choices'  => $data['answers'],
+                'choices' => $data['answers'],
                 'multiple' => false,
                 'expanded' => true,
                 'required' => true,
-                'attr'     => ['class' => 'readers-survey-answer'],
+                'attr' => ['class' => 'readers-survey-answer'],
             ]
         );
         $builder->add(
@@ -39,9 +38,9 @@ class ReadersSurveyForm extends AbstractType
             SubmitType::class,
             [
                 'label' => 'news.readers.survey.submit',
-                'attr'  => [
+                'attr' => [
 //                    'data-action' => $options['action'][static::SUBMIT],
-                    'class'       => 'btn btn-primary',
+                    'class' => 'btn btn-primary',
                 ],
             ]
         );

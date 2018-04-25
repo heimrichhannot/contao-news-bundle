@@ -1,14 +1,18 @@
 <?php
 
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\StringUtil;
-use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
-use HeimrichHannot\UtilsBundle\Model\CfgTagModel;
 use HeimrichHannot\NewsBundle\Model\NewsListArchiveModel;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
-use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
+use HeimrichHannot\UtilsBundle\Model\CfgTagModel;
 use Model\Collection;
 
 class SearchablePagesListener
@@ -37,11 +41,11 @@ class SearchablePagesListener
     }
 
     /**
-     * Add news items to the indexer
+     * Add news items to the indexer.
      *
      * @param array $pages
-     * @param integer $rootId
-     * @param boolean $isSitemap
+     * @param int   $rootId
+     * @param bool  $isSitemap
      *
      * @return array
      */
@@ -54,20 +58,20 @@ class SearchablePagesListener
         }
 
         $processed = [];
-        $time      = \Date::floorToMinute();
+        $time = \Date::floorToMinute();
 
-        if (($archive = NewsListArchiveModel::findAll()) !== null) {
+        if (null !== ($archive = NewsListArchiveModel::findAll())) {
             while ($archive->next()) {
-                if (!$archive->jumpTo || !empty($root) && !in_array($archive->jumpTo, $root)) {
+                if (!$archive->jumpTo || !empty($root) && !in_array($archive->jumpTo, $root, true)) {
                     continue;
                 }
 
                 if (!isset($processed[$archive->jumpTo])) {
-                    if (($parent = \PageModel::findWithDetails($archive->jumpTo)) === null) {
+                    if (null === ($parent = \PageModel::findWithDetails($archive->jumpTo))) {
                         continue;
                     }
 
-                    if (!$parent->published || ($parent->start != '' && $parent->start > $time) || ($parent->stop != '' && $parent->stop <= ($time + 60))) {
+                    if (!$parent->published || ('' != $parent->start && $parent->start > $time) || ('' != $parent->stop && $parent->stop <= ($time + 60))) {
                         continue;
                     }
 
@@ -76,7 +80,7 @@ class SearchablePagesListener
                             continue;
                         }
 
-                        if ($parent->sitemap == 'map_never') {
+                        if ('map_never' == $parent->sitemap) {
                             continue;
                         }
                     }
@@ -87,7 +91,7 @@ class SearchablePagesListener
 
                 $url = $processed[$archive->jumpTo];
 
-                if (($newsList = NewsListModel::findBy(['pid=?', 'published=?'], [$archive->id, true])) !== null) {
+                if (null !== ($newsList = NewsListModel::findBy(['pid=?', 'published=?'], [$archive->id, true]))) {
                     while ($newsList->next()) {
                         $pages[] = sprintf($url, $newsList->alias ?: $newsList->id);
                     }
@@ -99,11 +103,11 @@ class SearchablePagesListener
     }
 
     /**
-     * Add news items to the indexer
+     * Add news items to the indexer.
      *
      * @param array $pages
-     * @param integer $rootId
-     * @param boolean $isSitemap
+     * @param int   $rootId
+     * @param bool  $isSitemap
      *
      * @return array
      */
@@ -116,22 +120,22 @@ class SearchablePagesListener
         }
 
         $processed = [];
-        $time      = \Date::floorToMinute();
+        $time = \Date::floorToMinute();
 
         foreach (StringUtil::deserialize(\Config::get('tagSourceJumpTos'), true) as $tagSource) {
             $jumpTo = $tagSource['jumpTo'];
             $source = $tagSource['source'];
 
-            if (!$jumpTo || !empty($root) && !in_array($jumpTo, $root)) {
+            if (!$jumpTo || !empty($root) && !in_array($jumpTo, $root, true)) {
                 continue;
             }
 
             if (!isset($processed[$jumpTo])) {
-                if (($parent = \PageModel::findWithDetails($jumpTo)) === null) {
+                if (null === ($parent = \PageModel::findWithDetails($jumpTo))) {
                     continue;
                 }
 
-                if (!$parent->published || ($parent->start != '' && $parent->start > $time) || ($parent->stop != '' && $parent->stop <= ($time + 60))) {
+                if (!$parent->published || ('' != $parent->start && $parent->start > $time) || ('' != $parent->stop && $parent->stop <= ($time + 60))) {
                     continue;
                 }
 
@@ -140,7 +144,7 @@ class SearchablePagesListener
                         continue;
                     }
 
-                    if ($parent->sitemap == 'map_never') {
+                    if ('map_never' == $parent->sitemap) {
                         continue;
                     }
                 }
@@ -152,9 +156,8 @@ class SearchablePagesListener
             $url = $processed[$jumpTo];
 
             /** @var Collection $tags */
-            if (($tags = CfgTagModel::findAllBySource($source)) !== null) {
-                foreach (array_combine($tags->fetchEach('id'), $tags->fetchEach('alias')) as $id => $tag)
-                {
+            if (null !== ($tags = CfgTagModel::findAllBySource($source))) {
+                foreach (array_combine($tags->fetchEach('id'), $tags->fetchEach('alias')) as $id => $tag) {
                     $pages[] = sprintf($url, $tag ?: $id);
                 }
             }
@@ -162,5 +165,4 @@ class SearchablePagesListener
 
         return $pages;
     }
-
 }

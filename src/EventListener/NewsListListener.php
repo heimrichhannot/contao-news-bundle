@@ -1,21 +1,21 @@
 <?php
-/**
- * Copyright (c) 2017 Heimrich & Hannot GmbH
- * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\EventListener;
 
 use HeimrichHannot\NewsBundle\Event\NewsListAfterCompileEvent;
 use HeimrichHannot\NewsBundle\Event\NewsListBeforeCompileEvent;
-use HeimrichHannot\NewsBundle\Form\NewsFilterForm;
-use Symfony\Component\Form\Forms;
 
 class NewsListListener
 {
     /**
-     * Manipulate the news list template before compile() run
+     * Manipulate the news list template before compile() run.
+     *
      * @param NewsListBeforeCompileEvent $event
      */
     public function beforeCompile(NewsListBeforeCompileEvent $event)
@@ -25,15 +25,12 @@ class NewsListListener
         }
     }
 
-
     /**
-     * Manipulate the news list template after compile() run
+     * Manipulate the news list template after compile() run.
+     *
      * @param NewsListAfterCompileEvent $event
      */
     public function afterCompile(NewsListAfterCompileEvent $event)
     {
-
     }
-
-
 }

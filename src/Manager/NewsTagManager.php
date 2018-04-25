@@ -1,24 +1,18 @@
 <?php
-/**
- * Contao Open Source CMS
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
- * Copyright (c) 2017 Heimrich & Hannot GmbH
- *
- * @author  Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Manager;
 
-
-use Codefog\TagsBundle\Collection\CollectionInterface;
 use Codefog\TagsBundle\Manager\DefaultManager;
 use Codefog\TagsBundle\Model\TagModel;
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 
 class NewsTagManager extends DefaultManager
 {
-
     /**
      * {@inheritdoc}
      */
@@ -44,7 +38,7 @@ class NewsTagManager extends DefaultManager
         /** @var TagModel $adapter */
         $adapter = $this->framework->getAdapter(TagModel::class);
 
-        if (($model = $adapter->findByAlias($value)) === null) {
+        if (null === ($model = $adapter->findByAlias($value))) {
             return null;
         }
 

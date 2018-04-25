@@ -1,21 +1,16 @@
 <?php
-/**
- * Contao Open Source CMS
- *
+
+/*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
- * @author  Thomas Körner <t.koerner@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+ * @license LGPL-3.0-or-later
  */
 
-
 namespace HeimrichHannot\NewsBundle\EventListener;
-
 
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\DataContainer;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class NewsCallbackListener
 {
@@ -26,10 +21,8 @@ class NewsCallbackListener
 
     public function __construct(ContaoFramework $framework)
     {
-
         $this->framework = $framework;
     }
-
 
     public function getNewsPalettes(DataContainer $dc)
     {
@@ -40,7 +33,7 @@ class NewsCallbackListener
             return $arrOptions;
         }
         foreach ($arrPalettes as $strName => $strPalette) {
-            if (in_array($strName, ['__selector__', 'internal', 'external', 'default'])) {
+            if (in_array($strName, ['__selector__', 'internal', 'external', 'default'], true)) {
                 continue;
             }
             $arrOptions[$strName] = $strName;
@@ -48,5 +41,4 @@ class NewsCallbackListener
 
         return $arrOptions;
     }
-
 }

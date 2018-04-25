@@ -1,15 +1,14 @@
 <?php
-/**
- * Copyright (c) 2017 Heimrich & Hannot GmbH
- * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Module;
 
-
 use Contao\ModuleModel;
-use HeimrichHannot\NewsBundle\Form\NewsFilterForm;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Forms;
@@ -38,7 +37,15 @@ class ModuleNewsListFilter extends \Contao\ModuleNews
     }
 
     /**
-     * Compile the current element
+     * @return NewsFilterModule
+     */
+    public function getFilter(): NewsFilterModule
+    {
+        return $this->filter;
+    }
+
+    /**
+     * Compile the current element.
      */
     protected function compile()
     {
@@ -47,7 +54,7 @@ class ModuleNewsListFilter extends \Contao\ModuleNews
         $form = $this->filter->getForm();
 
         /**
-         * @var \Twig_Environment $twig
+         * @var \Twig_Environment
          */
         $twig = \System::getContainer()->get('twig');
 
@@ -57,13 +64,5 @@ class ModuleNewsListFilter extends \Contao\ModuleNews
                 'form' => $form->createView(),
             ]
         );
-    }
-
-    /**
-     * @return NewsFilterModule
-     */
-    public function getFilter(): NewsFilterModule
-    {
-        return $this->filter;
     }
 }

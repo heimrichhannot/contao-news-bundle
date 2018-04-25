@@ -1,6 +1,12 @@
 <?php
-namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
+namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 
@@ -13,7 +19,8 @@ class TwitterCrawler extends AbstractCrawler
 
     /**
      * TwitterCrawler constructor.
-     * @param \GuzzleHttp\Client $client
+     *
+     * @param \GuzzleHttp\Client                         $client
      * @param \HeimrichHannot\NewsBundle\Model\NewsModel $item
      * @param $baseUrl
      * @param $config Must contain following keys: consumer_key, consumer_secret, access_token, access_token_secret
@@ -41,28 +48,29 @@ class TwitterCrawler extends AbstractCrawler
         $this->count = 0;
         $count = 0;
         foreach ($this->getUrls() as $url) {
-            $response = $this->connection->get("search/tweets", [
-                "q"     => 'url:' . $url,
-                "count" => 100
+            $response = $this->connection->get('search/tweets', [
+                'q' => 'url:'.$url,
+                'count' => 100,
             ]);
             if ($errors = $response->errors) {
                 $this->setErrorCode(static::ERROR_BREAKING);
                 $this->setErrorMessage($errors[0]->message);
+
                 return $this->error;
-            } else {
-                $count += count($response->statuses);
             }
+            $count += count($response->statuses);
         }
         $this->count = $count;
+
         return $count;
     }
 
     /**
-     * Update the current item
+     * Update the current item.
      */
     public function updateItem()
     {
-        $this->item->twitter_counter    = $this->count;
+        $this->item->twitter_counter = $this->count;
         $this->item->twitter_updated_at = time();
         $this->item->save();
     }

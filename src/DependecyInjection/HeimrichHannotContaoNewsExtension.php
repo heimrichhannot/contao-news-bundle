@@ -1,12 +1,17 @@
 <?php
 
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace HeimrichHannot\NewsBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use HeimrichHannot\NewsBundle\DependencyInjection\Configuration;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class HeimrichHannotContaoNewsExtension extends Extension
 {
@@ -16,7 +21,7 @@ class HeimrichHannotContaoNewsExtension extends Extension
     private $files = [
         'services.yml',
         'commands.yml',
-        'listener.yml'
+        'listener.yml',
     ];
 
     /**
@@ -24,12 +29,12 @@ class HeimrichHannotContaoNewsExtension extends Extension
      */
     public function load(array $mergedConfig, ContainerBuilder $container)
     {
-        $configuration   = new Configuration(true);
+        $configuration = new Configuration(true);
         $processedConfig = $this->processConfiguration($configuration, $mergedConfig);
         $container->setParameter('social_stats', $processedConfig);
 
         $loader = new YamlFileLoader(
-            $container, new FileLocator(__DIR__ . '/../Resources/config')
+            $container, new FileLocator(__DIR__.'/../Resources/config')
         );
 
         foreach ($this->files as $file) {

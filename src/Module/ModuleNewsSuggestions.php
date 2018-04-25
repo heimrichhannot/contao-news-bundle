@@ -1,13 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kwagner
- * Date: 25.07.17
- * Time: 17:06
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Module;
-
 
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use Patchwork\Utf8;
@@ -15,14 +14,14 @@ use Patchwork\Utf8;
 class ModuleNewsSuggestions extends \ModuleNews
 {
     /**
-     * Template
+     * Template.
      *
      * @var string
      */
     protected $strTemplate = 'mod_news_suggestions';
 
     /**
-     * Display a wildcard in the back end
+     * Display a wildcard in the back end.
      *
      * @return string
      */
@@ -32,11 +31,11 @@ class ModuleNewsSuggestions extends \ModuleNews
             /** @var \BackendTemplate|object $objTemplate */
             $objTemplate = new \BackendTemplate('be_wildcard');
 
-            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['newsreader'][0]) . ' ###';
-            $objTemplate->title    = $this->headline;
-            $objTemplate->id       = $this->id;
-            $objTemplate->link     = $this->name;
-            $objTemplate->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD']['newsreader'][0]).' ###';
+            $objTemplate->title = $this->headline;
+            $objTemplate->id = $this->id;
+            $objTemplate->link = $this->name;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -59,16 +58,16 @@ class ModuleNewsSuggestions extends \ModuleNews
     protected function compile()
     {
         /**
-         * @var \Twig_Environment $twig
+         * @var \Twig_Environment
          */
-        $twig                        = \System::getContainer()->get('twig');
+        $twig = \System::getContainer()->get('twig');
         $this->Template->suggestions = $twig->render('@HeimrichHannotContaoNews/news/suggestions.html.twig', ['suggestions' => $this->getSuggestions()]);
     }
 
     protected function getNews($order)
     {
-        $news = NewsModel::findPublishedByPid($this->news_archives, $this->perPage, ['order' => $order . ' DESC']);
-        if ($news == null) {
+        $news = NewsModel::findPublishedByPid($this->news_archives, $this->perPage, ['order' => $order.' DESC']);
+        if (null == $news) {
             return null;
         }
         $orderedNews = [];
@@ -76,9 +75,9 @@ class ModuleNewsSuggestions extends \ModuleNews
             $this->getTeaserImage($newsModel);
             $orderedNews[] = [
                 'subheadline' => $newsModel->subheadline,
-                'headline'    => $newsModel->headline,
-                'link'        => $newsModel->getUrl(null),
-                'image'       => $newsModel->src,
+                'headline' => $newsModel->headline,
+                'link' => $newsModel->getUrl(null),
+                'image' => $newsModel->src,
             ];
         }
 
@@ -88,7 +87,7 @@ class ModuleNewsSuggestions extends \ModuleNews
     protected function getSuggestions()
     {
         $newsSuggestions = unserialize($this->news_suggestion);
-        $suggestions     = null;
+        $suggestions = null;
         if (empty($newsSuggestions)) {
             return $suggestions;
         }
@@ -96,8 +95,8 @@ class ModuleNewsSuggestions extends \ModuleNews
         foreach ($newsSuggestions as $suggestion) {
             $suggestions[] = [
                 'collapse' => str_replace(' ', '', $suggestion['suggestion_label']),
-                'label'    => $suggestion['suggestion_label'],
-                'news'     => $this->getNews($suggestion['suggestion_order_column']),
+                'label' => $suggestion['suggestion_label'],
+                'news' => $this->getNews($suggestion['suggestion_order_column']),
             ];
         }
 
@@ -110,15 +109,15 @@ class ModuleNewsSuggestions extends \ModuleNews
     protected function getTeaserImage($objArticle)
     {
         // Add an image
-        if ($objArticle->addImage && $objArticle->singleSRC != '') {
+        if ($objArticle->addImage && '' != $objArticle->singleSRC) {
             $objModel = \FilesModel::findByUuid($objArticle->singleSRC);
 
-            if ($objModel !== null && is_file(TL_ROOT . '/' . $objModel->path)) {
+            if (null !== $objModel && is_file(TL_ROOT.'/'.$objModel->path)) {
                 // Do not override the field now that we have a model registry (see #6303)
                 $arrArticle = $objArticle->row();
 
                 // Override the default image size
-                if ($this->imgSize != '') {
+                if ('' != $this->imgSize) {
                     $size = \StringUtil::deserialize($this->imgSize);
 
                     if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {

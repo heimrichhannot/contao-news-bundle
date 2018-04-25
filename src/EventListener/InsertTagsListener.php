@@ -1,9 +1,9 @@
 <?php
 
-/**
- * Copyright (c) 2017 Heimrich & Hannot GmbH
- * @author Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\EventListener;
@@ -36,7 +36,7 @@ class InsertTagsListener
     private $supportedNewsListTags = [
         'news_list',
         'news_list_url',
-        'news_list_title'
+        'news_list_title',
     ];
 
     /**
@@ -59,7 +59,7 @@ class InsertTagsListener
     public function onReplaceInsertTags($tag)
     {
         $elements = explode('::', $tag);
-        $key      = strtolower($elements[0]);
+        $key = strtolower($elements[0]);
 
         if (in_array($key, $this->supportedNewsTags, true)) {
             return $this->replaceNewsInsertTag($key, $elements[1]);
@@ -71,7 +71,6 @@ class InsertTagsListener
 
         return false;
     }
-
 
     /**
      * Replaces an news-related insert tag.
@@ -121,7 +120,7 @@ class InsertTagsListener
      * Generates the replacement string.
      *
      * @param NewsModel $news
-     * @param string $insertTag
+     * @param string    $insertTag
      *
      * @return string
      */
@@ -134,7 +133,7 @@ class InsertTagsListener
      * Generates the replacement string.
      *
      * @param NewsListModel $newsList
-     * @param string $insertTag
+     * @param string        $insertTag
      *
      * @return string
      */
@@ -143,6 +142,7 @@ class InsertTagsListener
         switch ($insertTag) {
             case 'news_list':
                 $url = NewsListModel::generateNewsListUrl($newsList);
+
                 return sprintf('<a href="%s">%s</a>', $url, $newsList->title);
                 break;
             case 'news_list_url':

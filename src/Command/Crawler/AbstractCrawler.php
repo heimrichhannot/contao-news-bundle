@@ -1,9 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kwagner
- * Date: 26.07.17
- * Time: 10:18
+
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Command\Crawler;
@@ -16,7 +16,7 @@ abstract class AbstractCrawler implements CrawlerInterface
 {
     const ERROR_NO_ERROR = 0;
     const ERROR_BREAKING = 1;
-    const ERROR_NOTICE   = 2;
+    const ERROR_NOTICE = 2;
 
     /**
      * @var Client
@@ -32,7 +32,7 @@ abstract class AbstractCrawler implements CrawlerInterface
     protected $baseUrl;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $count;
 
@@ -40,8 +40,8 @@ abstract class AbstractCrawler implements CrawlerInterface
      * @var array
      */
     protected $error = [
-        'code'    => 1,
-        'message' => 'No error specified'
+        'code' => 1,
+        'message' => 'No error specified',
     ];
 
     /**
@@ -51,22 +51,24 @@ abstract class AbstractCrawler implements CrawlerInterface
 
     /**
      * AbstractCrawler constructor.
-     * @param Client $client
-     * @param NewsModel $item
-     * @param string $baseUrl
+     *
+     * @param Client            $client
+     * @param NewsModel         $item
+     * @param string            $baseUrl
      * @param null|SymfonyStyle $io
      */
     public function __construct($client, $item = null, $baseUrl = '', $io = null)
     {
-        $this->client  = $client;
-        $this->item    = $item;
+        $this->client = $client;
+        $this->item = $item;
         $this->baseUrl = $baseUrl;
-        $this->count   = 0;
-        $this->io      = $io;
+        $this->count = 0;
+        $this->io = $io;
     }
 
     /**
-     * Returns all available urls for an array
+     * Returns all available urls for an array.
+     *
      * @return array
      */
     public function getUrls()
@@ -77,7 +79,7 @@ abstract class AbstractCrawler implements CrawlerInterface
             && is_array($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])) {
             foreach ($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'] as $callback) {
                 $addUrls = \System::importStatic($callback[0])->{$callback[1]}($this->item, $this->baseUrl);
-                $urls    = array_merge(
+                $urls = array_merge(
                     is_array($addUrls) ? $addUrls : [],
                     $urls
                 );
@@ -101,10 +103,10 @@ abstract class AbstractCrawler implements CrawlerInterface
      *
      * @return int|array
      */
-    abstract function getCount();
+    abstract public function getCount();
 
     /**
-     * Update the current item
+     * Update the current item.
      */
     public function updateItem()
     {
@@ -145,12 +147,14 @@ abstract class AbstractCrawler implements CrawlerInterface
     public function setErrorCode($code)
     {
         $this->error['code'] = $code;
+
         return $this->error;
     }
 
     public function setErrorMessage($message)
     {
         $this->error['message'] = $message;
+
         return $this->error;
     }
 
@@ -177,6 +181,4 @@ abstract class AbstractCrawler implements CrawlerInterface
     {
         $this->io = $io;
     }
-
-
 }

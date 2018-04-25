@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace HeimrichHannot\NewsBundle\Backend;
 
 use HeimrichHannot\Haste\Dca\General;
@@ -9,7 +15,7 @@ class CfgTag extends \Backend
 {
     public static function generateAlias($value, \DataContainer $dc)
     {
-        if (($tag = CfgTagModel::findByPk($dc->id)) === null) {
+        if (null === ($tag = CfgTagModel::findByPk($dc->id))) {
             return $value;
         }
 

@@ -1,13 +1,17 @@
 <?php
 
+/*
+ * Copyright (c) 2018 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace HeimrichHannot\NewsBundle\Controller;
 
-
+use HeimrichHannot\Ajax\Ajax;
 use HeimrichHannot\Ajax\Response\ResponseData;
 use HeimrichHannot\Ajax\Response\ResponseSuccess;
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\News;
-use HeimrichHannot\Ajax\Ajax;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class FrontendController extends Controller
