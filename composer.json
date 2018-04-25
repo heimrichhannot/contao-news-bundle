@@ -4,25 +4,30 @@
   "description": "This module contains enhancements for the contao news entity.",
   "license": "LGPL-3.0-or-later",
   "require": {
-    "php": ">=5.6.0",
-    "contao/core-bundle": "^4.3.1",
-    "heimrichhannot/tags-bundle": "^1.0",
+    "php": "^7.1",
+    "contao/core-bundle": "^4.4",
+    "symfony/framework-bundle": "^3.4",
+    "codefog/tags-bundle": "^2.0",
     "heimrichhannot/contao-tagsinput": "^2.1",
     "google/apiclient": "^2.0",
     "abraham/twitteroauth": "^0.7",
     "heimrichhannot/contao-categories-bundle": "^1.0",
     "heimrichhannot/contao-fieldpalette": "^1.3.16",
-    "heimrichhannot/contao-haste_plus": "^1.6.92",
     "heimrichhannot/contao-head-bundle": "^1.0",
-    "heimrichhannot/contao-modal": "^1.3",
-    "heimrichhannot/contao-utils-bundle": "^2.0"
+    "heimrichhannot/contao-utils-bundle": "^2.0",
+    "twig/extensions": "^1.5"
   },
   "require-dev": {
+    "contao/test-case": "^1.1",
     "contao/manager-plugin": "^2.0",
-    "friendsofphp/php-cs-fixer": "^2.0",
-    "phpunit/phpunit": "^4.5",
-    "satooshi/php-coveralls": "^1.0",
-    "symfony/phpunit-bridge": "^2.8|^3.0"
+    "friendsofphp/php-cs-fixer": "^2.2",
+    "phpunit/phpunit": "^6.5",
+    "phpunit/phpunit-mock-objects": "^4.0|^5.0",
+    "phpunit/php-token-stream": "^1.4|^2.0|^3.0",
+    "php-http/guzzle6-adapter": "^1.1",
+    "php-http/message-factory": "^1.0.2",
+    "satooshi/php-coveralls": "^2.0",
+    "symfony/phpunit-bridge": "^3.2"
   },
   "autoload": {
     "psr-4": {
@@ -47,6 +52,7 @@
     "preferred-install": "dist"
   },
   "extra": {
-    "contao-manager-plugin": "HeimrichHannot\\NewsBundle\\ContaoManager\\Plugin"
+    "contao-manager-plugin": "HeimrichHannot\\NewsBundle\\ContaoManager\\Plugin",
+    "foxy": true
   }
 }

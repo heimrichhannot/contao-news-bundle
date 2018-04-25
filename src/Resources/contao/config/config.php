@@ -37,10 +37,6 @@ $GLOBALS['TL_MODELS']['tl_news_tags']         = '\HeimrichHannot\NewsBundle\Mode
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['initializeSystem']['heimrichhannot_news']   = ['HeimrichHannot\NewsBundle\Controller\FrontendController', 'xhrAction'];
-$GLOBALS['TL_HOOKS']['parseArticles']['heimrichhannot_news']      = ['huh.news.listener.hooks', 'parseArticles'];
-$GLOBALS['TL_HOOKS']['newsListCountItems']['heimrichhannot_news'] = ['huh.news.listener.hooks', 'newsListCountItems'];
-$GLOBALS['TL_HOOKS']['newsListFetchItems']['heimrichhannot_news'] = ['huh.news.listener.hooks', 'newsListFetchItems'];
-$GLOBALS['TL_HOOKS']['getPageLayout']['heimrichhannot_news']      = ['huh.news.listener.hooks', 'getPageLayout'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags']['heimrichhannot_news']  = ['huh.news.listener.insert_tags', 'onReplaceInsertTags'];
 $GLOBALS['TL_HOOKS']['getSearchablePages']['heimrichhannot_news'] = ['huh.news.listener.searchable_pages', 'getSearchablePages'];
 

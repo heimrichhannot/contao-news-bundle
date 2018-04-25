@@ -32,7 +32,6 @@ class HeimrichHannotContaoNewsBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new NewsFilterManagerPass('huh.news.list_filter.registry', 'huh.news.list_filter'));
     }
 
 
