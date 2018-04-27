@@ -9,7 +9,7 @@ services:
                 - ["setContainer", ["@service_container"]]
 
     huh.news.news_tags_manager:
-        class: HeimrichHannot\NewsBundle\Manager\NewsTagManager
+        class: Codefog\TagsBundle\Manager\DefaultManager
         arguments:
             - "@contao.framework"
             - "tl_news"

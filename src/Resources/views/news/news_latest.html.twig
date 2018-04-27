@@ -1,0 +1,20 @@
+<div class="{{ 'layout_latest arc_' ~ archive.id ~ ' block ' ~ cssClass|trim }}" itemscope itemtype="http://schema.org/Article">
+
+    <p class="info">
+        <time datetime="{{ datetime }}" itemprop="datePublished">{{ date }}</time> {{ author ~ ' ' ~ commentCount| trim }}
+    </p>
+
+    {% if image|default() %}
+        {{ include('@HeimrichHannotContaoUtils/image.html.twig', image|merge({'href': detailsUrl})) }}
+    {% endif %}
+
+    <h2 itemprop="name">{{ linkHeadline|raw }}</h2>
+
+    <div class="ce_text block" itemprop="description">
+        {{ teaser }}
+    </div>
+
+    {% if hasText|default() or hasTeaser|default() %}
+        <p class="more">{{ more|raw }}</p>
+    {% endif %}
+</div>
