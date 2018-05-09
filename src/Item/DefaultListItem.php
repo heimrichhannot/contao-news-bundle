@@ -8,7 +8,7 @@
 
 namespace HeimrichHannot\NewsBundle\Item;
 
-class DefaultItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
+class DefaultListItem extends \HeimrichHannot\ListBundle\Item\DefaultItem
 {
     use NewsItemTrait;
 }

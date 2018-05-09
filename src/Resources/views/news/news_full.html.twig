@@ -21,14 +21,14 @@
         {{ text|raw }}
     {% else %}
         <div class="ce_text block">
-            {% if singleSRC|default() and not singleSRC.addBefore %}
-                {{ teaser }}
+            {% if images.singleSRC|default() and not images.singleSRC.addBefore %}
+                {{ teaser|raw }}
             {% endif %}
-            {% if singleSRC|default() %}
-                {{ include('@HeimrichHannotContaoUtils/image.html.twig', singleSRC|merge({'href': detailsUrl})) }}
+            {% if images.singleSRC|default() %}
+                {{ include('@HeimrichHannotContaoUtils/image.html.twig', images.singleSRC|merge({'href': detailsUrl})) }}
             {% endif %}
-            {% if singleSRC|default() and singleSRC.addBefore %}
-                {{ teaser }}
+            {% if images.singleSRC|default() and images.singleSRC.addBefore %}
+                {{ teaser|raw }}
             {% endif %}
         </div>
     {% endif %}
