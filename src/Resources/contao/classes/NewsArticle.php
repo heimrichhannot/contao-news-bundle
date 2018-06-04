@@ -12,6 +12,8 @@ namespace HeimrichHannot\NewsBundle;
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\ImageSizeModel;
+use Contao\System;
+use DOMDocument;
 use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\Form\NewsFilterForm;
@@ -110,31 +112,6 @@ class NewsArticle extends \ModuleNews
         $this->addNavigation();
         $this->replaceTokens();
         $this->relocate();
-        $this->redirectToExternalSource();
-    }
-
-    /**
-     * Add redirect support for news with external source
-     */
-    protected function redirectToExternalSource()
-    {
-        if (!$this->module instanceof \ModuleNewsReader) {
-            return;
-        }
-
-        if ($this->article->source !== 'external' || !$this->article->url || !\Contao\Validator::isUrl($this->article->url)) {
-            return;
-        }
-
-        $url = str_replace('{{news_url::', '{{news_category_url::', $this->article->relocateUrl);
-        $url = \Controller::replaceInsertTags($url, false);
-
-        if($url === $this->article->url)
-        {
-            return;
-        }
-
-        \Controller::redirect($this->article->url, 301);
     }
 
     /**
@@ -142,7 +119,7 @@ class NewsArticle extends \ModuleNews
      */
     protected function relocate()
     {
-        if (!$this->module instanceof \ModuleNewsReader) {
+        if (!$this->module instanceof \Contao\ModuleNewsReader) {
             return;
         }
 
@@ -159,7 +136,7 @@ class NewsArticle extends \ModuleNews
 
         switch ($this->article->relocate) {
             case 'deindex':
-                \Controller::redirect($url, 301);
+                \Controller::redirect($url);
                 break;
             case 'redirect':
                 // news article is still available, but google index will transfer page rank to new url
@@ -367,7 +344,7 @@ class NewsArticle extends \ModuleNews
      */
     protected function addTeaserImage()
     {
-        if ($this->module instanceof \ModuleNewsReader || $this->module->doNotUse) {
+        if ($this->module instanceof \Contao\ModuleNewsReader || $this->module->doNotUse) {
             return;
         }
 
@@ -429,7 +406,7 @@ class NewsArticle extends \ModuleNews
      */
     protected function addPageMeta()
     {
-        if (!$this->module instanceof \ModuleNewsReader) {
+        if (!$this->module instanceof \Contao\ModuleNewsReader) {
             return;
         }
 
@@ -752,7 +729,7 @@ class NewsArticle extends \ModuleNews
      */
     protected function setSeen()
     {
-        if ($this->module instanceof \Contao\ModuleNewsList || $this->module instanceof \ModuleNewsArchive) {
+        if ($this->module instanceof \Contao\ModuleNewsList || $this->module instanceof \Contao\ModuleNewsArchive) {
             NewsList::addSeen($this->article->id);
         }
     }

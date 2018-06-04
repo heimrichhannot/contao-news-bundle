@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.3] - 2018-06-04
+
+#### Fixed
+- fixed instance of namespace in NewsArticle.php
+
 ## [2.4.2] - 2018-04-03
 
 #### Changed
