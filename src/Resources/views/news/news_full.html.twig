@@ -13,8 +13,8 @@
         <time datetime="{{ datetime }}" itemprop="datePublished">{{ date }}</time> {{ author ~ ' ' ~ commentCount| trim }}
     </p>
 
-    {% if(hasSubHeadline|default()) %}
-        <h2>{{ subHeadline }}</h2>
+    {% if(newsSubHeadline|default()) %}
+        <h2>{{ newsSubHeadline }}</h2>
     {% endif %}
 
     {% if hasText|default() %}
