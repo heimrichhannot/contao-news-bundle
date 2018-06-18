@@ -281,7 +281,7 @@ trait NewsItemTrait
      */
     public function getDatetime(): string
     {
-        return Date::parse('Y-m-d\TH:i:sP', $this->data);
+        return Date::parse('Y-m-d\TH:i:sP', $this->date);
     }
 
     /**
