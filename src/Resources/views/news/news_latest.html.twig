@@ -11,7 +11,7 @@
     <h2 itemprop="name">{{ linkHeadline|raw }}</h2>
 
     <div class="ce_text block" itemprop="description">
-        {{ teaser }}
+        {{ teaser|raw }}
     </div>
 
     {% if hasText|default() or hasTeaser|default() %}
