@@ -384,7 +384,9 @@ trait NewsItemTrait
 
         if (null !== ($elements = $adapter->findPublishedByPidAndTable($this->id, $this->getDataContainer()))) {
             foreach ($elements as $element) {
-                $strText .= Controller::getContentElement($element->id);
+                try {
+                    $strText .= Controller::getContentElement($element->id);
+                } catch (\ErrorException $e) {}
             }
         }
 
