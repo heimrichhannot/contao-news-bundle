@@ -137,7 +137,7 @@ trait NewsItemTrait
     /**
      * {@inheritdoc}
      */
-    public function getDetailsUrl(): string
+    public function getDetailsUrl(bool $external = true): string
     {
         $cacheKey = 'id_'.$this->id;
 
