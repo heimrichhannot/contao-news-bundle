@@ -149,7 +149,7 @@ trait NewsItemTrait
         switch ($this->source) {
             // Link to an external page
             case 'external':
-                return $this->getExternalUrl();
+                return $external ? $this->getExternalUrl() : '';
             // Link to an internal page
             case 'internal':
                 return $this->getInternalUrl();
@@ -386,7 +386,8 @@ trait NewsItemTrait
             foreach ($elements as $element) {
                 try {
                     $strText .= Controller::getContentElement($element->id);
-                } catch (\ErrorException $e) {}
+                } catch (\ErrorException $e) {
+                }
             }
         }
 
