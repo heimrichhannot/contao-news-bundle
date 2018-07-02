@@ -20,5 +20,11 @@ services:
     huh.news.listener.callback.news:
       class: HeimrichHannot\NewsBundle\EventListener\NewsCallbackListener
       arguments: ["@contao.framework"]
-    huh.news.backend.tl_news:
+    huh.news.backend.news:
         class: HeimrichHannot\NewsBundle\Backend\News
+        arguments:
+          - "@contao.framework"
+    huh.news.backend.news_archive:
+        class: HeimrichHannot\NewsBundle\Backend\NewsArchive
+        arguments:
+          - "@contao.framework"

@@ -8,15 +8,23 @@
 
 namespace HeimrichHannot\NewsBundle\Backend;
 
+use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\DataContainer;
+use Contao\NewsArchiveModel;
+use Contao\NewsModel;
+use Contao\System;
+
 class News extends \Backend
 {
     /**
-     * Import the back end user object.
+     * @var ContaoFrameworkInterface
      */
-    public function __construct()
+    private $framework;
+
+    public function __construct(ContaoFrameworkInterface $framework)
     {
+        $this->framework = $framework;
         parent::__construct();
-        $this->import('BackendUser', 'User');
     }
 
     /**
@@ -48,5 +56,103 @@ class News extends \Backend
         }
 
         return $arrOption;
+    }
+
+    /**
+     * If news archive has addCustomNewsPalettes set and a customNewsPalettes given,
+     * replace the default news palette with the given one.
+     *
+     * @param DataContainer $dc
+     */
+    public function onLoad(DataContainer $dc)
+    {
+        /** @var NewsModel $news */
+        if (null === ($news = $this->framework->getAdapter(NewsModel::class)->findByPk($dc->id))) {
+            return;
+        }
+
+        /** @var NewsArchiveModel $archive */
+        if (null === ($archive = $this->framework->getAdapter(NewsArchiveModel::class)->findByPk($news->pid))) {
+            return;
+        }
+
+        $this->initCustomPalette($news, $archive, $dc);
+        $this->limitInputCharacterLength($news, $archive, $dc);
+    }
+
+    /**
+     * Limit input character length for editors based on archive config.
+     *
+     * @param NewsModel        $news
+     * @param NewsArchiveModel $archive
+     * @param DataContainer    $dc
+     *
+     * @return bool
+     */
+    protected function limitInputCharacterLength(NewsModel $news, NewsArchiveModel $archive, DataContainer $dc): bool
+    {
+        if (false === (bool) $archive->limitInputCharacterLength) {
+            return false;
+        }
+
+        if (empty($limits = \Contao\StringUtil::deserialize($archive->inputCharacterLengths, true))) {
+            return false;
+        }
+
+        foreach ($limits as $limit) {
+            $strField = $limit['field'];
+            $intLength = $limit['length'];
+            if ($intLength > 0 && isset($GLOBALS['TL_DCA']['tl_news']['fields'][$strField])) {
+                $arrData = &$GLOBALS['TL_DCA']['tl_news']['fields'][$strField];
+                if (isset($arrData['eval']['maxlength'])) {
+                    unset($arrData['eval']['maxlength']); // contao core does not count special characters as decoded entities
+                }
+                $arrData['eval']['data-maxlength'] = $intLength;
+                $arrData['eval']['rgxp'] = 'maxlength::'.$intLength;
+                $arrData['eval']['data-count-characters'] = true;
+                $arrData['eval']['data-count-characters-text'] = $GLOBALS['TL_LANG']['MSC']['countCharactersRemaing'];
+                if ($arrData['eval']['rte']) {
+                    $arrData['eval']['rte'] = 'tinyMCELimitedInputCharacterLength|html';
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * If news archive has addCustomNewsPalettes set and a customNewsPalettes given,
+     * replace the default news palette with the given one.
+     *
+     * @param NewsModel        $news
+     * @param NewsArchiveModel $archive
+     * @param DataContainer    $dc
+     *
+     * @return bool
+     */
+    protected function initCustomPalette(NewsModel $news, NewsArchiveModel $archive, DataContainer $dc): bool
+    {
+        if (false === (bool) $archive->addCustomNewsPalettes) {
+            return false;
+        }
+
+        if ('' === $archive->customNewsPalettes) {
+            return false;
+        }
+
+        if (!isset($GLOBALS['TL_DCA']['tl_news']['palettes'][$objArchive->customNewsPalettes])) {
+            return false;
+        }
+
+        $GLOBALS['TL_DCA']['tl_news']['palettes']['default'] = $GLOBALS['TL_DCA']['tl_news']['palettes'][$archive->customNewsPalettes];
+
+        // HOOK: loadDataContainer must be triggerd after onload_callback, otherwise slick slider wont work anymore
+        if (isset($GLOBALS['TL_HOOKS']['loadDataContainer']) && is_array($GLOBALS['TL_HOOKS']['loadDataContainer'])) {
+            foreach ($GLOBALS['TL_HOOKS']['loadDataContainer'] as $callback) {
+                System::importStatic($callback[0])->{$callback[1]}($dc->table);
+            }
+        }
+
+        return true;
     }
 }

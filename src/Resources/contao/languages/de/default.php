@@ -19,3 +19,6 @@ $GLOBALS['TL_LANG']['MSC']['ratings'] = 'Bewertungen';
 
 $GLOBALS['TL_LANG']['MSC']['newsNextArticle'] = 'Nächster Artikel';
 $GLOBALS['TL_LANG']['MSC']['newsPreviousArticle'] = 'Vorheriger Artikel';
+
+
+$GLOBALS['TL_LANG']['MSC']['countCharactersRemaing'] = '[{remaining} Zeichen verbleibend]';

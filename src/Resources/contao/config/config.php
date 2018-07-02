@@ -5,19 +5,23 @@ $bundleClass = new \HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
 /**
  * Front end modules
  */
-array_insert($GLOBALS['FE_MOD'], 2, [
-    'news' => [
-        'news_contact_box'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsContactBox',
-        'news_readers_survey'        => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurvey',
-        'news_readers_survey_result' => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurveyResult',
-        'news_info_box'              => 'HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox',
-        'newslist_related'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated',
-        'newslist_filter'            => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListFilter',
-    ],
-]);
+array_insert(
+    $GLOBALS['FE_MOD'],
+    2,
+    [
+        'news' => [
+            'news_contact_box'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsContactBox',
+            'news_readers_survey'        => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurvey',
+            'news_readers_survey_result' => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurveyResult',
+            'news_info_box'              => 'HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox',
+            'newslist_related'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated',
+            'newslist_filter'            => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListFilter',
+        ],
+    ]
+);
 
-$GLOBALS['FE_MOD']['news']['newsreader']                  = 'HeimrichHannot\NewsBundle\Module\ModuleNewsReader';
-$GLOBALS['FE_MOD']['news'][$bundleClass::MODULE_NEWSLIST] = 'HeimrichHannot\NewsBundle\Module\ModuleNewsList';
+$GLOBALS['FE_MOD']['news']['newsreader']                        = 'HeimrichHannot\NewsBundle\Module\ModuleNewsReader';
+$GLOBALS['FE_MOD']['news'][$bundleClass::MODULE_NEWSLIST]       = 'HeimrichHannot\NewsBundle\Module\ModuleNewsList';
 $GLOBALS['FE_MOD']['news'][$bundleClass::MODULE_NEWSNAVIGATION] = 'HeimrichHannot\NewsBundle\Module\ModuleNewsNavigation';
 
 /**
@@ -67,3 +71,11 @@ $GLOBALS['TL_PERMISSIONS'][] = 'newslistp';
 $GLOBALS['MODAL_MODULES']['newslist'] = [
     'invokePalette' => 'customTpl;', // The modal palette will be invoked after the field customTpl; as example
 ];
+
+/**
+ * JS
+ */
+
+if (\Contao\System::getContainer()->get('huh.utils.container')->isBackend()) {
+    $GLOBALS['TL_JAVASCRIPT']['be.news-bundle'] = 'bundles/heimrichhannotcontaonews/js/be-news-bundle.js';
+}
