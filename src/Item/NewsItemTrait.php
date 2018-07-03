@@ -14,6 +14,7 @@ use Contao\Config;
 use Contao\ContentModel;
 use Contao\Controller;
 use Contao\Date;
+use Contao\ModuleLoader;
 use Contao\NewsArchiveModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -330,7 +331,7 @@ trait NewsItemTrait
      */
     public function getNumberOfComments(): ?int
     {
-        if ($this->noComments || !\in_array('comments', \ModuleLoader::getActive(), true) || 'default' != $this->source) {
+        if ($this->noComments || !\in_array('comments', ModuleLoader::getActive(), true) || 'default' != $this->source) {
             return null;
         }
 
@@ -406,9 +407,7 @@ trait NewsItemTrait
             return true;
         }
 
-        /**
-         * @var ContentModel
-         */
+        /** @var ContentModel $adapter */
         $adapter = $this->getManager()->getFramework()->getAdapter(ContentModel::class);
 
         return $adapter->countPublishedByPidAndTable($this->id, $this->getDataContainer()) > 0;
@@ -441,7 +440,10 @@ trait NewsItemTrait
      */
     public function getNewsHeadline(): string
     {
-        return $this->headline;
+        $headline = $this->headline;
+        $headline2 = Controller::replaceInsertTags($this->headline);
+        return Controller::replaceInsertTags($this->headline);
+//        return $this->headline;
     }
 
     /**
