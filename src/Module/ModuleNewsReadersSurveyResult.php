@@ -8,7 +8,7 @@
 
 namespace HeimrichHannot\NewsBundle\Module;
 
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
+use HeimrichHannot\FieldPaletteBundle\Model\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 class ModuleNewsReadersSurveyResult extends \ModuleNews
