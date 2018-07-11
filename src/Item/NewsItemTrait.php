@@ -442,6 +442,7 @@ trait NewsItemTrait
     {
         $headline = $this->headline;
         $headline2 = Controller::replaceInsertTags($this->headline);
+
         return Controller::replaceInsertTags($this->headline);
 //        return $this->headline;
     }
