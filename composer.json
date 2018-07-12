@@ -12,7 +12,7 @@
     "google/apiclient": "^2.0",
     "abraham/twitteroauth": "^0.7",
     "heimrichhannot/contao-categories-bundle": "^1.0",
-    "heimrichhannot/contao-fieldpalette-bundle": "^0.2",
+    "heimrichhannot/contao-fieldpalette-bundle": ">=0.2 <2.0-dev",
     "heimrichhannot/contao-head-bundle": "^1.0",
     "heimrichhannot/contao-utils-bundle": "^2.0",
     "heimrichhannot/contao-multi-column-editor-bundle": "^1.0",
