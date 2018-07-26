@@ -140,7 +140,7 @@ class News extends \Backend
             return false;
         }
 
-        if (!isset($GLOBALS['TL_DCA']['tl_news']['palettes'][$objArchive->customNewsPalettes])) {
+        if (!isset($GLOBALS['TL_DCA']['tl_news']['palettes'][$archive->customNewsPalettes])) {
             return false;
         }
 
