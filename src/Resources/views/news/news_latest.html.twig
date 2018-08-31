@@ -4,8 +4,8 @@
         <time datetime="{{ datetime }}" itemprop="datePublished">{{ date }}</time> {{ author ~ ' ' ~ commentCount| trim }}
     </p>
 
-    {% if image.singleSRC|default() %}
-        {{ include('@HeimrichHannotContaoUtils/image.html.twig', image.singleSRC|merge({'href': detailsUrl})) }}
+    {% if images.singleSRC|default() %}
+        {{ include('@HeimrichHannotContaoUtils/image.html.twig', images.singleSRC|merge({'href': detailsUrl})) }}
     {% endif %}
 
     <h2 itemprop="name">{{ linkHeadline|raw }}</h2>
