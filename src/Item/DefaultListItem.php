@@ -10,5 +10,7 @@ namespace HeimrichHannot\NewsBundle\Item;
 
 class DefaultListItem extends \HeimrichHannot\ListBundle\Item\DefaultItem
 {
+    const SESSION_SEEN_NEWS = 'SESSION_SEEN_NEWS';
+
     use NewsItemTrait;
 }

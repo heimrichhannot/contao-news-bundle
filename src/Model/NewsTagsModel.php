@@ -8,14 +8,14 @@
 
 namespace HeimrichHannot\NewsBundle\Model;
 
-use Haste\Model\Model;
+use Contao\Model;
 
 /**
  * Class NewsTagsModel.
  *
- * @property int $id;
+ * @property int $id        ;
  * @property int $cfg_tag_id;
- * @property int $news_id;
+ * @property int $news_id   ;
  *
  * @method static NewsTagsModel|null findById($id, $opt = [])
  * @method static NewsTagsModel|null findByPk($id, array $opt = [])
@@ -37,7 +37,7 @@ class NewsTagsModel extends Model
      */
     public static function findByNews($varId, array $arrOptions = [])
     {
-        $t = static::$strTable;
+        $t          = static::$strTable;
         $arrColumns = ["$t.news_id=?"];
 
         return static::findBy($arrColumns, $varId, $arrOptions);

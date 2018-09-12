@@ -2,3 +2,5 @@ huh:
     reader:
         items:
             - { name: news_default, class: HeimrichHannot\NewsBundle\Item\DefaultReaderItem }
+        config_element_types:
+            - { name: newsPlayer, class: HeimrichHannot\NewsBundle\ConfigElementType\NewsPlayerElementType }

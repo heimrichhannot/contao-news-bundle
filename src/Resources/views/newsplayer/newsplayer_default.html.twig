@@ -1,0 +1,19 @@
+{% if isVideo %}
+    <video {{ size|raw }} {% if poster|default() %} {{ poster }} preload="none" {% endif %} {% if autoplay %} {{ autoplay }} {% endif %}
+            controls>
+        {% for file in files %}
+            <source type="{{ file.mime }}" src="{{ file.path }}"
+                    {% if file.name|default() %} title="{{ file.name }}" {% endif %}>
+        {% endfor %}
+    </video>
+{% else %}
+    {% if image|default() %}
+        {{ include('@HeimrichHannotContaoUtils/image.html.twig', image|merge({'href': detailsUrl})) }}
+    {% endif %}
+    <audio preload="none" {% if autoplay %} {{ autoplay }} {% endif %} controls>
+        {% for file in files %}
+            <source type="{{ file.mime }}"
+                    src="{{ file.path }}" {% if file.name|default() %} title="{{ file.name }}" {% endif %}>
+        {% endfor %}
+    </audio>
+{% endif %}

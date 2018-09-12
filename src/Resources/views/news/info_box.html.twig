@@ -1,9 +1,0 @@
-<div class="news-info-box">
-    <h5 class="news-info-box-header">{{ infoBox.header }}</h5>
-    <div class="news-info-box-text">
-        {{ infoBox.text|raw }}
-        {% if (infoBox.link is not null) and (infoBox.linkText is not null) %}
-            <a href="http://{{ infoBox.link }}" target="_blank">{{ infoBox.linkText }}</a>
-        {% endif %}
-    </div>
-</div>

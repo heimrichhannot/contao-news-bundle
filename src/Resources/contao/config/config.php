@@ -3,28 +3,6 @@
 $bundleClass = new \HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
 
 /**
- * Front end modules
- */
-array_insert(
-    $GLOBALS['FE_MOD'],
-    2,
-    [
-        'news' => [
-            'news_contact_box'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsContactBox',
-            'news_readers_survey'        => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurvey',
-            'news_readers_survey_result' => 'HeimrichHannot\NewsBundle\Module\ModuleNewsReadersSurveyResult',
-            'news_info_box'              => 'HeimrichHannot\NewsBundle\Module\ModuleNewsInfoBox',
-            'newslist_related'           => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListRelated',
-            'newslist_filter'            => 'HeimrichHannot\NewsBundle\Module\ModuleNewsListFilter',
-        ],
-    ]
-);
-
-$GLOBALS['FE_MOD']['news']['newsreader']                        = 'HeimrichHannot\NewsBundle\Module\ModuleNewsReader';
-$GLOBALS['FE_MOD']['news'][$bundleClass::MODULE_NEWSLIST]       = 'HeimrichHannot\NewsBundle\Module\ModuleNewsList';
-$GLOBALS['FE_MOD']['news'][$bundleClass::MODULE_NEWSNAVIGATION] = 'HeimrichHannot\NewsBundle\Module\ModuleNewsNavigation';
-
-/**
  * Back end modules
  */
 $GLOBALS['BE_MOD']['content']['news']['tables'][] = 'tl_news_list';
@@ -40,24 +18,8 @@ $GLOBALS['TL_MODELS']['tl_news_tags']         = '\HeimrichHannot\NewsBundle\Mode
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['initializeSystem']['heimrichhannot_news']   = ['HeimrichHannot\NewsBundle\Controller\FrontendController', 'xhrAction'];
 $GLOBALS['TL_HOOKS']['replaceInsertTags']['heimrichhannot_news']  = ['huh.news.listener.insert_tags', 'onReplaceInsertTags'];
 $GLOBALS['TL_HOOKS']['getSearchablePages']['heimrichhannot_news'] = ['huh.news.listener.searchable_pages', 'getSearchablePages'];
-
-/**
- * Ajax Actions
- */
-$GLOBALS['AJAX'][\HeimrichHannot\NewsBundle\News::XHR_GROUP] = [
-    'actions' => [
-        \HeimrichHannot\NewsBundle\News::XHR_READER_SURVEY_RESULT_ACTION => [
-            'arguments' => [
-                \HeimrichHannot\NewsBundle\News::XHR_PARAMETER_ID,
-                \HeimrichHannot\NewsBundle\News::XHR_PARAMETER_ITEMS,
-            ],
-            'optional'  => [],
-        ],
-    ],
-];
 
 /**
  * Permissions
@@ -75,7 +37,6 @@ $GLOBALS['MODAL_MODULES']['newslist'] = [
 /**
  * JS
  */
-
 if (\Contao\System::getContainer()->get('huh.utils.container')->isBackend()) {
     $GLOBALS['TL_JAVASCRIPT']['be.news-bundle'] = 'bundles/heimrichhannotcontaonews/js/be-news-bundle.js';
 }

@@ -8,17 +8,18 @@
 
 namespace HeimrichHannot\NewsBundle\Backend;
 
-use HeimrichHannot\Haste\Dca\General;
+use Contao\DataContainer;
+use Contao\System;
 use HeimrichHannot\UtilsBundle\Model\CfgTagModel;
 
-class CfgTag extends \Backend
+class CfgTag
 {
-    public static function generateAlias($value, \DataContainer $dc)
+    public function generateAlias($value, DataContainer $dc)
     {
-        if (null === ($tag = CfgTagModel::findByPk($dc->id))) {
+        if (null === ($tag = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk(CfgTagModel::class, $dc->id))) {
             return $value;
         }
 
-        return General::generateAlias($value, $dc->id, 'tl_cfg_tag', $tag->name, false);
+        return System::getContainer()->get('huh.utils.dca')->generateAlias($value, $dc->id, 'tl_cfg_tag', $tag->name, false);
     }
 }

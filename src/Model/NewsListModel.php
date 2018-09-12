@@ -8,9 +8,13 @@
 
 namespace HeimrichHannot\NewsBundle\Model;
 
+use Contao\Config;
+use Contao\Environment;
+use Contao\Model;
+use Contao\PageModel;
 use HeimrichHannot\Haste\Dca\General;
 
-class NewsListModel extends \Model
+class NewsListModel extends Model
 {
     protected static $strTable = 'tl_news_list';
 
@@ -41,12 +45,12 @@ class NewsListModel extends \Model
             return self::$urlCache[$cacheKey];
         }
 
-        $page = \PageModel::findByPk($newsListArchive->jumpTo);
+        $page = PageModel::findByPk($newsListArchive->jumpTo);
 
         if (!$page instanceof \PageModel) {
-            self::$urlCache[$cacheKey] = ampersand(\Environment::get('request'), true);
+            self::$urlCache[$cacheKey] = ampersand(Environment::get('request'), true);
         } else {
-            self::$urlCache[$cacheKey] = ampersand($page->getFrontendUrl((\Config::get('useAutoItem') ? '/' : '/items/').($newsList->alias ?: $newsList->id)));
+            self::$urlCache[$cacheKey] = ampersand($page->getFrontendUrl((Config::get('useAutoItem') ? '/' : '/items/').($newsList->alias ?: $newsList->id)));
         }
 
         return self::$urlCache[$cacheKey];

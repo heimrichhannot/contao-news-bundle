@@ -9,8 +9,9 @@
 namespace HeimrichHannot\NewsBundle\Model;
 
 use Contao\Database;
+use Contao\Date;
 use Contao\Model\Collection;
-use HeimrichHannot\NewsBundle\News;
+use Contao\System;
 
 class NewsModel extends \Contao\NewsModel
 {
@@ -26,12 +27,12 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function countPublishedByPidAndCriteria(array $pid, array $columns = [], $values = null, $options = [])
     {
-        $t = static::$strTable;
-        $columns[] = "$t.pid IN(".implode(',', array_map('intval', $pid)).')';
+        $t         = static::$strTable;
+        $columns[] = "$t.pid IN(" . implode(',', array_map('intval', $pid)) . ')';
 
         if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time      = Date::floorToMinute();
+            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         return static::countBy($columns, $values, $options);
@@ -49,12 +50,12 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function findPublishedByPidAndCriteria(array $pid, array $columns = [], $values = null, $options = [])
     {
-        $t = static::$strTable;
-        $columns[] = "$t.pid IN(".implode(',', array_map('intval', $pid)).')';
+        $t         = static::$strTable;
+        $columns[] = "$t.pid IN(" . implode(',', array_map('intval', $pid)) . ')';
 
         if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time      = \Date::floorToMinute();
+            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         return static::findBy($columns, $values, $options);
@@ -143,7 +144,7 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find news items for social stats.
      *
-     * @param string $row   Table row
+     * @param string $row Table row
      * @param int    $limit
      * @param int    $days
      * @param array  $pids
@@ -173,16 +174,12 @@ class NewsModel extends \Contao\NewsModel
         if (0 === $limit) {
             $limit = 10000;
         }
-        $query = "SELECT *, ((`tstamp` > $row) * `tstamp` * ($row > 0)) AS `was_updated` "
-            .'FROM `tl_news` '
-            .'WHERE `published` = 1 '
-            .'AND `date` > ? ';
+        $query = "SELECT *, ((`tstamp` > $row) * `tstamp` * ($row > 0)) AS `was_updated` " . 'FROM `tl_news` ' . 'WHERE `published` = 1 ' . 'AND `date` > ? ';
         if (!empty($pids)) {
             $query .= 'AND `pid` IN (?) ';
         }
-        $query .= "ORDER BY `was_updated` DESC, $row ASC, `tstamp` DESC "
-            .'LIMIT ? ';
-        $stmt = Database::getInstance()->prepare($query);
+        $query .= "ORDER BY `was_updated` DESC, $row ASC, `tstamp` DESC " . 'LIMIT ? ';
+        $stmt  = Database::getInstance()->prepare($query);
         if (!empty($pids)) {
             $result = $stmt->execute($period, implode(',', array_map('intval', $pids)), $limit);
         } else {
@@ -203,11 +200,11 @@ class NewsModel extends \Contao\NewsModel
     {
         $t = static::$strTable;
 
-        $query = "SELECT FROM_UNIXTIME(date, '%Y') as year FROM $t WHERE $t.pid IN(".implode(',', array_map('intval', $pid)).')';
+        $query = "SELECT FROM_UNIXTIME(date, '%Y') as year FROM $t WHERE $t.pid IN(" . implode(',', array_map('intval', $pid)) . ')';
 
         if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $query .= " AND ($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time  = \Date::floorToMinute();
+            $query .= " AND ($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         $query .= ' GROUP BY year ORDER BY year DESC';
@@ -230,16 +227,16 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function getPublishedMonthsByYearAndPids(array $pid, $year)
     {
-        $yearStart = mktime(0, 0, 0, 0, 0, (int) $year);
-        $yearEnd = mktime(0, 0, 0, 0, 0, (int) $year + 1);
+        $yearStart = mktime(0, 0, 0, 0, 0, (int)$year);
+        $yearEnd   = mktime(0, 0, 0, 0, 0, (int)$year + 1);
 
         $t = static::$strTable;
 
-        $query = "SELECT FROM_UNIXTIME(date, '%m') as month FROM $t WHERE pid IN(".implode(',', array_map('intval', $pid)).') AND date > ? AND date < ?';
+        $query = "SELECT FROM_UNIXTIME(date, '%m') as month FROM $t WHERE pid IN(" . implode(',', array_map('intval', $pid)) . ') AND date > ? AND date < ?';
 
         if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $query .= " AND ($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time  = \Date::floorToMinute();
+            $query .= " AND ($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         $query .= ' GROUP BY month ORDER BY month DESC';
@@ -256,7 +253,7 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Get published news items within a given year and pids.
      *
-     * @param int $year The year value (for example 2017)
+     * @param int   $year The year value (for example 2017)
      * @param       array pids The parent news archives
      * @param array $arrOptions
      *
@@ -264,16 +261,16 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function findPublishedByYearAndPids($year, array $pid, array $arrOptions = [])
     {
-        $yearStart = mktime(0, 0, 0, 0, 0, (int) $year);
-        $yearEnd = mktime(0, 0, 0, 0, 0, (int) $year + 1);
+        $yearStart = mktime(0, 0, 0, 0, 0, (int)$year);
+        $yearEnd   = mktime(0, 0, 0, 0, 0, (int)$year + 1);
 
         $t = static::$strTable;
 
-        $arrColumns = ["$t.date > ? AND $t.date < ? AND $t.pid IN(".implode(',', array_map('intval', $pid)).')'];
+        $arrColumns = ["$t.date > ? AND $t.date < ? AND $t.pid IN(" . implode(',', array_map('intval', $pid)) . ')'];
 
         if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         return static::findBy($arrColumns, [$yearStart, $yearEnd], $arrOptions);
@@ -282,24 +279,24 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Get published news items within a given year and month and pids.
      *
-     * @param int   $month      The month to search in given year
-     * @param int   $year       The year to search in
+     * @param int   $month The month to search in given year
+     * @param int   $year  The year to search in
      * @param array $arrOptions
      *
      * @return \Contao\NewsModel|\Contao\NewsModel[]|\Model\Collection|null
      */
     public static function findPublishedByYearMonthAndPids($year, $month, array $pid, array $arrOptions = [])
     {
-        $yearStart = mktime(0, 0, 0, (int) $month, 1, (int) $year);
-        $yearEnd = mktime(0, 0, 0, (int) $month + 1, 1, (int) $year);
+        $yearStart = mktime(0, 0, 0, (int)$month, 1, (int)$year);
+        $yearEnd   = mktime(0, 0, 0, (int)$month + 1, 1, (int)$year);
 
         $t = static::$strTable;
 
-        $arrColumns = ["$t.date > ? AND $t.date < ? AND $t.pid IN(".implode(',', array_map('intval', $pid)).')'];
+        $arrColumns = ["$t.date > ? AND $t.date < ? AND $t.pid IN(" . implode(',', array_map('intval', $pid)) . ')'];
 
         if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         return static::findBy($arrColumns, [$yearStart, $yearEnd], $arrOptions);
@@ -321,11 +318,11 @@ class NewsModel extends \Contao\NewsModel
             return 0;
         }
 
-        $t = static::$strTable;
-        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).')'];
+        $t          = static::$strTable;
+        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ')'];
 
         if (is_array($arrIds) && !empty($arrIds)) {
-            $arrColumn[] = "$t.id IN(".implode(',', array_map('intval', $arrIds)).')';
+            $arrColumn[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ')';
         }
 
         if (true === $blnFeatured) {
@@ -335,8 +332,8 @@ class NewsModel extends \Contao\NewsModel
         }
 
         if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         return static::countBy($arrColumns, null, $arrOptions);
@@ -360,11 +357,11 @@ class NewsModel extends \Contao\NewsModel
             return null;
         }
 
-        $t = static::$strTable;
-        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).')'];
+        $t          = static::$strTable;
+        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ')'];
 
         if (is_array($arrIds) && !empty($arrIds)) {
-            $arrColumns[] = "$t.id IN(".implode(',', array_map('intval', $arrIds)).')';
+            $arrColumns[] = "$t.id IN(" . implode(',', array_map('intval', $arrIds)) . ')';
         }
 
         if (true === $blnFeatured) {
@@ -375,15 +372,15 @@ class NewsModel extends \Contao\NewsModel
 
         // Never return unpublished elements in the back end, so they don't end up in the RSS feed
         if (!BE_USER_LOGGED_IN || TL_MODE == 'BE') {
-            $time = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.date DESC";
         }
 
-        $arrOptions['limit'] = $intLimit;
+        $arrOptions['limit']  = $intLimit;
         $arrOptions['offset'] = $intOffset;
 
         return static::findBy($arrColumns, null, $arrOptions);
@@ -405,9 +402,9 @@ class NewsModel extends \Contao\NewsModel
             return 0;
         }
 
-        $t = static::$strTable;
-        $arrValues = null;
-        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).')'];
+        $t          = static::$strTable;
+        $arrValues  = null;
+        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ')'];
 
         if (true === $blnFeatured) {
             $arrColumns[] = "$t.featured='1'";
@@ -416,8 +413,8 @@ class NewsModel extends \Contao\NewsModel
         }
 
         if (isset($arrOptions['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time         = Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         if (null !== $callback) {
@@ -425,7 +422,7 @@ class NewsModel extends \Contao\NewsModel
                 if (is_callable($callback)) {
                     $callback($arrColumns, $arrValues, $arrOptions);
                 } else {
-                    \Controller::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
+                    System::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
                 }
             }
         }
@@ -451,9 +448,9 @@ class NewsModel extends \Contao\NewsModel
             return null;
         }
 
-        $t = static::$strTable;
-        $arrValues = null;
-        $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).')'];
+        $t          = static::$strTable;
+        $arrValues  = null;
+        $arrColumns = ["$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ')'];
 
         if (true === $blnFeatured) {
             $arrColumns[] = "$t.featured='1'";
@@ -463,15 +460,15 @@ class NewsModel extends \Contao\NewsModel
 
         // Never return unpublished elements in the back end, so they don't end up in the RSS feed
         if (!BE_USER_LOGGED_IN || TL_MODE == 'BE') {
-            $time = \Date::floorToMinute();
-            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time         = \Date::floorToMinute();
+            $arrColumns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.date DESC";
         }
 
-        $arrOptions['limit'] = $intLimit;
+        $arrOptions['limit']  = $intLimit;
         $arrOptions['offset'] = $intOffset;
 
         if (null !== $callback) {
@@ -479,7 +476,7 @@ class NewsModel extends \Contao\NewsModel
                 if (is_callable($callback)) {
                     $callback($arrColumns, $arrValues, $arrOptions);
                 } else {
-                    \Controller::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
+                    System::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
                 }
             }
         }
@@ -493,7 +490,7 @@ class NewsModel extends \Contao\NewsModel
             return null;
         }
 
-        $arrRegistered = [];
+        $arrRegistered   = [];
         $arrUnregistered = [];
 
         // Search for registered models
@@ -511,25 +508,23 @@ class NewsModel extends \Contao\NewsModel
         if (!empty($arrUnregistered)) {
             $t = static::$strTable;
 
-            $arrOptions = array_merge(
-                [
-                    'column' => [
-                        "$t.id IN(".implode(',', array_map('intval', $arrUnregistered)).')',
-                        "$t.pid IN(".implode(',', array_map('intval', $arrPids)).')',
-                    ],
-                    'value' => null,
-                    'order' => \Database::getInstance()->findInSet("$t.id", $arrIds),
-                    'return' => 'Collection',
+            $arrOptions = array_merge([
+                'column' => [
+                    "$t.id IN(" . implode(',', array_map('intval', $arrUnregistered)) . ')',
+                    "$t.pid IN(" . implode(',', array_map('intval', $arrPids)) . ')',
                 ],
+                'value'  => null,
+                'order'  => \Database::getInstance()->findInSet("$t.id", $arrIds),
+                'return' => 'Collection',
+            ],
 
-                $arrOptions
-            );
+                $arrOptions);
 
             $objMissing = static::find($arrOptions);
 
             if (null !== $objMissing) {
                 while ($objMissing->next()) {
-                    $intId = $objMissing->{static::$strPk};
+                    $intId                 = $objMissing->{static::$strPk};
                     $arrRegistered[$intId] = $objMissing->current();
                 }
             }
@@ -541,7 +536,7 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Return the next (newer) article.
      *
-     * @param $time
+     * @param       $time
      * @param array $columns
      * @param array $options
      *
@@ -549,10 +544,10 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function findNextPublishedByReleaseDate($time, $columns = [], $options = [])
     {
-        $t = static::$strTable;
-        $values = [];
+        $t         = static::$strTable;
+        $values    = [];
         $columns[] = "$t.time > ?";
-        $values[] = $time;
+        $values[]  = $time;
         if (empty($options['order'])) {
             $options['order'] = "$t.time ASC";
         } else {
@@ -565,7 +560,7 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Return the previous (older) article.
      *
-     * @param $time
+     * @param       $time
      * @param array $columns
      * @param array $options
      *
@@ -573,10 +568,10 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function findPreviousPublishedByReleaseDate($time, $columns = [], $options = [])
     {
-        $t = static::$strTable;
-        $values = [];
+        $t         = static::$strTable;
+        $values    = [];
         $columns[] = "$t.time < ?";
-        $values[] = $time;
+        $values[]  = $time;
         if (empty($options['order'])) {
             $options['order'] = "$t.time DESC";
         } else {
@@ -599,8 +594,8 @@ class NewsModel extends \Contao\NewsModel
     {
         $t = static::$strTable;
         if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
-            $time = \Date::floorToMinute();
-            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";
+            $time      = \Date::floorToMinute();
+            $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'" . ($time + 60) . "') AND $t.published='1'";
         }
 
         return static::findOneBy($columns, $values, $options);

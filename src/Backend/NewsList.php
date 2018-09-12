@@ -8,12 +8,12 @@
 
 namespace HeimrichHannot\NewsBundle\Backend;
 
-use HeimrichHannot\Haste\Dca\General;
+use Contao\System;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 
 class NewsList extends \Contao\Backend
 {
-    const MODE_MANUAL = 'manual';
+    const MODE_MANUAL    = 'manual';
     const MODE_AUTO_ITEM = 'auto_item';
 
     const MODES = [
@@ -27,12 +27,12 @@ class NewsList extends \Contao\Backend
             return $varValue;
         }
 
-        return General::generateAlias($varValue, $objDc->id, 'tl_news_list', $objNewsList->title, false);
+        return System::getContainer()->get('huh.utils.dca')->generateAlias($varValue, $objDc->id, 'tl_news_list', $objNewsList->title, false);
     }
 
     public function checkPermission()
     {
-        $user = \BackendUser::getInstance();
+        $user     = \BackendUser::getInstance();
         $database = \Database::getInstance();
 
         if ($user->isAdmin) {
@@ -56,14 +56,14 @@ class NewsList extends \Contao\Backend
 
             case 'create':
                 if (!strlen(\Input::get('pid')) || !in_array(\Input::get('pid'), $root, true)) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to create news_list items in news_list archive ID '.\Input::get('pid').'.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to create news_list items in news_list archive ID ' . \Input::get('pid') . '.');
                 }
                 break;
 
             case 'cut':
             case 'copy':
                 if (!in_array(\Input::get('pid'), $root, true)) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to '.\Input::get('act').' news_list item ID '.$id.' to news_list archive ID '.\Input::get('pid').'.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list item ID ' . $id . ' to news_list archive ID ' . \Input::get('pid') . '.');
                 }
             // no break STATEMENT HERE
 
@@ -72,16 +72,14 @@ class NewsList extends \Contao\Backend
             case 'delete':
             case 'toggle':
             case 'feature':
-                $objArchive = $database->prepare('SELECT pid FROM tl_news_list WHERE id=?')
-                    ->limit(1)
-                    ->execute($id);
+                $objArchive = $database->prepare('SELECT pid FROM tl_news_list WHERE id=?')->limit(1)->execute($id);
 
                 if ($objArchive->numRows < 1) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list item ID '.$id.'.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list item ID ' . $id . '.');
                 }
 
                 if (!in_array($objArchive->pid, $root, true)) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to '.\Input::get('act').' news_list item ID '.$id.' of news_list archive ID '.$objArchive->pid.'.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list item ID ' . $id . ' of news_list archive ID ' . $objArchive->pid . '.');
                 }
                 break;
 
@@ -92,29 +90,28 @@ class NewsList extends \Contao\Backend
             case 'cutAll':
             case 'copyAll':
                 if (!in_array($id, $root, true)) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID '.$id.'.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID ' . $id . '.');
                 }
 
-                $objArchive = $database->prepare('SELECT id FROM tl_news_list WHERE pid=?')
-                    ->execute($id);
+                $objArchive = $database->prepare('SELECT id FROM tl_news_list WHERE pid=?')->execute($id);
 
                 if ($objArchive->numRows < 1) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list archive ID '.$id.'.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid news_list archive ID ' . $id . '.');
                 }
 
                 /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
                 $session = \System::getContainer()->get('session');
 
-                $session = $session->all();
+                $session                   = $session->all();
                 $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objArchive->fetchEach('id'));
                 $session->replace($session);
                 break;
 
             default:
                 if (strlen(\Input::get('act'))) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "'.\Input::get('act').'".');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "' . \Input::get('act') . '".');
                 } elseif (!in_array($id, $root, true)) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID '.$id.'.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access news_list archive ID ' . $id . '.');
                 }
                 break;
         }
@@ -134,18 +131,18 @@ class NewsList extends \Contao\Backend
             return '';
         }
 
-        $href .= '&amp;tid='.$row['id'].'&amp;state='.($row['published'] ? '' : 1);
+        $href .= '&amp;tid=' . $row['id'] . '&amp;state=' . ($row['published'] ? '' : 1);
 
         if (!$row['published']) {
             $icon = 'invisible.svg';
         }
 
-        return '<a href="'.$this->addToUrl($href).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label, 'data-state="'.($row['published'] ? 1 : 0).'"').'</a> ';
+        return '<a href="' . $this->addToUrl($href) . '" title="' . \StringUtil::specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"') . '</a> ';
     }
 
     public function toggleVisibility($intId, $blnVisible, \DataContainer $dc = null)
     {
-        $user = \BackendUser::getInstance();
+        $user     = \BackendUser::getInstance();
         $database = \Database::getInstance();
 
         // Set the ID and action
@@ -170,14 +167,12 @@ class NewsList extends \Contao\Backend
 
         // Check the field access
         if (!$user->hasAccess('tl_news_list::published', 'alexf')) {
-            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish news_list item ID '.$intId.'.');
+            throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish news_list item ID ' . $intId . '.');
         }
 
         // Set the current record
         if ($dc) {
-            $objRow = $database->prepare('SELECT * FROM tl_news_list WHERE id=?')
-                ->limit(1)
-                ->execute($intId);
+            $objRow = $database->prepare('SELECT * FROM tl_news_list WHERE id=?')->limit(1)->execute($intId);
 
             if ($objRow->numRows) {
                 $dc->activeRecord = $objRow;
@@ -202,11 +197,10 @@ class NewsList extends \Contao\Backend
         $time = time();
 
         // Update the database
-        $database->prepare("UPDATE tl_news_list SET tstamp=$time, published='".($blnVisible ? '1' : '')."' WHERE id=?")
-            ->execute($intId);
+        $database->prepare("UPDATE tl_news_list SET tstamp=$time, published='" . ($blnVisible ? '1' : '') . "' WHERE id=?")->execute($intId);
 
         if ($dc) {
-            $dc->activeRecord->tstamp = $time;
+            $dc->activeRecord->tstamp    = $time;
             $dc->activeRecord->published = ($blnVisible ? '1' : '');
         }
 
@@ -227,22 +221,12 @@ class NewsList extends \Contao\Backend
 
     public function copyList($row, $href, $label, $title, $icon, $attributes)
     {
-        return \BackendUser::getInstance()->hasAccess('create', 'newslistp')
-            ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label)
-            .'</a> '
-            : \Image::getHtml(
-                preg_replace('/\.svg/i', '_.svg', $icon)
-            ).' ';
+        return \BackendUser::getInstance()->hasAccess('create', 'newslistp') ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label) . '</a> ' : \Image::getHtml(preg_replace('/\.svg/i', '_.svg', $icon)) . ' ';
     }
 
     public function deleteList($row, $href, $label, $title, $icon, $attributes)
     {
-        return \BackendUser::getInstance()->hasAccess('delete', 'newslistp')
-            ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label)
-            .'</a> '
-            : \Image::getHtml(
-                preg_replace('/\.svg/i', '_.svg', $icon)
-            ).' ';
+        return \BackendUser::getInstance()->hasAccess('delete', 'newslistp') ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label) . '</a> ' : \Image::getHtml(preg_replace('/\.svg/i', '_.svg', $icon)) . ' ';
     }
 
     public function getNewsOptions(\DataContainer $dc)
@@ -284,10 +268,10 @@ class NewsList extends \Contao\Backend
             return $strLabel;
         }
 
-        $strLabel = $objNews->headline.' [ID: '.$objNews->id.']';
+        $strLabel = $objNews->headline . ' [ID: ' . $objNews->id . ']';
 
         if (null !== ($objArchive = $objNews->getRelated('pid'))) {
-            $strLabel .= ' - '.$objArchive->title;
+            $strLabel .= ' - ' . $objArchive->title;
         }
 
         return $strLabel;

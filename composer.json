@@ -6,17 +6,19 @@
   "require": {
     "php": "^7.1",
     "contao/core-bundle": "^4.4",
+    "contao/news-bundle": "^4.4",
     "symfony/framework-bundle": "^3.4",
     "codefog/tags-bundle": "^2.0",
     "heimrichhannot/contao-tagsinput": "^2.1",
     "google/apiclient": "^2.0",
     "abraham/twitteroauth": "^0.7",
-    "heimrichhannot/contao-categories-bundle": "^1.0",
+    "heimrichhannot/contao-categories-bundle": "^1.0-beta",
     "heimrichhannot/contao-fieldpalette-bundle": ">=0.2 <2.0-dev",
     "heimrichhannot/contao-head-bundle": "^1.0",
     "heimrichhannot/contao-utils-bundle": "^2.0",
     "heimrichhannot/contao-multi-column-editor-bundle": "^1.0",
-    "twig/extensions": "^1.5"
+    "twig/extensions": "^1.5",
+    "heimrichhannot/contao-reader-bundle": "^1.0-beta"
   },
   "require-dev": {
     "contao/test-case": "^1.1",

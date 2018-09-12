@@ -8,7 +8,9 @@
 
 namespace HeimrichHannot\NewsBundle\Model;
 
-class NewsListArchiveModel extends \Model
+use Contao\Model;
+
+class NewsListArchiveModel extends Model
 {
     protected static $strTable = 'tl_news_list_archive';
 }

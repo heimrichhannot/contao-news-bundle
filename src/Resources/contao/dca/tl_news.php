@@ -3,7 +3,7 @@
 /**
  * Load tl_content language file
  */
-System::loadLanguageFile('tl_content');
+\Contao\System::loadLanguageFile('tl_content');
 
 $dc = &$GLOBALS['TL_DCA']['tl_news'];
 
@@ -561,12 +561,8 @@ $fields = [
 $dc['fields'] = array_merge($dc['fields'], $fields);
 
 // this call automatically adds the field "<categoriesFieldname>_primary" which is a simple integer field that contains the reference to the category marked as primary
-\HeimrichHannot\CategoriesBundle\Backend\Category::addMultipleCategoriesFieldToDca(
-    'tl_news',
-    'categories',
-    [
-        'addPrimaryCategory'  => false,
-        'mandatory'           => false,
-        'parentsUnselectable' => true // default false
-    ]
-);
+\HeimrichHannot\CategoriesBundle\Backend\Category::addMultipleCategoriesFieldToDca('tl_news', 'categories', [
+    'addPrimaryCategory'  => false,
+    'mandatory'           => false,
+    'parentsUnselectable' => true // default false
+]);
