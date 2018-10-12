@@ -29,11 +29,11 @@ class HeimrichHannotContaoNewsExtension extends Extension
      */
     public function load(array $mergedConfig, ContainerBuilder $container)
     {
-        $configuration   = new Configuration(true);
+        $configuration = new Configuration(true);
         $processedConfig = $this->processConfiguration($configuration, $mergedConfig);
         $container->setParameter('social_stats', $processedConfig);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         foreach ($this->files as $file) {
             $loader->load($file);

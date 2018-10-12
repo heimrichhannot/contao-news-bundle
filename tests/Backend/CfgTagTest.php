@@ -1,12 +1,12 @@
 <?php
-/**
+
+/*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Test\Backend;
-
 
 use Contao\DataContainer;
 use Contao\System;
@@ -18,7 +18,6 @@ use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 
 class CfgTagTest extends ContaoTestCase
 {
-
     public function testGenerateAlias()
     {
         $utilsModel = $this->createMock(ModelUtil::class);
@@ -33,7 +32,7 @@ class CfgTagTest extends ContaoTestCase
         $result = $cfgTag->generateAlias('test', $this->getDataContainerMock());
         $this->assertSame('test', $result);
 
-        $token      = $this->mockClassWithProperties(CfgTagModel::class, ['name' => 'test']);
+        $token = $this->mockClassWithProperties(CfgTagModel::class, ['name' => 'test']);
         $utilsModel = $this->createMock(ModelUtil::class);
         $utilsModel->method('findModelInstanceByPk')->willReturn($token);
 

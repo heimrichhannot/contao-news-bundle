@@ -33,12 +33,12 @@
         </div>
     {% endif %}
 
-    {% if enclosures|default %}
+    {% if addEnclosure|default() and enclosures|default() %}
         <div class="enclosure">
             <ul>
                 {% for enclosure in enclosures %}
                     <li class="download-element ext-{{ enclosure.extension }}">
-                        <a href="{{ enclosure.href }}" title="{{ enclosure.title }}">{{ enclosure.link }}<span class="size">({{ enclosure.filesize }}</span></a>
+                        <a href="{{ enclosure.href }}" title="{{ enclosure.title }}">{{ enclosure.link }}<span class="size"> ({{ enclosure.filesize }})</span></a>
                     </li>
                 {% endfor %}
             </ul>

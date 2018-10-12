@@ -16,7 +16,7 @@ class NewsListArchive extends \Contao\Backend
 {
     public function checkPermission()
     {
-        $user     = BackendUser::getInstance();
+        $user = BackendUser::getInstance();
         $database = Database::getInstance();
 
         if ($user->isAdmin) {
@@ -58,13 +58,13 @@ class NewsListArchive extends \Contao\Backend
                     if (is_array($arrNew['tl_news_list_archive']) && in_array(\Input::get('id'), $arrNew['tl_news_list_archive'], true)) {
                         // Add the permissions on group level
                         if ('custom' != $user->inherit) {
-                            $objGroup = $database->execute('SELECT id, newslists, newslistp FROM tl_user_group WHERE id IN(' . implode(',', array_map('intval', $user->groups)) . ')');
+                            $objGroup = $database->execute('SELECT id, newslists, newslistp FROM tl_user_group WHERE id IN('.implode(',', array_map('intval', $user->groups)).')');
 
                             while ($objGroup->next()) {
                                 $arrModulep = \StringUtil::deserialize($objGroup->newslistp);
 
                                 if (is_array($arrModulep) && in_array('create', $arrModulep, true)) {
-                                    $arrModules   = \StringUtil::deserialize($objGroup->newslists, true);
+                                    $arrModules = \StringUtil::deserialize($objGroup->newslists, true);
                                     $arrModules[] = \Input::get('id');
 
                                     $database->prepare('UPDATE tl_user_group SET newslists=? WHERE id=?')->execute(serialize($arrModules), $objGroup->id);
@@ -79,7 +79,7 @@ class NewsListArchive extends \Contao\Backend
                             $arrModulep = \StringUtil::deserialize($user->newslistp);
 
                             if (is_array($arrModulep) && in_array('create', $arrModulep, true)) {
-                                $arrModules   = \StringUtil::deserialize($user->newslists, true);
+                                $arrModules = \StringUtil::deserialize($user->newslists, true);
                                 $arrModules[] = \Input::get('id');
 
                                 $database->prepare('UPDATE tl_user SET newslists=? WHERE id=?')->execute(serialize($arrModules), $user->id);
@@ -87,7 +87,7 @@ class NewsListArchive extends \Contao\Backend
                         }
 
                         // Add the new element to the user object
-                        $root[]          = \Input::get('id');
+                        $root[] = \Input::get('id');
                         $user->newslists = $root;
                     }
                 }
@@ -97,7 +97,7 @@ class NewsListArchive extends \Contao\Backend
             case 'delete':
             case 'show':
                 if (!in_array(\Input::get('id'), $root, true) || ('delete' == \Input::get('act') && !$user->hasAccess('delete', 'newslistp'))) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list_archive ID ' . \Input::get('id') . '.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to '.\Input::get('act').' news_list_archive ID '.\Input::get('id').'.');
                 }
                 break;
 
@@ -115,7 +115,7 @@ class NewsListArchive extends \Contao\Backend
 
             default:
                 if (strlen(\Input::get('act'))) {
-                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Input::get('act') . ' news_list_archives.');
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to '.\Input::get('act').' news_list_archives.');
                 }
                 break;
         }
@@ -123,16 +123,16 @@ class NewsListArchive extends \Contao\Backend
 
     public function editHeader($row, $href, $label, $title, $icon, $attributes)
     {
-        return BackendUser::getInstance()->canEditFieldsOf('tl_news_list_archive') ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . \StringUtil::specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label) . '</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+        return BackendUser::getInstance()->canEditFieldsOf('tl_news_list_archive') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
     }
 
     public function copyArchive($row, $href, $label, $title, $icon, $attributes)
     {
-        return BackendUser::getInstance()->hasAccess('create', 'newslistp') ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . \StringUtil::specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label) . '</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+        return BackendUser::getInstance()->hasAccess('create', 'newslistp') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
     }
 
     public function deleteArchive($row, $href, $label, $title, $icon, $attributes)
     {
-        return BackendUser::getInstance()->hasAccess('delete', 'newslistp') ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . \StringUtil::specialchars($title) . '"' . $attributes . '>' . \Image::getHtml($icon, $label) . '</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+        return BackendUser::getInstance()->hasAccess('delete', 'newslistp') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
     }
 }

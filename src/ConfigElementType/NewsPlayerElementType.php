@@ -1,12 +1,12 @@
 <?php
-/**
+
+/*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\ConfigElementType;
-
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\File;
@@ -46,7 +46,7 @@ class NewsPlayerElementType implements ConfigElementType
             return '';
         }
 
-        if (!$newsModel->player || $newsModel->player == 'none') {
+        if (!$newsModel->player || 'none' == $newsModel->player) {
             return '';
         }
 
@@ -66,12 +66,12 @@ class NewsPlayerElementType implements ConfigElementType
 
                 $files = $this->framework->getAdapter(FilesModel::class)->findMultipleByUuidsAndExtensions($uuid, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv', 'm4a', 'mp3', 'wma', 'mpeg', 'wav', 'ogg']);
 
-                if ($files === null) {
+                if (null === $files) {
                     return '';
                 }
 
                 // Pre-sort the array by preference
-                if (in_array($files->first()->extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'])) {
+                if (in_array($files->first()->extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'], true)) {
                     $isVideo = true;
                     $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
                 } else {
@@ -105,9 +105,9 @@ class NewsPlayerElementType implements ConfigElementType
 
                         return '';
                     }
-                    $newFile->title            = StringUtil::specialchars($strTitle);
-                    $newFile                   = $newFile->getModel()->row();
-                    $newFile['mime']           = $GLOBALS['TL_MIME'][$file->extension][0];
+                    $newFile->title = StringUtil::specialchars($strTitle);
+                    $newFile = $newFile->getModel()->row();
+                    $newFile['mime'] = $GLOBALS['TL_MIME'][$file->extension][0];
                     $sources[$file->extension] = $newFile;
                 }
 
@@ -122,7 +122,7 @@ class NewsPlayerElementType implements ConfigElementType
                 $extension = pathinfo($paths[0], PATHINFO_EXTENSION);
 
                 // Pre-sort the array by preference
-                if (in_array($extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'])) {
+                if (in_array($extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'], true)) {
                     $isVideo = true;
                     $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
                 } else {
@@ -138,9 +138,9 @@ class NewsPlayerElementType implements ConfigElementType
                         continue;
                     }
 
-                    $file                = [];
-                    $file['mime']        = $GLOBALS['TL_MIME'][$extension][0];
-                    $file['path']        = System::getContainer()->get('huh.utils.url')->addURIScheme($path);
+                    $file = [];
+                    $file['mime'] = $GLOBALS['TL_MIME'][$extension][0];
+                    $file['path'] = System::getContainer()->get('huh.utils.url')->addURIScheme($path);
                     $sources[$extension] = $file;
                 }
 
@@ -148,11 +148,11 @@ class NewsPlayerElementType implements ConfigElementType
         }
 
         $templateData['poster'] = false;
-        $posterSRC              = $newsModel->posterSRC ?: $readerConfigElement->posterSRC;
+        $posterSRC = $newsModel->posterSRC ?: $readerConfigElement->posterSRC;
 
         // Optional poster
-        if ($posterSRC != '') {
-            if (($poster = $this->framework->getAdapter(FilesModel::class)->findByUuid($posterSRC)) !== null) {
+        if ('' != $posterSRC) {
+            if (null !== ($poster = $this->framework->getAdapter(FilesModel::class)->findByUuid($posterSRC))) {
                 $templateData['poster'] = $poster->path;
             }
         }
@@ -163,20 +163,20 @@ class NewsPlayerElementType implements ConfigElementType
             $templateData['size'] = 'width="640" height="360"';
 
             if ($size[0] > 0 || $size[1] > 0) {
-                $templateData['size'] = 'width="' . $size[0] . '" height="' . $size[1] . '"';
+                $templateData['size'] = 'width="'.$size[0].'" height="'.$size[1].'"';
             } else {
                 if (is_numeric($size[2])) {
                     /** @var ImageSizeModel $imageModel */
                     $imageModel = $this->framework->getAdapter(ImageSizeModel::class);
-                    $imageSize  = $imageModel->findByPk($size[2]);
+                    $imageSize = $imageModel->findByPk($size[2]);
 
                     if (null !== $imageSize) {
-                        $templateData['size'] = 'width="' . $imageSize->width . '" height="' . $imageSize->height . '"';
+                        $templateData['size'] = 'width="'.$imageSize->width.'" height="'.$imageSize->height.'"';
                     }
                 }
             }
         } else {
-            if ($templateData['poster'] != '') {
+            if ('' != $templateData['poster']) {
                 $image = ['singleSRC' => $templateData['poster'], 'size' => serialize([640, 360])];
 
                 if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
@@ -187,7 +187,7 @@ class NewsPlayerElementType implements ConfigElementType
             }
         }
 
-        $templateData['files']   = array_values(array_filter($sources));
+        $templateData['files'] = array_values(array_filter($sources));
         $templateData['isVideo'] = $isVideo;
 
         $item->setFormattedValue('newsPlayer', $templateData);

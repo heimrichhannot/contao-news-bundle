@@ -17,9 +17,8 @@ use Contao\System;
 
 class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
 {
-    const SESSION_SEEN_NEWS = 'SESSION_SEEN_NEWS';
-
     use NewsItemTrait;
+    const SESSION_SEEN_NEWS = 'SESSION_SEEN_NEWS';
 
     public function parse(): string
     {
@@ -31,8 +30,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
     }
 
     /**
-     * Add news to list of already seen for current page
-     *
+     * Add news to list of already seen for current page.
      */
     protected function addSeen()
     {
@@ -50,13 +48,13 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
     }
 
     /**
-     * Add page meta information
+     * Add page meta information.
      */
     protected function addPageMeta()
     {
         global $objPage;
         $container = System::getContainer();
-        $article   = $this->getRaw();
+        $article = $this->getRaw();
 
         $container->get('huh.head.tag.meta_robots')->setContent($article['robots'] ?: 'index,follow');
         $container->get('huh.head.tag.meta_date')->setContent(Date::parse('c', $article['date']));
@@ -64,28 +62,28 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
         $container->get('huh.head.tag.og_locale')->setContent($container->get('request_stack')->getCurrentRequest()->getLocale());
         $container->get('huh.head.tag.og_type')->setContent('article');
         $container->get('huh.head.tag.og_title')->setContent(StringUtil::stripInsertTags($article['headline']));
-        $container->get('huh.head.tag.og_url')->setContent('{{news_category_url::' . $article['id'] . '}}');
+        $container->get('huh.head.tag.og_url')->setContent('{{news_category_url::'.$article['id'].'}}');
         $container->get('huh.head.tag.og_description')->setContent(str_replace("\n", ' ', strip_tags(Controller::replaceInsertTags($article['teaser']))));
 
         if ($article['addImage']) {
-            $container->get('huh.head.tag.og_image')->setContent(Environment::get('url') . '/' . $this->getFormattedValue('singleSRC'));
+            $container->get('huh.head.tag.og_image')->setContent(Environment::get('url').'/'.$this->getFormattedValue('singleSRC'));
         }
 
-        $title = !$article['pageTitle'] ? StringUtil::stripInsertTags($article['pageTitle']) : StringUtil::stripInsertTags($article['headline'] . ' - ' . $objPage->rootPageTitle);
+        $title = !$article['pageTitle'] ? StringUtil::stripInsertTags($article['pageTitle']) : StringUtil::stripInsertTags($article['headline'].' - '.$objPage->rootPageTitle);
         $container->get('huh.head.tag.meta_title')->setContent($title);
 
         //Overwrite the page title
-        if ($article['headline'] != '') {
+        if ('' != $article['headline']) {
             $objPage->pageTitle = strip_tags(StringUtil::stripInsertTags($article['headline']));
         }
 
         $description = '';
 
         // Overwrite the page description
-        if ($article['metaDescription'] != '') {
+        if ('' != $article['metaDescription']) {
             $description = $article['metaDescription'];
         } else {
-            if ($article['teaser'] != '') {
+            if ('' != $article['teaser']) {
                 $description = $article['teaser'];
             }
         }
@@ -105,7 +103,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
         if ($article['twitterCard']) {
             $container->get('huh.head.tag.twitter_card')->setContent($article['twitterCard']);
 
-            if ($objPage->rootId > 0 && ($rootPage = PageModel::findByPk($objPage->rootId)) !== null && $rootPage->twitterSite) {
+            if ($objPage->rootId > 0 && null !== ($rootPage = PageModel::findByPk($objPage->rootId)) && $rootPage->twitterSite) {
                 $container->get('huh.head.tag.twitter_site')->setContent($rootPage->twitterSite);
             }
 
@@ -120,7 +118,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
             }
 
             if ($article['addImage']) {
-                $container->get('huh.head.tag.twitter_image')->setContent(Environment::get('url') . '/' . $this->getFormattedValue('singleSRC'));
+                $container->get('huh.head.tag.twitter_image')->setContent(Environment::get('url').'/'.$this->getFormattedValue('singleSRC'));
 
                 if ($article['alt']) {
                     $container->get('huh.head.tag.twitter_image_alt')->setContent($article['alt']);
@@ -128,7 +126,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
             }
 
             if ($article['addYoutube']) {
-                $container->get('huh.head.tag.twitter_player')->setContent('https://www.youtube.com/embed/' . $article['youtube']);
+                $container->get('huh.head.tag.twitter_player')->setContent('https://www.youtube.com/embed/'.$article['youtube']);
                 $container->get('huh.head.tag.twitter_player_width')->setContent(480);
                 $container->get('huh.head.tag.twitter_player_height')->setContent(300);
             }
@@ -136,7 +134,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
     }
 
     /**
-     * Prepare a text to be used in the meta description tag
+     * Prepare a text to be used in the meta description tag.
      *
      * @param string $strText
      *

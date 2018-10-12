@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
@@ -7,10 +8,8 @@
 
 namespace HeimrichHannot\NewsBundle\Test\ConfigElementType;
 
-
 use Contao\FilesModel;
 use Contao\PageModel;
-use Contao\StringUtil;
 use Contao\TestCase\ContaoTestCase;
 use HeimrichHannot\NewsBundle\ConfigElementType\NewsPlayerElementType;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
@@ -20,7 +19,6 @@ use Model\Collection;
 
 class NewsPlayerElementTypeTest extends ContaoTestCase
 {
-
     public function testAddToItemData()
     {
         $newsModelAdapter = $this->mockAdapter(['findByPk']);
@@ -28,13 +26,13 @@ class NewsPlayerElementTypeTest extends ContaoTestCase
         $newsPlayerElementType = new NewsPlayerElementType($this->mockContaoFramework([NewsModel::class => $newsModelAdapter]));
         $this->assertSame('', $newsPlayerElementType->addToItemData($this->getDefaultItem(), $this->getReaderConfigElementModel()));
 
-        $newsModel        = $this->mockClassWithProperties(NewsModel::class, ['player' => 'none']);
+        $newsModel = $this->mockClassWithProperties(NewsModel::class, ['player' => 'none']);
         $newsModelAdapter = $this->mockAdapter(['findByPk']);
         $newsModelAdapter->method('findByPk')->willReturn($newsModel);
         $newsPlayerElementType = new NewsPlayerElementType($this->mockContaoFramework([NewsModel::class => $newsModelAdapter]));
         $this->assertSame('', $newsPlayerElementType->addToItemData($this->getDefaultItem(), $this->getReaderConfigElementModel()));
 
-        $newsModel        = $this->mockClassWithProperties(NewsModel::class, ['player' => 'internal', 'playerSRC' => 'a:1:{i:0;s:16:"M��ƃU蹡@a�+�`";}']);
+        $newsModel = $this->mockClassWithProperties(NewsModel::class, ['player' => 'internal', 'playerSRC' => 'a:1:{i:0;s:16:"M��ƃU蹡@a�+�`";}']);
         $newsModelAdapter = $this->mockAdapter(['findByPk']);
         $newsModelAdapter->method('findByPk')->willReturn($newsModel);
         $newsPlayerElementType = new NewsPlayerElementType($this->mockContaoFramework([NewsModel::class => $newsModelAdapter]));
@@ -74,5 +72,4 @@ class NewsPlayerElementTypeTest extends ContaoTestCase
     {
         return $this->mockClassWithProperties(ReaderConfigElementModel::class, []);
     }
-
 }

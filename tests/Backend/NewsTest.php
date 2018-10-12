@@ -1,12 +1,12 @@
 <?php
-/**
+
+/*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\Test\Backend;
-
 
 use Contao\DataContainer;
 use Contao\TestCase\ContaoTestCase;
@@ -26,7 +26,7 @@ class NewsTest extends ContaoTestCase
     {
         $news = new News($this->mockContaoFramework([]));
 
-        $this->assertSame(null, $news->getRelatedNews(['value' => 11], $this->getDataContainerMock()));
+        $this->assertNull($news->getRelatedNews(['value' => 11], $this->getDataContainerMock()));
 
         $this->assertSame(['value' => 12], $news->getRelatedNews(['value' => 12], $this->getDataContainerMock()));
     }
@@ -35,7 +35,7 @@ class NewsTest extends ContaoTestCase
     {
         $news = new News($this->mockContaoFramework([]));
 
-        $this->assertSame(null, $news->getMembers(['value' => 11], $this->getDataContainerMock()));
+        $this->assertNull($news->getMembers(['value' => 11], $this->getDataContainerMock()));
 
         $this->assertSame(['value' => 12], $news->getMembers(['value' => 12], $this->getDataContainerMock()));
     }

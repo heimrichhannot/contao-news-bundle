@@ -1,5 +1,6 @@
 <?php
-/**
+
+/*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
@@ -14,14 +15,11 @@ use Contao\ManagerPlugin\Bundle\Parser\DelegatingParser;
 use HeimrichHannot\CategoriesBundle\CategoriesBundle;
 use HeimrichHannot\NewsBundle\ContaoManager\Plugin;
 use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
-use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test the plugin class
- * Class PluginTest
- *
- * @package HeimrichHannot\HeadBundle\Test\ContaoManager
+ * Class PluginTest.
  */
 class PluginTest extends TestCase
 {
@@ -39,7 +37,7 @@ class PluginTest extends TestCase
 
         static::assertCount(1, $bundles);
         static::assertInstanceOf(BundleConfig::class, $bundles[0]);
-        static::assertEquals(HeimrichHannotContaoNewsBundle::class, $bundles[0]->getName());
-        static::assertEquals([CodefogTagsBundle::class, ContaoCoreBundle::class, CategoriesBundle::class], $bundles[0]->getLoadAfter());
+        static::assertSame(HeimrichHannotContaoNewsBundle::class, $bundles[0]->getName());
+        static::assertSame([CodefogTagsBundle::class, ContaoCoreBundle::class, CategoriesBundle::class], $bundles[0]->getLoadAfter());
     }
 }

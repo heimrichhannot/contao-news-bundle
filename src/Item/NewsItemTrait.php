@@ -78,7 +78,7 @@ trait NewsItemTrait
     {
         // Internal link
         if ('external' !== $this->source) {
-            return sprintf('<a href="%s" title="%s" itemprop="url">%s%s</a>', $this->getDetailsUrl(), StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['MSC']['readMore'], $this->headline), true), $GLOBALS['TL_LANG']['MSC']['more'], '<span class="invisible"> ' . $this->headline . '</span>');
+            return sprintf('<a href="%s" title="%s" itemprop="url">%s%s</a>', $this->getDetailsUrl(), StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['MSC']['readMore'], $this->headline), true), $GLOBALS['TL_LANG']['MSC']['more'], '<span class="invisible"> '.$this->headline.'</span>');
         }
 
         // External link
@@ -115,7 +115,7 @@ trait NewsItemTrait
 
         // Add the current archive parameter (news archive)
         if (System::getContainer()->get('huh.request')->query->has('month')) {
-            $url .= '?month=' . System::getContainer()->get('huh.request')->query->get('month');
+            $url .= '?month='.System::getContainer()->get('huh.request')->query->get('month');
         }
 
         return $url;
@@ -126,7 +126,7 @@ trait NewsItemTrait
      */
     public function getDetailsUrl(bool $external = true): string
     {
-        $cacheKey = 'id_' . $this->id;
+        $cacheKey = 'id_'.$this->id;
 
         // Load the URL from cache
         if (isset(self::$urlCache[$cacheKey])) {
@@ -155,7 +155,7 @@ trait NewsItemTrait
      */
     public function getExternalUrl(): ?string
     {
-        $cacheKey = 'id_' . $this->id;
+        $cacheKey = 'id_'.$this->id;
 
         // Load the URL from cache
         if (isset(self::$urlCache[$cacheKey])) {
@@ -178,7 +178,7 @@ trait NewsItemTrait
      */
     public function getInternalUrl(): ?string
     {
-        $cacheKey = 'id_' . $this->id;
+        $cacheKey = 'id_'.$this->id;
 
         // Load the URL from cache
         if (isset(self::$urlCache[$cacheKey])) {
@@ -204,7 +204,7 @@ trait NewsItemTrait
      */
     public function getArticleUrl(): ?string
     {
-        $cacheKey = 'id_' . $this->id;
+        $cacheKey = 'id_'.$this->id;
 
         // Load the URL from cache
         if (isset(self::$urlCache[$cacheKey])) {
@@ -213,13 +213,13 @@ trait NewsItemTrait
 
         /**
          * @var NewsArchiveModel
-         * @var PageModel $pageModel
+         * @var PageModel        $pageModel
          */
-        $pageModel    = $this->getManager()->getFramework()->getAdapter(PageModel::class);
+        $pageModel = $this->getManager()->getFramework()->getAdapter(PageModel::class);
         $articleModel = $this->getManager()->getFramework()->getAdapter(ArticleModel::class);
 
         if (null !== ($article = $articleModel->findByPk($this->articleId, ['eager' => true])) && null !== ($parentPage = $pageModel->findByPk($article->pid))) {
-            self::$urlCache[$cacheKey] = ampersand($parentPage->getFrontendUrl('/articles/' . ($article->alias ?: $article->id)));
+            self::$urlCache[$cacheKey] = ampersand($parentPage->getFrontendUrl('/articles/'.($article->alias ?: $article->id)));
         }
 
         return self::$urlCache[$cacheKey] ?? null;
@@ -232,7 +232,7 @@ trait NewsItemTrait
      */
     public function getDefaultUrl(): ?string
     {
-        $cacheKey = 'id_' . $this->id;
+        $cacheKey = 'id_'.$this->id;
 
         // Load the URL from cache
         if (isset(self::$urlCache[$cacheKey])) {
@@ -241,9 +241,9 @@ trait NewsItemTrait
 
         /**
          * @var NewsArchiveModel
-         * @var PageModel $pageModel
+         * @var PageModel        $pageModel
          */
-        $pageModel    = $this->getManager()->getFramework()->getAdapter(PageModel::class);
+        $pageModel = $this->getManager()->getFramework()->getAdapter(PageModel::class);
         $archiveModel = $this->getManager()->getFramework()->getAdapter(NewsArchiveModel::class);
 
         if (null === ($archive = $archiveModel->findByPk($this->pid))) {
@@ -255,7 +255,7 @@ trait NewsItemTrait
         if (null === $page) {
             self::$urlCache[$cacheKey] = ampersand(System::getContainer()->get('request_stack')->getCurrentRequest()->getRequestUri(), true);
         } else {
-            self::$urlCache[$cacheKey] = ampersand($page->getFrontendUrl((Config::get('useAutoItem') ? '/' : '/items/') . ($this->alias ?: $this->id)));
+            self::$urlCache[$cacheKey] = ampersand($page->getFrontendUrl((Config::get('useAutoItem') ? '/' : '/items/').($this->alias ?: $this->id)));
         }
 
         return self::$urlCache[$cacheKey] ?? null;
@@ -292,7 +292,7 @@ trait NewsItemTrait
         $adapter = $this->getManager()->getFramework()->getAdapter(UserModel::class);
 
         if (null !== ($user = $adapter->findByPk($this->author))) {
-            return $GLOBALS['TL_LANG']['MSC']['by'] . ' ' . $user->name;
+            return $GLOBALS['TL_LANG']['MSC']['by'].' '.$user->name;
         }
 
         return null;
@@ -365,7 +365,7 @@ trait NewsItemTrait
         $strText = '';
 
         /**
-         * @var $adapter ContentModel
+         * @var ContentModel
          */
         $adapter = $this->getManager()->getFramework()->getAdapter(ContentModel::class);
 
@@ -450,7 +450,7 @@ trait NewsItemTrait
     }
 
     /**
-     * get article writers from member table
+     * get article writers from member table.
      */
     public function getWriters()
     {
@@ -460,7 +460,7 @@ trait NewsItemTrait
             return;
         }
 
-        if (($members = System::getContainer()->get('contao.framework')->getAdapter(MemberModel::class)->findMultipleByIds($ids)) === null) {
+        if (null === ($members = System::getContainer()->get('contao.framework')->getAdapter(MemberModel::class)->findMultipleByIds($ids))) {
             return;
         }
 
@@ -484,31 +484,7 @@ trait NewsItemTrait
     }
 
     /**
-     * Provide a helper function that returns the writer names separated with given delimiter
-     *
-     * @param string      $delimiter The delimiter
-     * @param string|null $format    The writer name format string (default: ##firstname## ##lastname##)
-     *
-     * @return string The writers separated by the delimiter string
-     * @throws \Exception
-     */
-    protected function getWritersNames($delimiter = ',', $format = null, $writers)
-    {
-        if ($format === null) {
-            $format = '##firstname## ##lastname##';
-        }
-
-        $names = [];
-
-        foreach ($writers as $writer) {
-            $names[] = trim(StringUtil::parseSimpleTokens($format, $writer->row()));
-        }
-
-        return implode($delimiter, $names);
-    }
-
-    /**
-     * Get list of already seen news for current or given page
+     * Get list of already seen news for current or given page.
      *
      * @param null $pageId Set pageId or null for current page
      *
@@ -516,7 +492,7 @@ trait NewsItemTrait
      */
     public function getSeen($pageId = null)
     {
-        if ($pageId === null) {
+        if (null === $pageId) {
             global $objPage;
             $pageId = $objPage->id;
         }
@@ -528,5 +504,30 @@ trait NewsItemTrait
         }
 
         return is_array($pages[$pageId]) ? $pages[$pageId] : null;
+    }
+
+    /**
+     * Provide a helper function that returns the writer names separated with given delimiter.
+     *
+     * @param string      $delimiter The delimiter
+     * @param string|null $format    The writer name format string (default: ##firstname## ##lastname##)
+     *
+     * @throws \Exception
+     *
+     * @return string The writers separated by the delimiter string
+     */
+    protected function getWritersNames($delimiter, $format, $writers)
+    {
+        if (null === $format) {
+            $format = '##firstname## ##lastname##';
+        }
+
+        $names = [];
+
+        foreach ($writers as $writer) {
+            $names[] = trim(StringUtil::parseSimpleTokens($format, $writer->row()));
+        }
+
+        return implode($delimiter, $names);
     }
 }

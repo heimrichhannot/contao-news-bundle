@@ -90,7 +90,7 @@ class News
      */
     protected function limitInputCharacterLength(NewsModel $news, NewsArchiveModel $archive, DataContainer $dc): bool
     {
-        if (false === (bool)$archive->limitInputCharacterLength) {
+        if (false === (bool) $archive->limitInputCharacterLength) {
             return false;
         }
 
@@ -99,16 +99,16 @@ class News
         }
 
         foreach ($limits as $limit) {
-            $strField  = $limit['field'];
+            $strField = $limit['field'];
             $intLength = $limit['length'];
             if ($intLength > 0 && isset($GLOBALS['TL_DCA']['tl_news']['fields'][$strField])) {
                 $arrData = &$GLOBALS['TL_DCA']['tl_news']['fields'][$strField];
                 if (isset($arrData['eval']['maxlength'])) {
                     unset($arrData['eval']['maxlength']); // contao core does not count special characters as decoded entities
                 }
-                $arrData['eval']['data-maxlength']             = $intLength;
-                $arrData['eval']['rgxp']                       = 'maxlength::' . $intLength;
-                $arrData['eval']['data-count-characters']      = true;
+                $arrData['eval']['data-maxlength'] = $intLength;
+                $arrData['eval']['rgxp'] = 'maxlength::'.$intLength;
+                $arrData['eval']['data-count-characters'] = true;
                 $arrData['eval']['data-count-characters-text'] = $GLOBALS['TL_LANG']['MSC']['countCharactersRemaing'];
                 if ($arrData['eval']['rte']) {
                     $arrData['eval']['rte'] = 'tinyMCELimitedInputCharacterLength|html';
@@ -131,7 +131,7 @@ class News
      */
     protected function initCustomPalette(NewsModel $news, NewsArchiveModel $archive, DataContainer $dc): bool
     {
-        if (false === (bool)$archive->addCustomNewsPalettes) {
+        if (false === (bool) $archive->addCustomNewsPalettes) {
             return false;
         }
 
