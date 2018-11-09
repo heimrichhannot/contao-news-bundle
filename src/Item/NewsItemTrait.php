@@ -239,6 +239,13 @@ trait NewsItemTrait
             return self::$urlCache[$cacheKey];
         }
 
+        // news is relocated -> return relocation url
+        if ('none' !== $this->relocate && '' !== ($relocateUrl = ampersand(Controller::replaceInsertTags($this->relocateUrl), true))) {
+            self::$urlCache[$cacheKey] = $relocateUrl;
+
+            return self::$urlCache[$cacheKey];
+        }
+
         /**
          * @var NewsArchiveModel
          * @var PageModel        $pageModel
