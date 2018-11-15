@@ -49,6 +49,7 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
 
         $keyFile = System::getContainer()->getParameter('kernel.root_dir').'/..';
         $keyFile .= '/'.$config['keyfile'];
+
         if (!file_exists($keyFile)) {
             return false;
         }
@@ -71,9 +72,11 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
     public function getCount()
     {
         $this->count = 0;
+
         if (empty($urls = $this->getUrls())) {
             return $this->count;
         }
+
         foreach ($urls as $url) {
             $count = 0;
             $url = str_replace($this->getBaseUrl(), '', $url);
@@ -91,13 +94,15 @@ class GoogleAnalyticsCrawler extends AbstractCrawler
 
             $report = $responce[0];
             $rows = $report->getData()->getRows();
-            for ($rowIndex = 0; $rowIndex < count($rows); ++$rowIndex) {
+
+            for ($rowIndex = 0; $rowIndex < \count($rows); ++$rowIndex) {
                 $row = $rows[$rowIndex];
                 $metrics = $row->getMetrics();
                 $values = $metrics[0]->getValues();
                 $count += $values[0];
             }
             $this->count += $count;
+
             if ($this->io) {
                 $this->io->text($url.': '.$count);
             }

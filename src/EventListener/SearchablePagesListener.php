@@ -62,7 +62,7 @@ class SearchablePagesListener
 
         if (null !== ($archive = NewsListArchiveModel::findAll())) {
             while ($archive->next()) {
-                if (!$archive->jumpTo || !empty($root) && !in_array($archive->jumpTo, $root, true)) {
+                if (!$archive->jumpTo || !empty($root) && !\in_array($archive->jumpTo, $root, true)) {
                     continue;
                 }
 
@@ -126,7 +126,7 @@ class SearchablePagesListener
             $jumpTo = $tagSource['jumpTo'];
             $source = $tagSource['source'];
 
-            if (!$jumpTo || !empty($root) && !in_array($jumpTo, $root, true)) {
+            if (!$jumpTo || !empty($root) && !\in_array($jumpTo, $root, true)) {
                 continue;
             }
 

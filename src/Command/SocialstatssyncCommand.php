@@ -92,6 +92,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         $io->title('Updating social stats...');
 
         $this->httpClient = $this->setUpHttpClient();
+
         try {
             $this->applyOptions($input);
         } catch (ClassNotFoundException $e) {
@@ -146,11 +147,13 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->io->note('Activated debug mode');
             $this->io->text('Base-Url: '.$this->baseUrl);
         }
+
         if ($articleId = $input->getOption('article')) {
             /**
              * @var NewsModel
              */
             $model = $this->framework->getAdapter(NewsModel::class);
+
             if ($model) {
                 if ($items = $model->findMultipleByIds([$articleId])) {
                     $this->items = $items;
@@ -175,15 +178,18 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $this->config['chunksize'] = 0;
             $this->io->note('Ignoring chunksize.');
         }
+
         if (1 == $input->getOption('no-days')) {
             $this->config['days'] = 0;
             $this->io->note('Ignoring days config.');
         }
+
         if (1 == $input->getOption('only-current')) {
             /**
              * @var NewsModel
              */
             $model = $this->framework->getAdapter(NewsModel::class);
+
             if ($model) {
                 $this->items = $model->findPublishedFromToByPids(0, time(), $this->config['archives'], $this->config['chunksize']);
             } else {
@@ -286,12 +292,14 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     private function updateStats(AbstractCrawler $crawler, array $crawlerConfig)
     {
         $crawler->setIo($this->io);
+
         if (!array_key_exists($crawlerConfig['alias'], $this->config)) {
             $this->io->note('No '.$crawlerConfig['name'].' config provided. Skipping...');
 
             return;
         }
         $this->io->section('Retriving '.$crawlerConfig['name'].' counts');
+
         if (!$this->items) {
             $method = $crawlerConfig['method'];
             $items = $this->framework->getAdapter(NewsModel::class)->$method(
@@ -309,9 +317,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $crawler->setBaseUrl($this->baseUrl);
             $crawler->setIo($this->debug);
             $count = $crawler->getCount();
-            if (is_array($count)) {
+
+            if (\is_array($count)) {
                 $this->io->note('Error: '.$count['message']);
                 $this->logger->addNotice($crawlerConfig['name'].': '.$count['message']);
+
                 if (AbstractCrawler::ERROR_BREAKING == $count['code']) {
                     $this->io->note('Stopping updating stats for current provider.');
 

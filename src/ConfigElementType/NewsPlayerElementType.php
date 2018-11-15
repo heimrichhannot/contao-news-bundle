@@ -60,7 +60,7 @@ class NewsPlayerElementType implements ConfigElementType
 
                 $uuid = StringUtil::deserialize($newsModel->playerSRC);
 
-                if (!is_array($uuid) || empty($uuid)) {
+                if (!\is_array($uuid) || empty($uuid)) {
                     return '';
                 }
 
@@ -71,7 +71,7 @@ class NewsPlayerElementType implements ConfigElementType
                 }
 
                 // Pre-sort the array by preference
-                if (in_array($files->first()->extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'], true)) {
+                if (\in_array($files->first()->extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'], true)) {
                     $isVideo = true;
                     $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
                 } else {
@@ -88,7 +88,7 @@ class NewsPlayerElementType implements ConfigElementType
                 foreach ($files as $file) {
                     $arrMeta = StringUtil::deserialize($file->meta);
 
-                    if (is_array($arrMeta) && isset($arrMeta[$language])) {
+                    if (\is_array($arrMeta) && isset($arrMeta[$language])) {
                         $strTitle = $arrMeta[$language]['title'];
                     } else {
                         $strTitle = $file->name;
@@ -112,17 +112,18 @@ class NewsPlayerElementType implements ConfigElementType
                 }
 
                 break;
+
             case 'external':
                 $paths = StringUtil::trimsplit('|', $newsModel->playerUrl);
 
-                if (!is_array($paths) || empty($paths)) {
+                if (!\is_array($paths) || empty($paths)) {
                     return '';
                 }
 
                 $extension = pathinfo($paths[0], PATHINFO_EXTENSION);
 
                 // Pre-sort the array by preference
-                if (in_array($extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'], true)) {
+                if (\in_array($extension, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv'], true)) {
                     $isVideo = true;
                     $sources = ['mp4' => null, 'm4v' => null, 'mov' => null, 'wmv' => null, 'webm' => null, 'ogv' => null];
                 } else {

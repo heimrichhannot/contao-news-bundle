@@ -43,10 +43,12 @@ class DisqusCrawler extends AbstractCrawler
     public function getCount()
     {
         $this->count = 0;
+
         if ($this->io) {
             $this->io->text('Forum: '.$this->forum.' | Thread: '.$this->identifier);
         }
         $count = 0;
+
         try {
             $response = $this->client->request(
                 'GET',
@@ -56,6 +58,7 @@ class DisqusCrawler extends AbstractCrawler
         } catch (ClientException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents());
             $this->setErrorMessage($error->response);
+
             if (2 == $error->code) {
                 $this->setErrorCode(AbstractCrawler::ERROR_NOTICE);
             }

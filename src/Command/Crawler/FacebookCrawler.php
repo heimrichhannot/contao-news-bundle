@@ -34,6 +34,7 @@ class FacebookCrawler extends AbstractCrawler
     {
         $this->count = 0;
         $count = 0;
+
         foreach ($this->getUrls() as $url) {
             try {
                 $response = $this->client->request('GET', 'https://graph.facebook.com/?id='.$url);

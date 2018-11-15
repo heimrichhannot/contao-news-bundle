@@ -33,8 +33,10 @@ class GooglePlusCrawler extends AbstractCrawler
     {
         $this->count = 0;
         $count = 0;
+
         foreach ($this->getUrls() as $url) {
             $body = '[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"'.$url.'","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"2.0","key":"p","apiVersion":"v1"}]';
+
             try {
                 $response = $this->client->request('POST', 'https://clients6.google.com/rpc', ['body' => $body]);
             } catch (ClientException $e) {

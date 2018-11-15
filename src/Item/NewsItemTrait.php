@@ -506,11 +506,11 @@ trait NewsItemTrait
 
         $pages = System::getContainer()->get('session')->get(static::SESSION_SEEN_NEWS);
 
-        if (!is_array($pages) || !isset($pages[$pageId])) {
+        if (!\is_array($pages) || !isset($pages[$pageId])) {
             return null;
         }
 
-        return is_array($pages[$pageId]) ? $pages[$pageId] : null;
+        return \is_array($pages[$pageId]) ? $pages[$pageId] : null;
     }
 
     /**

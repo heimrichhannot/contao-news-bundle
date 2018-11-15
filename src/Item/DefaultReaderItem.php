@@ -39,7 +39,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
 
         $pages = System::getContainer()->get('session')->get(static::SESSION_SEEN_NEWS);
 
-        if (!is_array($pages)) {
+        if (!\is_array($pages)) {
             $pages = [];
         }
 
@@ -59,8 +59,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
 
         $image = $this->getFormattedValue('singleSRC');
 
-        if (Validator::isBinaryUuid($image))
-        {
+        if (Validator::isBinaryUuid($image)) {
             $image = System::getContainer()->get('huh.utils.file')->getPathFromUuid($image);
         }
 

@@ -29,11 +29,13 @@ class NewsCallbackListener
         $arrOptions = [];
         $this->framework->getAdapter(Controller::class)->loadDataContainer('tl_news');
         $arrPalettes = $GLOBALS['TL_DCA']['tl_news']['palettes'];
-        if (!is_array($arrPalettes)) {
+
+        if (!\is_array($arrPalettes)) {
             return $arrOptions;
         }
+
         foreach ($arrPalettes as $strName => $strPalette) {
-            if (in_array($strName, ['__selector__', 'internal', 'external', 'default'], true)) {
+            if (\in_array($strName, ['__selector__', 'internal', 'external', 'default'], true)) {
                 continue;
             }
             $arrOptions[$strName] = $strName;

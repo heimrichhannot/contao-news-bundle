@@ -61,11 +61,11 @@ class InsertTagsListener
         $elements = explode('::', $tag);
         $key = strtolower($elements[0]);
 
-        if (in_array($key, $this->supportedNewsTags, true)) {
+        if (\in_array($key, $this->supportedNewsTags, true)) {
             return $this->replaceNewsInsertTag($key, $elements[1]);
         }
 
-        if (in_array($key, $this->supportedNewsListTags, true)) {
+        if (\in_array($key, $this->supportedNewsListTags, true)) {
             return $this->replaceNewsListInsertTag($key, $elements[1]);
         }
 
@@ -144,12 +144,17 @@ class InsertTagsListener
                 $url = NewsListModel::generateNewsListUrl($newsList);
 
                 return sprintf('<a href="%s">%s</a>', $url, $newsList->title);
+
                 break;
+
             case 'news_list_url':
                 return NewsListModel::generateNewsListUrl($newsList);
+
                 break;
+
             case 'news_list_title':
                 return $newsList->title;
+
                 break;
         }
 

@@ -75,12 +75,13 @@ abstract class AbstractCrawler implements CrawlerInterface
     {
         \System::getContainer()->get('contao.framework')->initialize();
         $urls = [];
+
         if (isset($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])
-            && is_array($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])) {
+            && \is_array($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'])) {
             foreach ($GLOBALS['TL_HOOKS']['addNewsArticleUrlsToSocialStats'] as $callback) {
                 $addUrls = \System::importStatic($callback[0])->{$callback[1]}($this->item, $this->baseUrl);
                 $urls = array_merge(
-                    is_array($addUrls) ? $addUrls : [],
+                    \is_array($addUrls) ? $addUrls : [],
                     $urls
                 );
             }

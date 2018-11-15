@@ -24,7 +24,7 @@ class NewsListArchive extends \Contao\Backend
         }
 
         // Set root IDs
-        if (!is_array($user->newslists) || empty($user->newslists)) {
+        if (!\is_array($user->newslists) || empty($user->newslists)) {
             $root = [0];
         } else {
             $root = $user->newslists;
@@ -49,13 +49,13 @@ class NewsListArchive extends \Contao\Backend
 
             case 'edit':
                 // Dynamically add the record to the user profile
-                if (!in_array(\Input::get('id'), $root, true)) {
+                if (!\in_array(\Input::get('id'), $root, true)) {
                     /** @var \Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface $sessionBag */
                     $sessionBag = $objSession->getBag('contao_backend');
 
                     $arrNew = $sessionBag->get('new_records');
 
-                    if (is_array($arrNew['tl_news_list_archive']) && in_array(\Input::get('id'), $arrNew['tl_news_list_archive'], true)) {
+                    if (\is_array($arrNew['tl_news_list_archive']) && \in_array(\Input::get('id'), $arrNew['tl_news_list_archive'], true)) {
                         // Add the permissions on group level
                         if ('custom' != $user->inherit) {
                             $objGroup = $database->execute('SELECT id, newslists, newslistp FROM tl_user_group WHERE id IN('.implode(',', array_map('intval', $user->groups)).')');
@@ -63,7 +63,7 @@ class NewsListArchive extends \Contao\Backend
                             while ($objGroup->next()) {
                                 $arrModulep = \StringUtil::deserialize($objGroup->newslistp);
 
-                                if (is_array($arrModulep) && in_array('create', $arrModulep, true)) {
+                                if (\is_array($arrModulep) && \in_array('create', $arrModulep, true)) {
                                     $arrModules = \StringUtil::deserialize($objGroup->newslists, true);
                                     $arrModules[] = \Input::get('id');
 
@@ -78,7 +78,7 @@ class NewsListArchive extends \Contao\Backend
 
                             $arrModulep = \StringUtil::deserialize($user->newslistp);
 
-                            if (is_array($arrModulep) && in_array('create', $arrModulep, true)) {
+                            if (\is_array($arrModulep) && \in_array('create', $arrModulep, true)) {
                                 $arrModules = \StringUtil::deserialize($user->newslists, true);
                                 $arrModules[] = \Input::get('id');
 
@@ -96,27 +96,31 @@ class NewsListArchive extends \Contao\Backend
             case 'copy':
             case 'delete':
             case 'show':
-                if (!in_array(\Input::get('id'), $root, true) || ('delete' == \Input::get('act') && !$user->hasAccess('delete', 'newslistp'))) {
+                if (!\in_array(\Input::get('id'), $root, true) || ('delete' == \Input::get('act') && !$user->hasAccess('delete', 'newslistp'))) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to '.\Input::get('act').' news_list_archive ID '.\Input::get('id').'.');
                 }
+
                 break;
 
             case 'editAll':
             case 'deleteAll':
             case 'overrideAll':
                 $session = $objSession->all();
+
                 if ('deleteAll' == \Input::get('act') && !$user->hasAccess('delete', 'newslistp')) {
                     $session['CURRENT']['IDS'] = [];
                 } else {
                     $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $root);
                 }
                 $objSession->replace($session);
+
                 break;
 
             default:
-                if (strlen(\Input::get('act'))) {
+                if (\strlen(\Input::get('act'))) {
                     throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to '.\Input::get('act').' news_list_archives.');
                 }
+
                 break;
         }
     }

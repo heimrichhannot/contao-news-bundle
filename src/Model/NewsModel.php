@@ -162,9 +162,11 @@ class NewsModel extends \Contao\NewsModel
             'twitter_updated_at',
             'facebook_updated_at',
         ];
-        if (!in_array($row, $allowedRows, true)) {
+
+        if (!\in_array($row, $allowedRows, true)) {
             throw new \Exception('Database row not allowed here.');
         }
+
         if ($days > 0) {
             $period = time() - (60 * 60 * 24 * $days);
         } else {
@@ -175,11 +177,13 @@ class NewsModel extends \Contao\NewsModel
             $limit = 10000;
         }
         $query = "SELECT *, ((`tstamp` > $row) * `tstamp` * ($row > 0)) AS `was_updated` ".'FROM `tl_news` '.'WHERE `published` = 1 '.'AND `date` > ? ';
+
         if (!empty($pids)) {
             $query .= 'AND `pid` IN (?) ';
         }
         $query .= "ORDER BY `was_updated` DESC, $row ASC, `tstamp` DESC ".'LIMIT ? ';
         $stmt = Database::getInstance()->prepare($query);
+
         if (!empty($pids)) {
             $result = $stmt->execute($period, implode(',', array_map('intval', $pids)), $limit);
         } else {
@@ -314,14 +318,14 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function countPublishedByPidsAndIds($arrPids, $arrIds, $blnFeatured = null, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids)) {
+        if (!\is_array($arrPids) || empty($arrPids)) {
             return 0;
         }
 
         $t = static::$strTable;
         $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).')'];
 
-        if (is_array($arrIds) && !empty($arrIds)) {
+        if (\is_array($arrIds) && !empty($arrIds)) {
             $arrColumn[] = "$t.id IN(".implode(',', array_map('intval', $arrIds)).')';
         }
 
@@ -353,14 +357,14 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function findPublishedByPidsAndIds($arrPids, $arrIds, $blnFeatured = null, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids)) {
+        if (!\is_array($arrPids) || empty($arrPids)) {
             return null;
         }
 
         $t = static::$strTable;
         $arrColumns = ["$t.pid IN(".implode(',', array_map('intval', $arrPids)).')'];
 
-        if (is_array($arrIds) && !empty($arrIds)) {
+        if (\is_array($arrIds) && !empty($arrIds)) {
             $arrColumns[] = "$t.id IN(".implode(',', array_map('intval', $arrIds)).')';
         }
 
@@ -398,7 +402,7 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function countPublishedByPidsAndCallback($arrPids, $callback = null, $blnFeatured = null, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids)) {
+        if (!\is_array($arrPids) || empty($arrPids)) {
             return 0;
         }
 
@@ -418,8 +422,8 @@ class NewsModel extends \Contao\NewsModel
         }
 
         if (null !== $callback) {
-            if (is_array($callback)) {
-                if (is_callable($callback)) {
+            if (\is_array($callback)) {
+                if (\is_callable($callback)) {
                     $callback($arrColumns, $arrValues, $arrOptions);
                 } else {
                     System::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
@@ -444,7 +448,7 @@ class NewsModel extends \Contao\NewsModel
      */
     public static function findPublishedByPidsAndCallback($arrPids, $callback = null, $blnFeatured = null, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
-        if (!is_array($arrPids) || empty($arrPids)) {
+        if (!\is_array($arrPids) || empty($arrPids)) {
             return null;
         }
 
@@ -472,8 +476,8 @@ class NewsModel extends \Contao\NewsModel
         $arrOptions['offset'] = $intOffset;
 
         if (null !== $callback) {
-            if (is_array($callback)) {
-                if (is_callable($callback)) {
+            if (\is_array($callback)) {
+                if (\is_callable($callback)) {
                     $callback($arrColumns, $arrValues, $arrOptions);
                 } else {
                     System::importStatic($callback[0])->{$callback[1]}($arrColumns, $arrValues, $arrOptions);
@@ -486,7 +490,7 @@ class NewsModel extends \Contao\NewsModel
 
     public static function findMultipleByIdsAndPids($arrIds, $arrPids, array $arrOptions = [])
     {
-        if (empty($arrIds) || !is_array($arrIds)) {
+        if (empty($arrIds) || !\is_array($arrIds)) {
             return null;
         }
 
@@ -547,6 +551,7 @@ class NewsModel extends \Contao\NewsModel
         $values = [];
         $columns[] = "$t.time > ?";
         $values[] = $time;
+
         if (empty($options['order'])) {
             $options['order'] = "$t.time ASC";
         } else {
@@ -571,6 +576,7 @@ class NewsModel extends \Contao\NewsModel
         $values = [];
         $columns[] = "$t.time < ?";
         $values[] = $time;
+
         if (empty($options['order'])) {
             $options['order'] = "$t.time DESC";
         } else {
@@ -592,6 +598,7 @@ class NewsModel extends \Contao\NewsModel
     public static function findOnePublished($columns = [], $values = [], $options = [])
     {
         $t = static::$strTable;
+
         if (isset($options['ignoreFePreview']) || !BE_USER_LOGGED_IN) {
             $time = \Date::floorToMinute();
             $columns[] = "($t.start='' OR $t.start<='$time') AND ($t.stop='' OR $t.stop>'".($time + 60)."') AND $t.published='1'";

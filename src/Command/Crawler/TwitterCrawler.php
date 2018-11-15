@@ -47,18 +47,20 @@ class TwitterCrawler extends AbstractCrawler
     {
         $this->count = 0;
         $count = 0;
+
         foreach ($this->getUrls() as $url) {
             $response = $this->connection->get('search/tweets', [
                 'q' => 'url:'.$url,
                 'count' => 100,
             ]);
+
             if ($errors = $response->errors) {
                 $this->setErrorCode(static::ERROR_BREAKING);
                 $this->setErrorMessage($errors[0]->message);
 
                 return $this->error;
             }
-            $count += count($response->statuses);
+            $count += \count($response->statuses);
         }
         $this->count = $count;
 

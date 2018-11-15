@@ -101,8 +101,10 @@ class News
         foreach ($limits as $limit) {
             $strField = $limit['field'];
             $intLength = $limit['length'];
+
             if ($intLength > 0 && isset($GLOBALS['TL_DCA']['tl_news']['fields'][$strField])) {
                 $arrData = &$GLOBALS['TL_DCA']['tl_news']['fields'][$strField];
+
                 if (isset($arrData['eval']['maxlength'])) {
                     unset($arrData['eval']['maxlength']); // contao core does not count special characters as decoded entities
                 }
@@ -110,6 +112,7 @@ class News
                 $arrData['eval']['rgxp'] = 'maxlength::'.$intLength;
                 $arrData['eval']['data-count-characters'] = true;
                 $arrData['eval']['data-count-characters-text'] = $GLOBALS['TL_LANG']['MSC']['countCharactersRemaing'];
+
                 if ($arrData['eval']['rte']) {
                     $arrData['eval']['rte'] = 'tinyMCELimitedInputCharacterLength|html';
                 }
@@ -146,7 +149,7 @@ class News
         $GLOBALS['TL_DCA']['tl_news']['palettes']['default'] = $GLOBALS['TL_DCA']['tl_news']['palettes'][$archive->customNewsPalettes];
 
         // HOOK: loadDataContainer must be triggerd after onload_callback, otherwise slick slider wont work anymore
-        if (isset($GLOBALS['TL_HOOKS']['loadDataContainer']) && is_array($GLOBALS['TL_HOOKS']['loadDataContainer'])) {
+        if (isset($GLOBALS['TL_HOOKS']['loadDataContainer']) && \is_array($GLOBALS['TL_HOOKS']['loadDataContainer'])) {
             foreach ($GLOBALS['TL_HOOKS']['loadDataContainer'] as $callback) {
                 System::importStatic($callback[0])->{$callback[1]}($dc->table);
             }
