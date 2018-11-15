@@ -14,6 +14,7 @@ use Contao\Environment;
 use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
+use Contao\Validator;
 
 class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
 {
@@ -56,6 +57,13 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
         $container = System::getContainer();
         $article = $this->getRaw();
 
+        $image = $this->getFormattedValue('singleSRC');
+
+        if (Validator::isBinaryUuid($image))
+        {
+            $image = System::getContainer()->get('huh.utils.file')->getPathFromUuid($image);
+        }
+
         $container->get('huh.head.tag.meta_robots')->setContent($article['robots'] ?: 'index,follow');
         $container->get('huh.head.tag.meta_date')->setContent(Date::parse('c', $article['date']));
         $container->get('huh.head.tag.og_site_name')->setContent($objPage->rootPageTitle);
@@ -66,7 +74,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
         $container->get('huh.head.tag.og_description')->setContent(str_replace("\n", ' ', strip_tags(Controller::replaceInsertTags($article['teaser']))));
 
         if ($article['addImage']) {
-            $container->get('huh.head.tag.og_image')->setContent(Environment::get('url').'/'.$this->getFormattedValue('singleSRC'));
+            $container->get('huh.head.tag.og_image')->setContent(Environment::get('url').'/'.$image);
         }
 
         $title = !$article['pageTitle'] ? StringUtil::stripInsertTags($article['pageTitle']) : StringUtil::stripInsertTags($article['headline'].' - '.$objPage->rootPageTitle);
@@ -118,7 +126,7 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
             }
 
             if ($article['addImage']) {
-                $container->get('huh.head.tag.twitter_image')->setContent(Environment::get('url').'/'.$this->getFormattedValue('singleSRC'));
+                $container->get('huh.head.tag.twitter_image')->setContent(Environment::get('url').'/'.$image);
 
                 if ($article['alt']) {
                     $container->get('huh.head.tag.twitter_image_alt')->setContent($article['alt']);
