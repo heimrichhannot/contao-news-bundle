@@ -21,6 +21,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\UserModel;
+use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use Psr\Log\LogLevel;
 
 trait NewsItemTrait
@@ -239,30 +240,34 @@ trait NewsItemTrait
             return self::$urlCache[$cacheKey];
         }
 
-        // news is relocated -> return relocation url
-        if ('none' !== $this->relocate && '' !== ($relocateUrl = ampersand(Controller::replaceInsertTags($this->relocateUrl), true))) {
-            self::$urlCache[$cacheKey] = $relocateUrl;
-
-            return self::$urlCache[$cacheKey];
-        }
-
-        /**
-         * @var NewsArchiveModel
-         * @var PageModel        $pageModel
-         */
-        $pageModel = $this->getManager()->getFramework()->getAdapter(PageModel::class);
-        $archiveModel = $this->getManager()->getFramework()->getAdapter(NewsArchiveModel::class);
-
-        if (null === ($archive = $archiveModel->findByPk($this->pid))) {
-            return null;
-        }
-
-        $page = $pageModel->findByPk($archive->jumpTo);
-
-        if (null === $page) {
-            self::$urlCache[$cacheKey] = ampersand(System::getContainer()->get('request_stack')->getCurrentRequest()->getRequestUri(), true);
+        if ($this->getManager() instanceof ListManagerInterface && $this->getManager()->getListConfig()->addDetails) {
+            self::$urlCache[$cacheKey] = parent::getDetailsUrl();
         } else {
-            self::$urlCache[$cacheKey] = ampersand($page->getFrontendUrl((Config::get('useAutoItem') ? '/' : '/items/').($this->alias ?: $this->id)));
+            // news is relocated -> return relocation url
+            if ('none' !== $this->relocate && '' !== ($relocateUrl = ampersand(Controller::replaceInsertTags($this->relocateUrl), true))) {
+                self::$urlCache[$cacheKey] = $relocateUrl;
+
+                return self::$urlCache[$cacheKey];
+            }
+
+            /**
+             * @var NewsArchiveModel
+             * @var PageModel        $pageModel
+             */
+            $pageModel = $this->getManager()->getFramework()->getAdapter(PageModel::class);
+            $archiveModel = $this->getManager()->getFramework()->getAdapter(NewsArchiveModel::class);
+
+            if (null === ($archive = $archiveModel->findByPk($this->pid))) {
+                return null;
+            }
+
+            $page = $pageModel->findByPk($archive->jumpTo);
+
+            if (null === $page) {
+                self::$urlCache[$cacheKey] = ampersand(System::getContainer()->get('request_stack')->getCurrentRequest()->getRequestUri(), true);
+            } else {
+                self::$urlCache[$cacheKey] = ampersand($page->getFrontendUrl((Config::get('useAutoItem') ? '/' : '/items/').($this->alias ?: $this->id)));
+            }
         }
 
         return self::$urlCache[$cacheKey] ?? null;
