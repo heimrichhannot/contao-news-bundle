@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.5.3] - 2018-12-06
+
+#### Changed
+- increase `heimrichhannot/contao-news_categories` dependency to 2.0 in order to replace dependency heimrichhannot/contao-fieldpalette with heimrichhannot/contao-fieldpalette-bundle
+
 ## [1.5.2] - 2018-12-06
 
 #### Changed
