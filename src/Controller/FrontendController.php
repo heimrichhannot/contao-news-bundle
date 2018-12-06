@@ -5,7 +5,6 @@ namespace HeimrichHannot\NewsBundle\Controller;
 
 use HeimrichHannot\Ajax\Response\ResponseData;
 use HeimrichHannot\Ajax\Response\ResponseSuccess;
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\News;
 use HeimrichHannot\Ajax\Ajax;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

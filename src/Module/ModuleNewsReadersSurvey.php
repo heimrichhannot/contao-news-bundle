@@ -10,7 +10,7 @@ namespace HeimrichHannot\NewsBundle\Module;
 
 
 use HeimrichHannot\Ajax\AjaxAction;
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
+use HeimrichHannot\FieldpaletteBundle\Model\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Form\ReadersSurveyForm;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\News;

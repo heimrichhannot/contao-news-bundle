@@ -10,10 +10,6 @@
 
 namespace HeimrichHannot\NewsBundle\Backend;
 
-use Contao\CoreBundle\Monolog\ContaoContext;
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
-use Psr\Log\LogLevel;
-
 class NewsListArchive extends \Contao\Backend
 {
     public function checkPermission()

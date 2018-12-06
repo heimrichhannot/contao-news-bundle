@@ -12,13 +12,13 @@ namespace HeimrichHannot\NewsBundle;
 
 
 use Contao\Module;
+use Contao\System;
 use Haste\Util\Url;
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
+use HeimrichHannot\FieldpaletteBundle\Model\FieldPaletteModel;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\NewsBundle\Model\NewsTagsModel;
-use HeimrichHannot\NewsBundle\Module\ModuleNewsListFilter;
 use HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModule;
 use HeimrichHannot\NewsBundle\QueryBuilder\NewsFilterQueryBuilder;
 use NewsCategories\CategoryHelper;
@@ -328,9 +328,12 @@ class NewsList
         if ($this->module->use_news_lists) {
             $t = static::$table;
 
+            /** @var FieldPaletteModel $fieldPaletteModel */
+            $fieldPaletteModel = System::getContainer()->get('contao.framework')->createInstance(FieldPaletteModel::class);
+
             switch ($this->module->newsListMode) {
                 case \HeimrichHannot\NewsBundle\Backend\NewsList::MODE_MANUAL:
-                    $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news');
+                    $relations = $fieldPaletteModel->findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news');
 
                     if ($relations === null) {
                         return false;
@@ -352,7 +355,7 @@ class NewsList
                     }
 
                     if (($objNewsList = NewsListModel::findBy(['alias=?', 'published=?'], [\Input::get('news_list'), true])) !== null) {
-                        $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField([$objNewsList->id], 'tl_news_list', 'news');
+                        $relations = $fieldPaletteModel->findPublishedByPidsAndTableAndField([$objNewsList->id], 'tl_news_list', 'news');
 
                         if ($relations === null) {
                             return false;
