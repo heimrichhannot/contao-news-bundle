@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.5.4] - 2018-12-06
+
+#### Fixed
+- replace dependency heimrichhannot/contao-fieldpalette with heimrichhannot/contao-fieldpalette-bundle errors
+
 ## [1.5.3] - 2018-12-06
 
 #### Changed

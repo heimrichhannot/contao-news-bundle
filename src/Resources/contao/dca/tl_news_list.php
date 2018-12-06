@@ -35,7 +35,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
             ['HeimrichHannot\Haste\Dca\General', 'setDateAdded'],
         ],
         'oncopy_callback'   => [
-            ['HeimrichHannot\FieldPalette\FieldPalette', 'copyFieldPaletteRecords'],
+            ['huh.fieldpalette.listener.callback', 'copyFieldPaletteRecords'],
         ],
         'sql'               => [
             'keys' => [
