@@ -13,8 +13,7 @@ use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\ImageSizeModel;
 use Contao\System;
-use DOMDocument;
-use HeimrichHannot\FieldPalette\FieldPaletteModel;
+use HeimrichHannot\FieldpaletteBundle\Model\FieldPaletteModel;
 use HeimrichHannot\Haste\Util\Url;
 use HeimrichHannot\NewsBundle\Form\NewsFilterForm;
 use HeimrichHannot\NewsBundle\Manager\NewsTagManager;
@@ -383,7 +382,10 @@ class NewsArticle extends \ModuleNews
             return;
         }
 
-        $relations = FieldPaletteModel::findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news', ['limit' => 1], ['tl_fieldpalette.news_list_news = ?'], [$this->article->id]);
+        /** @var FieldPaletteModel $fieldPaletteModel */
+        $fieldPaletteModel = System::getContainer()->get('contao.framework')->createInstance(FieldPaletteModel::class);
+
+        $relations = $fieldPaletteModel->findPublishedByPidsAndTableAndField(deserialize($this->module->news_lists, true), 'tl_news_list', 'news', ['limit' => 1], ['tl_fieldpalette.news_list_news = ?'], [$this->article->id]);
 
         if ($relations === null || !$relations->news_list_set_fields) {
             return;
