@@ -72,8 +72,10 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
         $container->get('huh.head.tag.og_url')->setContent('{{news_category_url::'.$article['id'].'}}');
         $container->get('huh.head.tag.og_description')->setContent(str_replace("\n", ' ', strip_tags(Controller::replaceInsertTags($article['teaser']))));
 
-        if ($article['addImage']) {
+        if ($article['addImage'] && $image) {
             $container->get('huh.head.tag.og_image')->setContent(Environment::get('url').'/'.$image);
+        } else {
+            $container->get('huh.head.tag.og_image')->setContent('');
         }
 
         $title = !$article['pageTitle'] ? StringUtil::stripInsertTags($article['pageTitle']) : StringUtil::stripInsertTags($article['headline'].' - '.$objPage->rootPageTitle);
@@ -124,12 +126,14 @@ class DefaultReaderItem extends \HeimrichHannot\ReaderBundle\Item\DefaultItem
                 $container->get('huh.head.tag.twitter_description')->setContent($this->prepareMetaDescription($description));
             }
 
-            if ($article['addImage']) {
+            if ($article['addImage'] && $image) {
                 $container->get('huh.head.tag.twitter_image')->setContent(Environment::get('url').'/'.$image);
 
                 if ($article['alt']) {
                     $container->get('huh.head.tag.twitter_image_alt')->setContent($article['alt']);
                 }
+            } else {
+                $container->get('huh.head.tag.twitter_image')->setContent('');
             }
 
             if ($article['addYoutube']) {
