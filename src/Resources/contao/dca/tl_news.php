@@ -24,7 +24,6 @@ $dc['palettes']['__selector__'][] = 'add_related_news';
 $dc['palettes']['__selector__'][] = 'player';
 $dc['palettes']['__selector__'][] = 'relocate';
 
-
 /**
  * Palettes
  */
@@ -87,6 +86,7 @@ $fields = [
     ],
     'contactBox_members'         => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_members'],
+        'exclude'   => true,
         'inputType' => 'tagsinput',
         'sql'       => "blob NULL",
         'eval'      => [
@@ -107,12 +107,14 @@ $fields = [
     'contactBox_header'          => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_header'],
         'inputType' => 'text',
+        'exclude'   => true,
         'sql'       => "varchar(255) NOT NULL default ''",
         'eval'      => ['mandatory' => true],
     ],
     'contactBox_links'           => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_links'],
         'inputType' => 'multiColumnEditor',
+        'exclude'   => true,
         'eval'      => [
             'multiColumnEditor' => [
                 'class'               => 'contact_box_link',
@@ -142,6 +144,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['writers'],
         'inputType' => 'tagsinput',
         'sql'       => "blob NULL",
+        'exclude'   => true,
         'eval'      => [
             'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['writers'],
             'freeInput'   => false,
@@ -411,6 +414,7 @@ $fields = [
     'related_news'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['related_news'],
         'inputType' => 'tagsinput',
+        'exclude'   => true,
         'sql'       => "blob NULL",
         'eval'      => [
             'placeholder'   => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['related_news'],
@@ -445,6 +449,7 @@ $fields = [
     'metaKeywords'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['metaKeywords'],
         'inputType' => 'tagsinput',
+        'exclude'   => true,
         'eval'      => [
             'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['metaKeywords'],
             'freeInput'   => true,
@@ -538,6 +543,7 @@ $fields = [
     ],
     'linkedMembers'              => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['linkedMembers'],
+        'exclude'   => true,
         'inputType' => 'tagsinput',
         'sql'       => "blob NULL",
         'eval'      => [
