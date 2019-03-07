@@ -3,11 +3,9 @@
 declare(strict_types=1);
 
 /*
- * Tags Bundle for Contao Open Source CMS.
+ * Copyright (c) 2019 Heimrich & Hannot GmbH
  *
- * @copyright  Copyright (c) 2017, Codefog
- * @author     Codefog <https://codefog.pl>
- * @license    MIT
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle\EventListener;
@@ -37,7 +35,7 @@ class TagManagerListener
     /**
      * On the field save.
      *
-     * @param string $value
+     * @param string        $value
      * @param DataContainer $dc
      *
      * @return string
@@ -50,7 +48,7 @@ class TagManagerListener
             $value = $manager->saveDcaField($value, $dc);
         }
 
-        $objModel               = NewsModel::findByPk($dc->id);
+        $objModel = NewsModel::findByPk($dc->id);
         $objModel->{$dc->field} = deserialize($value, true);
         $objModel->save();
 

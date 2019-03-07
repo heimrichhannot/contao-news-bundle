@@ -1,3 +1,0 @@
-<div class="layout_related arc_<?= $this->archive->id ?> block<?= $this->class ?>" itemscope itemtype="http://schema.org/Article">
-    <?= $this->linkHeadline ?>
-</div>

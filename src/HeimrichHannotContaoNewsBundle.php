@@ -1,23 +1,20 @@
 <?php
-/**
- * Contao Open Source CMS
+
+/*
+ * Copyright (c) 2019 Heimrich & Hannot GmbH
  *
- * Copyright (c) 2017 Heimrich & Hannot GmbH
- *
- * @author  Rico Kaltofen <r.kaltofen@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\NewsBundle;
 
-use HeimrichHannot\NewsBundle\DependencyInjection\Compiler\NewsFilterManagerPass;
 use HeimrichHannot\NewsBundle\DependencyInjection\HeimrichHannotContaoNewsExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoNewsBundle extends Bundle
 {
-    const MODULE_NEWSLIST       = 'newslist';
+    const MODULE_NEWSLIST = 'newslist';
     const MODULE_NEWSNAVIGATION = 'newsnavigation';
 
     /**
@@ -32,9 +29,7 @@ class HeimrichHannotContaoNewsBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new NewsFilterManagerPass('huh.news.list_filter.registry', 'huh.news.list_filter'));
     }
-
 
     /**
      * {@inheritdoc}

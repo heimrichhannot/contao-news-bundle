@@ -1,4 +1,11 @@
 <?php
+
+/*
+ * Copyright (c) 2019 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace  HeimrichHannot\NewsBundle\Command\Crawler;
 
 use GuzzleHttp\Client;
@@ -8,6 +15,7 @@ class FacebookCrawler extends AbstractCrawler
 {
     /**
      * FacebookCrawler constructor.
+     *
      * @param $client Client
      * @param $item
      * @param $baseUrl
@@ -18,37 +26,38 @@ class FacebookCrawler extends AbstractCrawler
     }
 
     /**
-     * Return share count or error message
+     * Return share count or error message.
+     *
      * @return int|array
      */
     public function getCount()
     {
         $this->count = 0;
         $count = 0;
-        foreach ($this->getUrls() as $url)
-        {
+
+        foreach ($this->getUrls() as $url) {
             try {
-                $response = $this->client->request('GET', 'https://graph.facebook.com/?id=' . $url);
-            } catch (ClientException $e)
-            {
+                $response = $this->client->request('GET', 'https://graph.facebook.com/?id='.$url);
+            } catch (ClientException $e) {
                 $this->setErrorCode(static::ERROR_BREAKING);
                 $error = json_decode($e->getResponse()->getBody()->getContents());
                 $this->setErrorMessage($error->error->message);
+
                 return $this->error;
             }
 
-            if ($response && $response->getStatusCode() == 200)
-            {
+            if ($response && 200 == $response->getStatusCode()) {
                 $data = json_decode($response->getBody()->getContents(), true);
-                $count += intval($data['share']['share_count']);
+                $count += (int) ($data['share']['share_count']);
             }
         }
         $this->count = $count;
+
         return $count;
     }
 
     /**
-     * Update the current item
+     * Update the current item.
      */
     public function updateItem()
     {
@@ -56,8 +65,4 @@ class FacebookCrawler extends AbstractCrawler
         $this->item->facebook_updated_at = time();
         $this->item->save();
     }
-
-
 }
-
-?>

@@ -3,8 +3,6 @@ services:
         class: HeimrichHannot\NewsBundle\EventListener\TagManagerListener
         arguments:
             - "@codefog_tags.manager_registry"
-    huh.news.listener.backend.tl_news:
-        class: HeimrichHannot\NewsBundle\EventListener\Backend\NewsListener
     huh.news.listener.insert_tags:
         class: HeimrichHannot\NewsBundle\EventListener\InsertTagsListener
         arguments:
@@ -13,15 +11,3 @@ services:
         class: HeimrichHannot\NewsBundle\EventListener\SearchablePagesListener
         arguments:
             - "@contao.framework"
-    huh.news.listener.hooks:
-        class: HeimrichHannot\NewsBundle\EventListener\HookListener
-        arguments:
-            - "@contao.framework"
-    huh.news.listener.newslist.compile_before:
-        class: HeimrichHannot\NewsBundle\EventListener\NewsListListener
-        tags:
-            - { name: kernel.event_listener, event: huh.news.list.event.before_compile, method: beforeCompile }
-    huh.news.listener.newslist.compile_after:
-        class: HeimrichHannot\NewsBundle\EventListener\NewsListListener
-        tags:
-            - { name: kernel.event_listener, event: huh.news.list.event.after_compile, method: afterCompile }

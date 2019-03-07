@@ -1,0 +1,47 @@
+<div class="{{ 'layout_full block ' ~ cssClass|trim }}" itemscope itemtype="http://schema.org/Article">
+
+    <!-- indexer::stop -->
+    {# Hint: create an tl_reader_config_element of type navigation with name navigation or custom name and rename the twig attribute below#}
+    {% if navigation|default() %}
+        {{ navigation|raw }}
+    {% endif %}
+    <!-- indexer::continue -->
+
+    <h1 itemprop="name">{{ newsHeadline }}</h1>
+
+    <p class="info">
+        <time datetime="{{ datetime }}" itemprop="datePublished">{{ date }}</time> {{ author ~ ' ' ~ commentCount| trim }}
+    </p>
+
+    {% if(newsSubHeadline|default()) %}
+        <h2>{{ newsSubHeadline }}</h2>
+    {% endif %}
+
+    {% if hasText|default() %}
+        {{ text|raw }}
+    {% else %}
+        <div class="ce_text block">
+            {% if images.singleSRC|default() and not images.singleSRC.addBefore %}
+                {{ teaser|raw }}
+            {% endif %}
+            {% if images.singleSRC|default() %}
+                {{ include('@HeimrichHannotContaoUtils/image.html.twig', images.singleSRC|merge({'href': detailsUrl})) }}
+            {% endif %}
+            {% if images.singleSRC|default() and images.singleSRC.addBefore %}
+                {{ teaser|raw }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if addEnclosure|default() and enclosures|default() %}
+        <div class="enclosure">
+            <ul>
+                {% for enclosure in enclosures %}
+                    <li class="download-element ext-{{ enclosure.extension }}">
+                        <a href="{{ enclosure.href }}" title="{{ enclosure.title }}">{{ enclosure.link }}<span class="size"> ({{ enclosure.filesize }})</span></a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,16 @@
+<div class="{{ 'layout_short arc_' ~ archive.id ~ ' block ' ~ cssClass|trim }}" itemscope itemtype="http://schema.org/Article">
+
+    <p class="info">
+        <time datetime="{{ datetime }}" itemprop="datePublished">{{ date }}</time> {{ author ~ ' ' ~ commentCount| trim }}
+    </p>
+
+    <h2 itemprop="name">{{ linkHeadline|raw }} ?></h2>
+
+    <div class="ce_text block" itemprop="description">
+        {{ teaser|raw }}
+    </div>
+
+    {% if hasText|default() or hasTeaser|default() %}
+        <p class="more">{{ more|raw }}</p>
+    {% endif %}
+</div>

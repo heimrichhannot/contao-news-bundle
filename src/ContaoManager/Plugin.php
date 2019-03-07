@@ -1,20 +1,25 @@
 <?php
 
+/*
+ * Copyright (c) 2019 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 namespace HeimrichHannot\NewsBundle\ContaoManager;
 
 use Codefog\TagsBundle\CodefogTagsBundle;
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
-use Contao\NewsBundle\ContaoNewsBundle;
+use Contao\ManagerPlugin\Config\ContainerBuilder;
+use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use HeimrichHannot\CategoriesBundle\CategoriesBundle;
 use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
-use Symfony\Component\Config\Loader\LoaderResolverInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\RouteCollection;
+use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 
-class Plugin implements BundlePluginInterface, RoutingPluginInterface
+class Plugin implements BundlePluginInterface, ExtensionPluginInterface
 {
     /**
      * {@inheritdoc}
@@ -22,30 +27,23 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(HeimrichHannotContaoNewsBundle::class)
-                ->setLoadAfter([
-                    CodefogTagsBundle::class,
-                    ContaoNewsBundle::class,
-                    CategoriesBundle::class
-                ])
+            BundleConfig::create(HeimrichHannotContaoNewsBundle::class)->setLoadAfter([
+                CodefogTagsBundle::class,
+                ContaoCoreBundle::class,
+                CategoriesBundle::class,
+            ]),
         ];
     }
 
     /**
-     * Returns a collection of routes for this bundle.
-     *
-     * @param LoaderResolverInterface $resolver
-     * @param KernelInterface         $kernel
-     *
-     * @return null|RouteCollection
+     * {@inheritdoc}
      */
-    public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
+    public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
     {
-        return $resolver
-            ->resolve(__DIR__.'/../Resources/config/routing.yml')
-            ->load(__DIR__.'/../Resources/config/routing.yml')
-            ;
+        $extensionConfigs = ContainerUtil::mergeConfigFile('huh_list', $extensionName, $extensionConfigs, __DIR__.'/../Resources/config/config_list.yml');
+
+        $extensionConfigs = ContainerUtil::mergeConfigFile('huh_reader', $extensionName, $extensionConfigs, __DIR__.'/../Resources/config/config_reader.yml');
+
+        return $extensionConfigs;
     }
-
-
 }

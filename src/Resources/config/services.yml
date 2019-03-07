@@ -9,7 +9,7 @@ services:
                 - ["setContainer", ["@service_container"]]
 
     huh.news.news_tags_manager:
-        class: HeimrichHannot\NewsBundle\Manager\NewsTagManager
+        class: Codefog\TagsBundle\Manager\DefaultManager
         arguments:
             - "@contao.framework"
             - "tl_news"
@@ -20,35 +20,11 @@ services:
     huh.news.listener.callback.news:
       class: HeimrichHannot\NewsBundle\EventListener\NewsCallbackListener
       arguments: ["@contao.framework"]
-
-
-    huh.news.backend.tl_news:
+    huh.news.backend.news:
         class: HeimrichHannot\NewsBundle\Backend\News
-    huh.news.list_filter.registry:
-        class: HeimrichHannot\NewsBundle\NewsFilter\NewsFilterRegistry
-    huh.news.list_filter.module_registry:
-            class: HeimrichHannot\NewsBundle\NewsFilter\NewsFilterModuleRegistry
-    huh.news.list_filter.year:
-        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\YearFilter
-        tags:
-          - { name: huh.news.list_filter, alias: year}
-    huh.news.list_filter.year_month:
-        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\YearMonthFilter
-        tags:
-          - { name: huh.news.list_filter, alias: year_month}
-    huh.news.list_filter.datepicker:
-        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\DatepickerFilter
-        tags:
-          - { name: huh.news.list_filter, alias: datepicker}
-    huh.news.list_filter.datepicker_range:
-        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\DatepickerRangeFilter
-        tags:
-          - { name: huh.news.list_filter, alias: datepicker_range}
-    huh.news.list_filter.archives:
-        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\ArchiveFilter
-        tags:
-          - { name: huh.news.list_filter, alias: archives}
-    huh.news.list_filter.fuzzy_string:
-        class: HeimrichHannot\NewsBundle\NewsFilter\Filter\FuzzySearchFilter
-        tags:
-          - { name: huh.news.list_filter, alias: fuzzy_string}
+        arguments:
+          - "@contao.framework"
+    huh.news.backend.news_archive:
+        class: HeimrichHannot\NewsBundle\Backend\NewsArchive
+        arguments:
+          - "@contao.framework"

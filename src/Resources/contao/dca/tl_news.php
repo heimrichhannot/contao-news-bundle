@@ -3,14 +3,14 @@
 /**
  * Load tl_content language file
  */
-System::loadLanguageFile('tl_content');
+\Contao\System::loadLanguageFile('tl_content');
 
 $dc = &$GLOBALS['TL_DCA']['tl_news'];
 
 /**
  * Config
  */
-$dc['config']['onload_callback'][] = ['HeimrichHannot\NewsBundle\News', 'initCustomPalette'];
+$dc['config']['onload_callback'][] = ['huh.news.backend.news', 'onLoad'];
 
 /**
  * Selectors
@@ -23,7 +23,6 @@ $dc['palettes']['__selector__'][] = 'infoBox';
 $dc['palettes']['__selector__'][] = 'add_related_news';
 $dc['palettes']['__selector__'][] = 'player';
 $dc['palettes']['__selector__'][] = 'relocate';
-
 
 /**
  * Palettes
@@ -87,6 +86,7 @@ $fields = [
     ],
     'contactBox_members'         => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_members'],
+        'exclude'   => true,
         'inputType' => 'tagsinput',
         'sql'       => "blob NULL",
         'eval'      => [
@@ -107,12 +107,14 @@ $fields = [
     'contactBox_header'          => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_header'],
         'inputType' => 'text',
+        'exclude'   => true,
         'sql'       => "varchar(255) NOT NULL default ''",
         'eval'      => ['mandatory' => true],
     ],
     'contactBox_links'           => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['contactBox_links'],
         'inputType' => 'multiColumnEditor',
+        'exclude'   => true,
         'eval'      => [
             'multiColumnEditor' => [
                 'class'               => 'contact_box_link',
@@ -142,6 +144,7 @@ $fields = [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['writers'],
         'inputType' => 'tagsinput',
         'sql'       => "blob NULL",
+        'exclude'   => true,
         'eval'      => [
             'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['writers'],
             'freeInput'   => false,
@@ -411,13 +414,14 @@ $fields = [
     'related_news'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['related_news'],
         'inputType' => 'tagsinput',
+        'exclude'   => true,
         'sql'       => "blob NULL",
         'eval'      => [
             'placeholder'   => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['related_news'],
             'freeInput'     => false,
             'multiple'      => true,
             'mode'          => \TagsInput::MODE_REMOTE,
-            'tags_callback' => [['huh.news.backend.tl_news', 'getRelatedNews']],
+            'tags_callback' => [['huh.news.backend.news', 'getRelatedNews']],
             'remote'        => [
                 'fields'       => ['headline', 'id'],
                 'format'       => '%s [ID:%s]',
@@ -445,6 +449,7 @@ $fields = [
     'metaKeywords'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['metaKeywords'],
         'inputType' => 'tagsinput',
+        'exclude'   => true,
         'eval'      => [
             'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['metaKeywords'],
             'freeInput'   => true,
@@ -459,7 +464,7 @@ $fields = [
         'inputType' => 'select',
         'options'   => ['index,follow', 'index,nofollow', 'noindex,follow', 'noindex,nofollow'],
         'eval'      => ['tl_class' => 'w50', 'doNotCopy' => true],
-        'sql'       => "varchar(32) NOT NULL default ''"
+        'sql'       => "varchar(32) NOT NULL default ''",
     ],
     'twitterCard'                => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['twitterCard'],
@@ -538,6 +543,7 @@ $fields = [
     ],
     'linkedMembers'              => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['linkedMembers'],
+        'exclude'   => true,
         'inputType' => 'tagsinput',
         'sql'       => "blob NULL",
         'eval'      => [
@@ -545,7 +551,7 @@ $fields = [
             'freeInput'     => false,
             'multiple'      => true,
             'mode'          => \TagsInput::MODE_REMOTE,
-            'tags_callback' => [['huh.news.backend.tl_news', 'getMembers']],
+            'tags_callback' => [['huh.news.backend.news', 'getMembers']],
             'remote'        => [
                 'fields'       => ['firstname', 'lastname', 'id'],
                 'format'       => '%s %s [ID:%s]',
@@ -561,12 +567,8 @@ $fields = [
 $dc['fields'] = array_merge($dc['fields'], $fields);
 
 // this call automatically adds the field "<categoriesFieldname>_primary" which is a simple integer field that contains the reference to the category marked as primary
-\HeimrichHannot\CategoriesBundle\Backend\Category::addMultipleCategoriesFieldToDca(
-    'tl_news',
-    'categories',
-    [
-        'addPrimaryCategory'  => false,
-        'mandatory'           => false,
-        'parentsUnselectable' => true // default false
-    ]
-);
+\HeimrichHannot\CategoriesBundle\Backend\Category::addMultipleCategoriesFieldToDca('tl_news', 'categories', [
+    'addPrimaryCategory'  => false,
+    'mandatory'           => false,
+    'parentsUnselectable' => true // default false
+]);
