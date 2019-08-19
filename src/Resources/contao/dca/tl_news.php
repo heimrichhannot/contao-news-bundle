@@ -5,54 +5,63 @@
  */
 System::loadLanguageFile('tl_content');
 
-$dc = &$GLOBALS['TL_DCA']['tl_news'];
+$dca = &$GLOBALS['TL_DCA']['tl_news'];
 
 /**
  * Config
  */
-$dc['config']['onload_callback'][] = ['HeimrichHannot\NewsBundle\News', 'initCustomPalette'];
+$dca['config']['onload_callback'][]   = ['HeimrichHannot\NewsBundle\News', 'initCustomPalette'];
+$dca['config']['onsubmit_callback'][] = ['huh.utils.dca', 'setDateAdded'];
+$dca['config']['oncopy_callback']     = array_merge(is_array($dca['config']['oncopy_callback']) ? $dca['config']['oncopy_callback'] : [], [['huh.utils.dca', 'setDateAddedOnCopy']]);
 
 /**
  * Selectors
  */
-$dc['palettes']['__selector__'][] = 'addContactBox';
-$dc['palettes']['__selector__'][] = 'add_teaser_image';
-$dc['palettes']['__selector__'][] = 'teaser_overwriteMeta';
-$dc['palettes']['__selector__'][] = 'add_readers_survey';
-$dc['palettes']['__selector__'][] = 'infoBox';
-$dc['palettes']['__selector__'][] = 'add_related_news';
-$dc['palettes']['__selector__'][] = 'player';
-$dc['palettes']['__selector__'][] = 'relocate';
+$dca['palettes']['__selector__'][] = 'addContactBox';
+$dca['palettes']['__selector__'][] = 'add_teaser_image';
+$dca['palettes']['__selector__'][] = 'teaser_overwriteMeta';
+$dca['palettes']['__selector__'][] = 'add_readers_survey';
+$dca['palettes']['__selector__'][] = 'infoBox';
+$dca['palettes']['__selector__'][] = 'add_related_news';
+$dca['palettes']['__selector__'][] = 'player';
+$dca['palettes']['__selector__'][] = 'relocate';
 
 
 /**
  * Palettes
  */
-$dc['palettes']['default'] = str_replace('author;', 'author,categories;{writers_legend:hide},writers;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('{date_legend}', '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{linkedMembers_legend:hide},linkedMembers;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,robots,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('cssClass,', 'relocate,cssClass,', $dc['palettes']['default']);
+$dca['palettes']['default'] = str_replace('author;', 'author,categories;{writers_legend:hide},writers;', $dca['palettes']['default']);
+$dca['palettes']['default'] = str_replace('{date_legend}', '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{linkedMembers_legend:hide},linkedMembers;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dca['palettes']['default']);
+$dca['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dca['palettes']['default']);
+$dca['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,robots,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dca['palettes']['default']);
+$dca['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dca['palettes']['default']);
+$dca['palettes']['default'] = str_replace('cssClass,', 'relocate,cssClass,', $dca['palettes']['default']);
 
 /**
  * Subpalettes
  */
-$dc['subpalettes']['addContactBox']        = 'contactBox_members,contactBox_header,contactBox_links';
-$dc['subpalettes']['add_teaser_image']     = 'teaser_singleSRC,teaser_size,teaser_floating,teaser_imagemargin,teaser_fullsize,teaser_overwriteMeta';
-$dc['subpalettes']['teaser_overwriteMeta'] = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
-$dc['subpalettes']['add_readers_survey']   = 'readers_survey';
-$dc['subpalettes']['infoBox_text']         = 'infoBox_header, infoBox_text, infoBox_link, infoBox_linkText';
-$dc['subpalettes']['add_related_news']     = 'related_news';
-$dc['subpalettes']['player_internal']      = 'playerSRC,posterSRC';
-$dc['subpalettes']['player_external']      = 'playerUrl,posterSRC';
-$dc['subpalettes']['relocate_deindex']     = 'relocateUrl';
-$dc['subpalettes']['relocate_redirect']    = 'relocateUrl';
+$dca['subpalettes']['addContactBox']        = 'contactBox_members,contactBox_header,contactBox_links';
+$dca['subpalettes']['add_teaser_image']     = 'teaser_singleSRC,teaser_size,teaser_floating,teaser_imagemargin,teaser_fullsize,teaser_overwriteMeta';
+$dca['subpalettes']['teaser_overwriteMeta'] = 'teaser_alt,teaser_imageTitle,teaser_imageUrl,teaser_caption';
+$dca['subpalettes']['add_readers_survey']   = 'readers_survey';
+$dca['subpalettes']['infoBox_text']         = 'infoBox_header, infoBox_text, infoBox_link, infoBox_linkText';
+$dca['subpalettes']['add_related_news']     = 'related_news';
+$dca['subpalettes']['player_internal']      = 'playerSRC,posterSRC';
+$dca['subpalettes']['player_external']      = 'playerUrl,posterSRC';
+$dca['subpalettes']['relocate_deindex']     = 'relocateUrl';
+$dca['subpalettes']['relocate_redirect']    = 'relocateUrl';
 
 /**
  * Fields
  */
 $fields = [
+    'dateAdded'                  => [
+        'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
+        'sorting' => true,
+        'flag'    => 6,
+        'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
+        'sql'     => "int(10) unsigned NOT NULL default '0'"
+    ],
     'teaser_short'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['teaser_short'],
         'exclude'   => true,
@@ -558,7 +567,7 @@ $fields = [
     ],
 ];
 
-$dc['fields'] = array_merge($dc['fields'], $fields);
+$dca['fields'] = array_merge($dca['fields'], $fields);
 
 // this call automatically adds the field "<categoriesFieldname>_primary" which is a simple integer field that contains the reference to the category marked as primary
 \HeimrichHannot\CategoriesBundle\Backend\Category::addMultipleCategoriesFieldToDca(
