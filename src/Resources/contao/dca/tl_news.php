@@ -10,7 +10,7 @@ $dc = &$GLOBALS['TL_DCA']['tl_news'];
 /**
  * Config
  */
-$dc['config']['onload_callback'][] = ['huh.news.backend.news', 'onLoad'];
+$dc['config']['onload_callback'][]   = ['huh.news.backend.news', 'onLoad'];
 $dc['config']['onsubmit_callback'][] = ['huh.utils.dca', 'setDateAdded'];
 $dc['config']['oncopy_callback']     = array_merge(is_array($dca['config']['oncopy_callback']) ? $dca['config']['oncopy_callback'] : [], [['huh.utils.dca', 'setDateAddedOnCopy']]);
 
@@ -55,6 +55,14 @@ $dc['subpalettes']['relocate_redirect']    = 'relocateUrl';
  * Fields
  */
 $fields = [
+    'dateAdded'                  => [
+        'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
+        'default' => time(),
+        'sorting' => true,
+        'flag'    => 6,
+        'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
+        'sql'     => "int(10) unsigned NOT NULL default '0'"
+    ],
     'teaser_short'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['teaser_short'],
         'exclude'   => true,
