@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 
 
-## [3.0.0-beta10-dev] - 2019-10-22
+## [3.0.0-beta10] - 2019-10-22
 
 * updated dependencies
 * migrated reader config element type to ReaderConfigElementTypeInterface
