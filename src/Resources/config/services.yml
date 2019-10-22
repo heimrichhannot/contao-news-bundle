@@ -1,4 +1,7 @@
 services:
+    _defaults:
+        public: true
+
     _instanceof:
         Contao\CoreBundle\Framework\FrameworkAwareInterface:
             calls:
@@ -20,11 +23,18 @@ services:
     huh.news.listener.callback.news:
       class: HeimrichHannot\NewsBundle\EventListener\NewsCallbackListener
       arguments: ["@contao.framework"]
+
     huh.news.backend.news:
         class: HeimrichHannot\NewsBundle\Backend\News
         arguments:
           - "@contao.framework"
+
     huh.news.backend.news_archive:
         class: HeimrichHannot\NewsBundle\Backend\NewsArchive
         arguments:
           - "@contao.framework"
+
+    HeimrichHannot\NewsBundle\ConfigElementType\NewsPlayerElementType:
+        tags: ['huh.reader.config_element_type']
+        autowire: true
+        public: false

@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+
+## [3.0.0-beta10-dev] - 2019-10-22
+
+* updated dependencies
+* migrated reader config element type to ReaderConfigElementTypeInterface
+
 ## [2.4.3] - 2018-06-04
 
 #### Fixed

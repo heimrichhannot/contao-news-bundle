@@ -13,12 +13,12 @@
     "google/apiclient": "^2.0",
     "abraham/twitteroauth": "^0.7",
     "heimrichhannot/contao-categories-bundle": "^1.0-beta",
-    "heimrichhannot/contao-fieldpalette-bundle": ">=0.2 <2.0-dev",
+    "heimrichhannot/contao-fieldpalette-bundle": ">=0.2||^1.0",
     "heimrichhannot/contao-head-bundle": "^1.0",
     "heimrichhannot/contao-utils-bundle": "^2.0",
-    "heimrichhannot/contao-multi-column-editor-bundle": "^2.0",
+    "heimrichhannot/contao-multi-column-editor-bundle": "^1.0||^2.0",
     "twig/extensions": "^1.5",
-    "heimrichhannot/contao-reader-bundle": "^1.0-beta"
+    "heimrichhannot/contao-reader-bundle": "^1.0"
   },
   "require-dev": {
     "contao/test-case": "^1.1",
@@ -30,7 +30,8 @@
     "php-http/guzzle6-adapter": "^1.1",
     "php-http/message-factory": "^1.0.2",
     "satooshi/php-coveralls": "^2.0",
-    "symfony/phpunit-bridge": "^3.2"
+    "symfony/phpunit-bridge": "^3.2",
+    "symfony/monolog-bridge": "^3.4||^4.0"
   },
   "autoload": {
     "psr-4": {
@@ -54,6 +55,8 @@
   "config": {
     "preferred-install": "dist"
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "extra": {
     "contao-manager-plugin": "HeimrichHannot\\NewsBundle\\ContaoManager\\Plugin",
     "foxy": true

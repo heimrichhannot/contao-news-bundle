@@ -13,23 +13,39 @@ use Contao\File;
 use Contao\FilesModel;
 use Contao\ImageSizeModel;
 use Contao\StringUtil;
-use Contao\System;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
-use HeimrichHannot\ReaderBundle\ConfigElementType\ConfigElementType;
+use HeimrichHannot\ReaderBundle\ConfigElementType\ReaderConfigElementData;
+use HeimrichHannot\ReaderBundle\ConfigElementType\ReaderConfigElementTypeInterface;
 use HeimrichHannot\ReaderBundle\Item\ItemInterface;
 use HeimrichHannot\ReaderBundle\Model\ReaderConfigElementModel;
+use HeimrichHannot\UtilsBundle\Url\UrlUtil;
 use Psr\Log\LogLevel;
+use Symfony\Bridge\Monolog\Logger;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class NewsPlayerElementType implements ConfigElementType
+class NewsPlayerElementType implements ReaderConfigElementTypeInterface
 {
     /**
      * @var ContaoFrameworkInterface
      */
     protected $framework;
+    /**
+     * @var Logger
+     */
+    private $logger;
+    /**
+     * @var UrlUtil
+     */
+    private $urlUtil;
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
-    public function __construct(ContaoFrameworkInterface $framework)
+    public function __construct(ContainerInterface $container, ContaoFrameworkInterface $framework)
     {
         $this->framework = $framework;
+        $this->container = $container;
     }
 
     /**
@@ -101,8 +117,7 @@ class NewsPlayerElementType implements ConfigElementType
                     try {
                         $newFile = new File($file->path);
                     } catch (\Exception $exception) {
-                        System::getContainer()->get('monolog.logger.contao')->log(LogLevel::ERROR, $exception->getMessage());
-
+                        $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, $exception->getMessage());
                         return '';
                     }
                     $newFile->title = StringUtil::specialchars($strTitle);
@@ -141,7 +156,7 @@ class NewsPlayerElementType implements ConfigElementType
 
                     $file = [];
                     $file['mime'] = $GLOBALS['TL_MIME'][$extension][0];
-                    $file['path'] = System::getContainer()->get('huh.utils.url')->addURIScheme($path);
+                    $file['path'] = $this->container->get('huh.utils.url')->addURIScheme($path);
                     $sources[$extension] = $file;
                 }
 
@@ -184,7 +199,7 @@ class NewsPlayerElementType implements ConfigElementType
                     $image['size'] = $readerConfigElement->imgSize;
                 }
                 $templateData['image'] = [];
-                System::getContainer()->get('huh.utils.image')->addToTemplateData('image', 'published', $templateData, $image, null, null, null, $poster);
+                $this->container->get('huh.utils.image')->addToTemplateData('image', 'published', $templateData, $image, null, null, null, $poster);
             }
         }
 
@@ -192,5 +207,35 @@ class NewsPlayerElementType implements ConfigElementType
         $templateData['isVideo'] = $isVideo;
 
         $item->setFormattedValue('newsPlayer', $templateData);
+    }
+
+    /**
+     * Return the reader config element type alias.
+     *
+     * @return string
+     */
+    public static function getType(): string
+    {
+        return 'newsPlayer';
+    }
+
+    /**
+     * Return the reader config element type palette.
+     *
+     * @return string
+     */
+    public function getPalette(): string
+    {
+        return '{title_type_legend},title,type;imgSize';
+    }
+
+    /**
+     * Update the item data.
+     *
+     * @param ReaderConfigElementData $configElementData
+     */
+    public function addToReaderItemData(ReaderConfigElementData $configElementData): void
+    {
+        $this->addToItemData($configElementData->getItem(), $configElementData->getReaderConfigElement());
     }
 }

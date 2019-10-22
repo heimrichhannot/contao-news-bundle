@@ -16,26 +16,42 @@ use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\ReaderBundle\Item\DefaultItem;
 use HeimrichHannot\ReaderBundle\Model\ReaderConfigElementModel;
 use Model\Collection;
+use Symfony\Bridge\Monolog\Logger;
 
 class NewsPlayerElementTypeTest extends ContaoTestCase
 {
+    public function getNewsPlayerElementType(array $parameters = [], array $adapters = [])
+    {
+        if (!isset($parameters['container'])) {
+            $parameters['container'] = $this->mockContainer();
+        }
+        if (!isset($parameters['framework'])) {
+            $parameters['framework'] = $this->mockContaoFramework($adapters);
+        }
+        if (!$parameters['container']->has('monolog.logger.contao')) {
+            $parameters['container']->set('monolog.logger.contao', $this->createMock(Logger::class));
+        }
+        $newsPlayerElementType = new NewsPlayerElementType($parameters['container'], $parameters['framework']);
+        return $newsPlayerElementType;
+    }
+
     public function testAddToItemData()
     {
         $newsModelAdapter = $this->mockAdapter(['findByPk']);
         $newsModelAdapter->method('findByPk')->willReturn(null);
-        $newsPlayerElementType = new NewsPlayerElementType($this->mockContaoFramework([NewsModel::class => $newsModelAdapter]));
+        $newsPlayerElementType = $this->getNewsPlayerElementType([], [NewsModel::class => $newsModelAdapter]);
         $this->assertSame('', $newsPlayerElementType->addToItemData($this->getDefaultItem(), $this->getReaderConfigElementModel()));
 
         $newsModel = $this->mockClassWithProperties(NewsModel::class, ['player' => 'none']);
         $newsModelAdapter = $this->mockAdapter(['findByPk']);
         $newsModelAdapter->method('findByPk')->willReturn($newsModel);
-        $newsPlayerElementType = new NewsPlayerElementType($this->mockContaoFramework([NewsModel::class => $newsModelAdapter]));
+        $newsPlayerElementType = $this->getNewsPlayerElementType([], [NewsModel::class => $newsModelAdapter]);
         $this->assertSame('', $newsPlayerElementType->addToItemData($this->getDefaultItem(), $this->getReaderConfigElementModel()));
 
         $newsModel = $this->mockClassWithProperties(NewsModel::class, ['player' => 'internal', 'playerSRC' => 'a:1:{i:0;s:16:"M��ƃU蹡@a�+�`";}']);
         $newsModelAdapter = $this->mockAdapter(['findByPk']);
         $newsModelAdapter->method('findByPk')->willReturn($newsModel);
-        $newsPlayerElementType = new NewsPlayerElementType($this->mockContaoFramework([NewsModel::class => $newsModelAdapter]));
+        $newsPlayerElementType = $this->getNewsPlayerElementType([], [NewsModel::class => $newsModelAdapter]);
         $this->assertSame('', $newsPlayerElementType->addToItemData($this->getDefaultItem(), $this->getReaderConfigElementModel()));
 
         // to be continued...
