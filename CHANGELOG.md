@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.0.0-beta12] - 2019-11-13
+## [3.0.0-beta12.1] - 2019-11-13
+- fixed news-list-reader-bundle dependency
+
+## [3.0.0-beta12.0] - 2019-11-13
 - refactored List and Reader Item into own bundle and added it as dependency
 
 ## [3.0.0-beta11] - 2019-10-23
