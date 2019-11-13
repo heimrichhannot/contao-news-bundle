@@ -1,6 +1,0 @@
-<div class="{{ 'layout_simple arc_' ~ archive.id ~ ' block ' ~ cssClass|trim }}" itemscope itemtype="http://schema.org/Article">
-    {% if date|default %}
-        <time datetime="{{ datetime }}" itemprop="datePublished">{{ date }}</time>
-    {% endif %}
-    {{ linkHeadline|raw }}
-</div>

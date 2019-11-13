@@ -1,4 +1,0 @@
-huh:
-    list:
-        items:
-            - { name: news_default, class: HeimrichHannot\NewsBundle\Item\DefaultListItem }

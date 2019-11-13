@@ -17,6 +17,7 @@
     "heimrichhannot/contao-head-bundle": "^1.0",
     "heimrichhannot/contao-utils-bundle": "^2.0",
     "heimrichhannot/contao-multi-column-editor-bundle": "^1.0||^2.0",
+    "heimrichhannot/contao-news-list-reader-bundle": "^0.1",
     "twig/extensions": "^1.5",
     "heimrichhannot/contao-reader-bundle": "^1.0"
   },

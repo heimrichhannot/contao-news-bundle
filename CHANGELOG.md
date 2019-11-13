@@ -1,14 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.0.0-beta11] - 2019-10-23
+## [3.0.0-beta12] - 2019-11-13
+- refactored List and Reader Item into own bundle and added it as dependency
 
-#### Fixed
-- callback issues
+## [3.0.0-beta11] - 2019-10-23
+- fixed callback issues
 
 ## [3.0.0-beta10] - 2019-10-22
-
-#### Changed
 - updated dependencies
 - migrated reader config element type to ReaderConfigElementTypeInterface
 
@@ -25,22 +24,22 @@ All notable changes to this project will be documented in this file.
 ## [2.4.1] - 2018-03-21
 
 #### Fixed
-* shareUrls null
+- shareUrls null
 
 ## [2.4.0] - 2018-03-21
 
 #### Added
-* support for contao-share shareUrls template variable
+- support for contao-share shareUrls template variable
 
 ## [2.3.0] - 2018-03-12
 
 #### Changed
-* utils bundle 2.0 dependency
+- utils bundle 2.0 dependency
 
 ## [2.2.12] - 2018-03-12
 
 #### Changed
-* Utils bundle dependency
+- Utils bundle dependency
 
 ## [2.2.11] - 2018-03-02
 
@@ -201,7 +200,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.2] - 2017-11-28
 
 ### Fixed
-* checkbox was to greedy (used a varchar(255) instead of char(1) to save it's value) -> needs database update to affect
+- checkbox was to greedy (used a varchar(255) instead of char(1) to save it's value) -> needs database update to affect
 
 ## [1.0.1] - 2017-11-24
 

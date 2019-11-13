@@ -3,11 +3,10 @@
 This module contains enhancements for the contao news entity. It works with Contao 4 (and higher).
 
 ## Features
-
-* [List Bundle](https://github.com/heimrichhannot/contao-list-bundle) support for news
-* [Reader Bundle](https://github.com/heimrichhannot/contao-reader-bundle) support for news
+* [List Bundle](https://github.com/heimrichhannot/contao-list-bundle) and [Reader Bundle](https://github.com/heimrichhannot/contao-reader-bundle) support through [Contao News List Reader Bundle](https://github.com/heimrichhannot/contao-news-list-reader-bundle)
 * news navigation
 * social stats
+* custom palettes for news archives
 
 ### News lists
 
