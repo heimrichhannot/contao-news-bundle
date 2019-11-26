@@ -8,12 +8,11 @@
 
 namespace HeimrichHannot\NewsBundle\Backend;
 
-use Contao\Backend;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\DataContainer;
 use Contao\PageModel;
 
-class NewsArchive extends Backend
+class NewsArchive
 {
     /**
      * @var ContaoFrameworkInterface
@@ -23,7 +22,6 @@ class NewsArchive extends Backend
     public function __construct(ContaoFrameworkInterface $framework)
     {
         $this->framework = $framework;
-        parent::__construct();
     }
 
     /**
