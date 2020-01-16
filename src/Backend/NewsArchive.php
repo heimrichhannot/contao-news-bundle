@@ -10,6 +10,7 @@ namespace HeimrichHannot\NewsBundle\Backend;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\DataContainer;
+use Contao\Model;
 use Contao\PageModel;
 
 class NewsArchive
@@ -34,7 +35,7 @@ class NewsArchive
     public function getRootPages(DataContainer $dc)
     {
         /** @var PageModel $pages */
-        if (null === ($pages = $this->framework->getAdapter(PageModel::class)->findBy('type', 'root'))) {
+        if (null === ($pages = $this->framework->getAdapter(Model::getClassFromTable('tl_page'))->findBy('type', 'root'))) {
             return [];
         }
 

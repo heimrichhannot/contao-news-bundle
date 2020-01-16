@@ -1,19 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.0.0-beta13] - 2020-01-16
+
+- fixed model retrieval
+
 ## [3.0.0-beta12.2] - 2019-11-26
+
 - fixed backend controller dependency in NewsArchive.php
 
 ## [3.0.0-beta12.1] - 2019-11-13
+
 - fixed news-list-reader-bundle dependency
 
 ## [3.0.0-beta12.0] - 2019-11-13
+
 - refactored List and Reader Item into own bundle and added it as dependency
 
 ## [3.0.0-beta11] - 2019-10-23
+
 - fixed callback issues
 
 ## [3.0.0-beta10] - 2019-10-22
+
 - updated dependencies
 - migrated reader config element type to ReaderConfigElementTypeInterface
 

@@ -9,6 +9,7 @@
 namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\Model;
 use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 
@@ -85,7 +86,7 @@ class InsertTagsListener
         $this->framework->initialize();
 
         /** @var NewsModel $adapter */
-        $adapter = $this->framework->getAdapter(NewsModel::class);
+        $adapter = $this->framework->getAdapter(Model::getClassFromTable('tl_news'));
 
         if (null === ($news = $adapter->findByIdOrAlias($idOrAlias))) {
             return '';
@@ -107,7 +108,7 @@ class InsertTagsListener
         $this->framework->initialize();
 
         /** @var NewsListModel $adapter */
-        $adapter = $this->framework->getAdapter(NewsListModel::class);
+        $adapter = $this->framework->getAdapter(Model::getClassFromTable('tl_news_list'));
 
         if (null === ($newsList = $adapter->findByIdOrAlias($idOrAlias))) {
             return '';

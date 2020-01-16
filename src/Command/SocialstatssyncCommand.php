@@ -11,6 +11,7 @@ namespace HeimrichHannot\NewsBundle\Command;
 use Contao\CoreBundle\Command\AbstractLockedCommand;
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
 use Contao\CoreBundle\Framework\FrameworkAwareTrait;
+use Contao\Model;
 use Contao\System;
 use GuzzleHttp\Client;
 use HeimrichHannot\NewsBundle\Command\Crawler\AbstractCrawler;
@@ -152,7 +153,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             /**
              * @var NewsModel
              */
-            $model = $this->framework->getAdapter(NewsModel::class);
+            $model = $this->framework->getAdapter(Model::getClassFromTable('tl_news'));
 
             if ($model) {
                 if ($items = $model->findMultipleByIds([$articleId])) {
@@ -188,7 +189,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             /**
              * @var NewsModel
              */
-            $model = $this->framework->getAdapter(NewsModel::class);
+            $model = $this->framework->getAdapter(Model::getClassFromTable('tl_news'));
 
             if ($model) {
                 $this->items = $model->findPublishedFromToByPids(0, time(), $this->config['archives'], $this->config['chunksize']);
@@ -302,7 +303,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
 
         if (!$this->items) {
             $method = $crawlerConfig['method'];
-            $items = $this->framework->getAdapter(NewsModel::class)->$method(
+            $items = $this->framework->getAdapter(Model::getClassFromTable('tl_news'))->$method(
                 $this->config['chunksize'],
                 $this->config['days'],
                 $this->config['archives']

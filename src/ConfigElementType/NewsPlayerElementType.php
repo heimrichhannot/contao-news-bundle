@@ -12,6 +12,7 @@ use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\File;
 use Contao\FilesModel;
 use Contao\ImageSizeModel;
+use Contao\Model;
 use Contao\StringUtil;
 use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\ReaderBundle\ConfigElementType\ReaderConfigElementData;
@@ -56,7 +57,7 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
      */
     public function addToItemData(ItemInterface $item, ReaderConfigElementModel $readerConfigElement)
     {
-        $newsModel = $this->framework->getAdapter(NewsModel::class)->findByPk($item->getRaw()['id']);
+        $newsModel = $this->framework->getAdapter(Model::getClassFromTable('tl_news'))->findByPk($item->getRaw()['id']);
 
         if (null === $newsModel) {
             return '';
@@ -80,7 +81,7 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
                     return '';
                 }
 
-                $files = $this->framework->getAdapter(FilesModel::class)->findMultipleByUuidsAndExtensions($uuid, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv', 'm4a', 'mp3', 'wma', 'mpeg', 'wav', 'ogg']);
+                $files = $this->framework->getAdapter(Model::getClassFromTable('tl_files'))->findMultipleByUuidsAndExtensions($uuid, ['mp4', 'm4v', 'mov', 'wmv', 'webm', 'ogv', 'm4a', 'mp3', 'wma', 'mpeg', 'wav', 'ogg']);
 
                 if (null === $files) {
                     return '';
@@ -168,7 +169,7 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
 
         // Optional poster
         if ('' != $posterSRC) {
-            if (null !== ($poster = $this->framework->getAdapter(FilesModel::class)->findByUuid($posterSRC))) {
+            if (null !== ($poster = $this->framework->getAdapter(Model::getClassFromTable('tl_files'))->findByUuid($posterSRC))) {
                 $templateData['poster'] = $poster->path;
             }
         }
@@ -183,7 +184,7 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
             } else {
                 if (is_numeric($size[2])) {
                     /** @var ImageSizeModel $imageModel */
-                    $imageModel = $this->framework->getAdapter(ImageSizeModel::class);
+                    $imageModel = $this->framework->getAdapter(Model::getClassFromTable('tl_image_size'));
                     $imageSize = $imageModel->findByPk($size[2]);
 
                     if (null !== $imageSize) {

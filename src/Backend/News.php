@@ -10,6 +10,7 @@ namespace HeimrichHannot\NewsBundle\Backend;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\DataContainer;
+use Contao\Model;
 use Contao\NewsArchiveModel;
 use Contao\NewsModel;
 use Contao\System;
@@ -66,12 +67,12 @@ class News
     public function onLoad(DataContainer $dc)
     {
         /** @var NewsModel $news */
-        if (null === ($news = $this->framework->getAdapter(NewsModel::class)->findByPk($dc->id))) {
+        if (null === ($news = $this->framework->getAdapter(Model::getClassFromTable('tl_news'))->findByPk($dc->id))) {
             return;
         }
 
         /** @var NewsArchiveModel $archive */
-        if (null === ($archive = $this->framework->getAdapter(NewsArchiveModel::class)->findByPk($news->pid))) {
+        if (null === ($archive = $this->framework->getAdapter(Model::getClassFromTable('tl_news_archive'))->findByPk($news->pid))) {
             return;
         }
 
@@ -88,7 +89,7 @@ class News
      *
      * @return bool
      */
-    protected function limitInputCharacterLength(NewsModel $news, NewsArchiveModel $archive, DataContainer $dc): bool
+    protected function limitInputCharacterLength(Model $news, Model $archive, DataContainer $dc): bool
     {
         if (false === (bool) $archive->limitInputCharacterLength) {
             return false;
@@ -132,7 +133,7 @@ class News
      *
      * @return bool
      */
-    protected function initCustomPalette(NewsModel $news, NewsArchiveModel $archive, DataContainer $dc): bool
+    protected function initCustomPalette(Model $news, Model $archive, DataContainer $dc): bool
     {
         if (false === (bool) $archive->addCustomNewsPalettes) {
             return false;
