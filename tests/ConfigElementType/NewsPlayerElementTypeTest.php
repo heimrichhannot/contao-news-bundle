@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -25,13 +25,16 @@ class NewsPlayerElementTypeTest extends ContaoTestCase
         if (!isset($parameters['container'])) {
             $parameters['container'] = $this->mockContainer();
         }
+
         if (!isset($parameters['framework'])) {
             $parameters['framework'] = $this->mockContaoFramework($adapters);
         }
+
         if (!$parameters['container']->has('monolog.logger.contao')) {
             $parameters['container']->set('monolog.logger.contao', $this->createMock(Logger::class));
         }
         $newsPlayerElementType = new NewsPlayerElementType($parameters['container'], $parameters['framework']);
+
         return $newsPlayerElementType;
     }
 

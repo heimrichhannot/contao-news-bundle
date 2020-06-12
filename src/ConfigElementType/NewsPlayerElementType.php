@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -10,11 +10,9 @@ namespace HeimrichHannot\NewsBundle\ConfigElementType;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\File;
-use Contao\FilesModel;
 use Contao\ImageSizeModel;
 use Contao\Model;
 use Contao\StringUtil;
-use HeimrichHannot\NewsBundle\Model\NewsModel;
 use HeimrichHannot\ReaderBundle\ConfigElementType\ReaderConfigElementData;
 use HeimrichHannot\ReaderBundle\ConfigElementType\ReaderConfigElementTypeInterface;
 use HeimrichHannot\ReaderBundle\Item\ItemInterface;
@@ -50,9 +48,6 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
     }
 
     /**
-     * @param ItemInterface            $item
-     * @param ReaderConfigElementModel $readerConfigElement
-     *
      * @return string
      */
     public function addToItemData(ItemInterface $item, ReaderConfigElementModel $readerConfigElement)
@@ -119,6 +114,7 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
                         $newFile = new File($file->path);
                     } catch (\Exception $exception) {
                         $this->container->get('monolog.logger.contao')->log(LogLevel::ERROR, $exception->getMessage());
+
                         return '';
                     }
                     $newFile->title = StringUtil::specialchars($strTitle);
@@ -212,8 +208,6 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
 
     /**
      * Return the reader config element type alias.
-     *
-     * @return string
      */
     public static function getType(): string
     {
@@ -222,8 +216,6 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
 
     /**
      * Return the reader config element type palette.
-     *
-     * @return string
      */
     public function getPalette(): string
     {
@@ -232,8 +224,6 @@ class NewsPlayerElementType implements ReaderConfigElementTypeInterface
 
     /**
      * Update the item data.
-     *
-     * @param ReaderConfigElementData $configElementData
      */
     public function addToReaderItemData(ReaderConfigElementData $configElementData): void
     {

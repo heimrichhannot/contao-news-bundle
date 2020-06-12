@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -27,8 +27,6 @@ class NewsArchive
 
     /**
      * Get all available root pages.
-     *
-     * @param DataContainer $dc
      *
      * @return array
      */

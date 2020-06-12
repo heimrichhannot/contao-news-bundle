@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -13,11 +13,8 @@ use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Contao\ManagerPlugin\Config\ContainerBuilder;
-use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use HeimrichHannot\CategoriesBundle\CategoriesBundle;
 use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
-use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 
 class Plugin implements BundlePluginInterface
 {

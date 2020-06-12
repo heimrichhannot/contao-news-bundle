@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -24,8 +24,6 @@ class TagManagerListener
 
     /**
      * TagContainer constructor.
-     *
-     * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -34,11 +32,6 @@ class TagManagerListener
 
     /**
      * On the field save.
-     *
-     * @param string        $value
-     * @param DataContainer $dc
-     *
-     * @return string
      */
     public function onFieldSave(string $value, DataContainer $dc): string
     {

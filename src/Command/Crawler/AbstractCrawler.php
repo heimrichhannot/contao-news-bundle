@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -45,7 +45,7 @@ abstract class AbstractCrawler implements CrawlerInterface
     ];
 
     /**
-     * @var null|SymfonyStyle
+     * @var SymfonyStyle|null
      */
     protected $io = null;
 
@@ -55,7 +55,7 @@ abstract class AbstractCrawler implements CrawlerInterface
      * @param Client            $client
      * @param NewsModel         $item
      * @param string            $baseUrl
-     * @param null|SymfonyStyle $io
+     * @param SymfonyStyle|null $io
      */
     public function __construct($client, $item = null, $baseUrl = '', $io = null)
     {
@@ -113,33 +113,21 @@ abstract class AbstractCrawler implements CrawlerInterface
     {
     }
 
-    /**
-     * @return NewsModel
-     */
     public function getItem(): NewsModel
     {
         return $this->item;
     }
 
-    /**
-     * @param NewsModel $item
-     */
     public function setItem(NewsModel $item)
     {
         $this->item = $item;
     }
 
-    /**
-     * @return string
-     */
     public function getBaseUrl(): string
     {
         return $this->baseUrl;
     }
 
-    /**
-     * @param string $baseUrl
-     */
     public function setBaseUrl(string $baseUrl)
     {
         $this->baseUrl = $baseUrl;
@@ -159,16 +147,13 @@ abstract class AbstractCrawler implements CrawlerInterface
         return $this->error;
     }
 
-    /**
-     * @return array
-     */
     public function getError(): array
     {
         return $this->error;
     }
 
     /**
-     * @return null|SymfonyStyle
+     * @return SymfonyStyle|null
      */
     public function getIo(): SymfonyStyle
     {
@@ -176,7 +161,7 @@ abstract class AbstractCrawler implements CrawlerInterface
     }
 
     /**
-     * @param null|SymfonyStyle $io
+     * @param SymfonyStyle|null $io
      */
     public function setIo($io)
     {

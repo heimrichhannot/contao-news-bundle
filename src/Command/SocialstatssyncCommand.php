@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -55,7 +55,7 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
     private $io;
 
     /**
-     * @var null|NewsModel|\Contao\Model\Collection
+     * @var NewsModel|\Contao\Model\Collection|null
      */
     private $items = null;
 
@@ -286,15 +286,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
         );
     }
 
-    /**
-     * @param AbstractCrawler $crawler
-     * @param array           $crawlerConfig
-     */
     private function updateStats(AbstractCrawler $crawler, array $crawlerConfig)
     {
         $crawler->setIo($this->io);
 
-        if (!array_key_exists($crawlerConfig['alias'], $this->config)) {
+        if (!\array_key_exists($crawlerConfig['alias'], $this->config)) {
             $this->io->note('No '.$crawlerConfig['name'].' config provided. Skipping...');
 
             return;

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -42,8 +42,6 @@ class InsertTagsListener
 
     /**
      * Constructor.
-     *
-     * @param ContaoFrameworkInterface $framework
      */
     public function __construct(ContaoFrameworkInterface $framework)
     {
@@ -120,8 +118,7 @@ class InsertTagsListener
     /**
      * Generates the replacement string.
      *
-     * @param NewsModel $news
-     * @param string    $insertTag
+     * @param string $insertTag
      *
      * @return string
      */
@@ -133,8 +130,7 @@ class InsertTagsListener
     /**
      * Generates the replacement string.
      *
-     * @param NewsListModel $newsList
-     * @param string        $insertTag
+     * @param string $insertTag
      *
      * @return string
      */

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -18,8 +18,6 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Count published news by pid and additional criterias.
      *
-     * @param array      $pid
-     * @param array      $columns
      * @param array|null $values
      * @param array      $options
      *
@@ -41,8 +39,6 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Find published news by pid and additional criterias.
      *
-     * @param array      $pid
-     * @param array      $columns
      * @param array|null $values
      * @param array      $options
      *
@@ -259,7 +255,6 @@ class NewsModel extends \Contao\NewsModel
      *
      * @param int $year The year value (for example 2017)
      * @param       array pids The parent news archives
-     * @param array $arrOptions
      *
      * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
      */
@@ -283,9 +278,8 @@ class NewsModel extends \Contao\NewsModel
     /**
      * Get published news items within a given year and month and pids.
      *
-     * @param int   $month      The month to search in given year
-     * @param int   $year       The year to search in
-     * @param array $arrOptions
+     * @param int $month The month to search in given year
+     * @param int $year  The year to search in
      *
      * @return \Contao\NewsModel|\Contao\NewsModel[]|\Model\Collection|null
      */

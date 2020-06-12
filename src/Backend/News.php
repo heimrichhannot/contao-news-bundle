@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -61,8 +61,6 @@ class News
     /**
      * If news archive has addCustomNewsPalettes set and a customNewsPalettes given,
      * replace the default news palette with the given one.
-     *
-     * @param DataContainer $dc
      */
     public function onLoad(DataContainer $dc)
     {
@@ -85,9 +83,6 @@ class News
      *
      * @param NewsModel        $news
      * @param NewsArchiveModel $archive
-     * @param DataContainer    $dc
-     *
-     * @return bool
      */
     protected function limitInputCharacterLength(Model $news, Model $archive, DataContainer $dc): bool
     {
@@ -129,9 +124,6 @@ class News
      *
      * @param NewsModel        $news
      * @param NewsArchiveModel $archive
-     * @param DataContainer    $dc
-     *
-     * @return bool
      */
     protected function initCustomPalette(Model $news, Model $archive, DataContainer $dc): bool
     {

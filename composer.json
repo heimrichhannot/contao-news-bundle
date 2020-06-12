@@ -7,7 +7,7 @@
     "php": "^7.1",
     "contao/core-bundle": "^4.4",
     "contao/news-bundle": "^4.4",
-    "symfony/framework-bundle": "^3.4",
+    "symfony/framework-bundle": "^3.4|^4.0",
     "codefog/tags-bundle": "^2.0",
     "heimrichhannot/contao-tagsinput": "^2.1",
     "google/apiclient": "^2.0",
