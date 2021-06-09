@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.0.0-beta15] - 2021-06-09
+
+- contao 4.9 compatibility
+
 ## [3.0.0-beta14] - 2020-06-12
 
 - contao 4.9 compatibility
