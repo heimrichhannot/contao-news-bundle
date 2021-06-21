@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2020 Heimrich & Hannot GmbH
+ * Copyright (c) 2021 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -13,7 +13,6 @@ use Contao\DataContainer;
 use Contao\Model;
 use Contao\NewsArchiveModel;
 use Contao\NewsModel;
-use Contao\System;
 
 class News
 {
@@ -140,13 +139,6 @@ class News
         }
 
         $GLOBALS['TL_DCA']['tl_news']['palettes']['default'] = $GLOBALS['TL_DCA']['tl_news']['palettes'][$archive->customNewsPalettes];
-
-        // HOOK: loadDataContainer must be triggerd after onload_callback, otherwise slick slider wont work anymore
-        if (isset($GLOBALS['TL_HOOKS']['loadDataContainer']) && \is_array($GLOBALS['TL_HOOKS']['loadDataContainer'])) {
-            foreach ($GLOBALS['TL_HOOKS']['loadDataContainer'] as $callback) {
-                System::importStatic($callback[0])->{$callback[1]}($dc->table);
-            }
-        }
 
         return true;
     }
