@@ -12,6 +12,7 @@ namespace HeimrichHannot\NewsBundle;
 use Codefog\TagsBundle\Tag;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\ImageSizeModel;
+use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\FieldpaletteBundle\Model\FieldPaletteModel;
 use HeimrichHannot\Haste\Util\Url;
@@ -622,9 +623,23 @@ class NewsArticle extends \ModuleNews
             return;
         }
 
-        if ($this->article->google_analytic_updated_at > 0) {
-            $this->template->hasRatings = $this->template->hasRatings ?: $this->article->google_analytic_counter > 0;
-            $this->template->viewRating = $this->article->google_analytic_counter;
+        $socialStatsData = StringUtil::deserialize($this->article->huh_socialstats_values, true);
+
+        $analyticsCount = $this->article->google_analytic_counter;
+        if (((int)$socialStatsData['google_analytics'] ?? 0) > $this->article->google_analytic_counter) {
+            $analyticsCount = (int)$socialStatsData['google_analytics'];
+        }
+
+        $facebookCount = $this->article->facebook_counter;
+        if (((int)$socialStatsData['facebook'] ?? 0) > $this->article->facebook_counter) {
+            $facebookCount = (int)$socialStatsData['facebook'];
+        }
+
+        $matomoCount = (int)$socialStatsData['matomo'] ?? 0;
+
+        if (($analyticsCount+$matomoCount) > 0) {
+            $this->template->hasRatings = true;
+            $this->template->viewRating = $analyticsCount+$matomoCount;
         }
 
         if ($this->article->disqus_updated_at > 0) {
@@ -632,9 +647,9 @@ class NewsArticle extends \ModuleNews
             $this->template->commentRating = $this->article->disqus_counter;
         }
 
-        if ($this->article->facebook_updated_at > 0) {
-            $this->template->hasRatings  = $this->template->hasRatings ?: $this->article->facebook_counter > 0;
-            $this->template->likesRating = ($this->template->likesRating ?: 0) + $this->article->facebook_counter;
+        if ($facebookCount > 0) {
+            $this->template->hasRatings  = true;
+            $this->template->likesRating = ($this->template->likesRating ?: 0) + $facebookCount;
         }
 
         if ($this->article->google_plus_updated_at > 0) {
