@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [1.6.0] - 2021-08-19
 - Added: support for social sync bundle
 - Added: information if no items found to social stats command
 
