@@ -323,6 +323,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
             $items = $this->items;
         }
 
+        if (empty($items)) {
+            $this->io->note("Found no items");
+            return;
+        }
+
         foreach ($items as $item)
         {
             $this->io->text('Updating news article ' . $item->id . ' (' . $item->headline . ')');

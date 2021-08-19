@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+- Added: information if no items found to social stats command
+- 
+
 ## [1.5.6] - 2018-12-06
 
 #### Fixed
