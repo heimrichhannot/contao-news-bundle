@@ -1,7 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.6.1] - 2022-03-23
+- Fixed: [Socialstats] exception occurs for some types if a config missing (now the types are skipped)
 
 ## [1.6.0] - 2021-08-19
 - Added: support for social sync bundle

@@ -212,6 +212,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateGoogleAnalyticsCount()
     {
+        if (!isset($this->config['google_analytics'])) {
+            $this->io->note("No Google Analytics config provided. Skipping...");
+            return;
+        }
+
         $crawlerConfig = [
             'name' => 'Google Analytics',
             'alias' => 'google_analytics',
@@ -249,6 +254,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateTwitterCount()
     {
+        if (!isset($this->config['twitter'])) {
+            $this->io->note("No Twitter config provided. Skipping...");
+            return;
+        }
+
         $crawlerConfig = [
             'name' => 'Twitter',
             'alias' => 'twitter',
@@ -281,6 +291,11 @@ class SocialstatssyncCommand extends AbstractLockedCommand implements FrameworkA
      */
     private function updateDisqusCount()
     {
+        if (!isset($this->config['disqus'])) {
+            $this->io->note("No Disqus config provided. Skipping...");
+            return;
+        }
+
         $crawlerConfig = [
             'name' => 'Disqus',
             'alias' => 'disqus',
