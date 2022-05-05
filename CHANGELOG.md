@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2022-05-05
+- Changed: allow symfony 5
+- Changed: raised codefog/tags-bundle dependency to 3
+
 ## [3.0.0-beta16] - 2021-06-21
 
 - fixed terminal42/changelanguage incompatibility

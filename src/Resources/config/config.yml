@@ -1,0 +1,4 @@
+codefog_tags:
+  managers:
+    app.news:
+      source: 'tl_news.tags'

@@ -11,15 +11,6 @@ services:
             calls:
                 - ["setContainer", ["@service_container"]]
 
-    huh.news.news_tags_manager:
-        class: Codefog\TagsBundle\Manager\DefaultManager
-        arguments:
-            - "@contao.framework"
-            - "tl_news"
-            - "tags"
-        tags:
-            - { name: codefog_tags.manager, alias: app.news }
-
     huh.news.listener.callback.news:
       class: HeimrichHannot\NewsBundle\EventListener\NewsCallbackListener
       arguments: ["@contao.framework"]
