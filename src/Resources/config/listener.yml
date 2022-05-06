@@ -1,9 +1,4 @@
 services:
-  huh.news.listener.tag_manager:
-    class: HeimrichHannot\NewsBundle\EventListener\TagManagerListener
-    public: true
-    arguments:
-      - "@codefog_tags.manager_registry"
   huh.news.listener.insert_tags:
     class: HeimrichHannot\NewsBundle\EventListener\InsertTagsListener
     public: true

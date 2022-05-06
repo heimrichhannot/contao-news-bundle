@@ -1,4 +1,9 @@
  # Contao News Bundle
+ 
+> This bundle is deprecated! Don't use is anymore. Version 4 is intended to removed feature one by one.
+> New minor versions will remove features, so stick to bugfix versions if you need to use version 4.
+> 
+> Version 4.0: Removed codefog/tags-bundle support
 
 This module contains enhancements for the contao news entity. It works with Contao 4 (and higher).
 

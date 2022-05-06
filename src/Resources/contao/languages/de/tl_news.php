@@ -7,7 +7,6 @@ $lang = &$GLOBALS['TL_LANG']['tl_news'];
  */
 $lang['teaser_short']            = ['Teasertext (kurz)', 'Der Teasertext kann in einer Nachrichtenliste anstatt des ganzen Beitrags angezeigt werden.'];
 $lang['writers']                 = ['Verfasser auswählen', 'Wählen Sie einen oder mehrere Verfasser aus der Mitgliederdatenbank aus.'];
-$lang['tags']                    = ['Schlagwörter', 'Vergeben Sie ein oder mehrere Schlagwörter.'];
 $lang['addContactBox']           = ['Kontaktbox hinzufügen', 'Fügen Sie dem Beitrag einen Ansprechpartner / Kontaktperson hinzu.'];
 $lang['contactBox_header']       = ['Überschrift Kontaktbox', 'Vergeben Sie eine Überschrift für die Kontaktbox.'];
 $lang['contactBox_members']      = ['Kontakt hinzufügen', 'Wählen Sie einen Kontaktperson aus der Mitgliederverwaltung aus (E-Mail Addresse).'];
@@ -52,7 +51,6 @@ $lang['linkedMembers']           = ['Mitglieder verknüpfen', 'Geben Sie den Nac
  * Legends
  */
 $lang['writers_legend']        = 'Verfasser';
-$lang['tags_legend']           = 'Schlagwörter';
 $lang['contact_box_legend']    = 'Kontakt';
 $lang['readers_survey_legend'] = 'Leser-Umfrage';
 $lang['info_box_legend']       = 'Infobox';

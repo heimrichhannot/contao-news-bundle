@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased] - 2022-05-05
+- Changed: removed codefog/tags-bundle integration
 - Changed: allow symfony 5
-- Changed: raised codefog/tags-bundle dependency to 3
-- Changed: removed non working tags filter in backend (see codefog/tags-bundle#34)
+- Changed: allow php 8
+- Changed: removed test setup
 
 ## [3.0.0-beta16] - 2021-06-21
 

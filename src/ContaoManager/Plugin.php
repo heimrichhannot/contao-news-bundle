@@ -8,17 +8,14 @@
 
 namespace HeimrichHannot\NewsBundle\ContaoManager;
 
-use Codefog\TagsBundle\CodefogTagsBundle;
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use HeimrichHannot\CategoriesBundle\CategoriesBundle;
 use HeimrichHannot\NewsBundle\HeimrichHannotContaoNewsBundle;
-use Symfony\Component\Config\Loader\LoaderInterface;
 
-class Plugin implements BundlePluginInterface, ConfigPluginInterface
+class Plugin implements BundlePluginInterface
 {
     /**
      * {@inheritdoc}
@@ -27,15 +24,9 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
     {
         return [
             BundleConfig::create(HeimrichHannotContaoNewsBundle::class)->setLoadAfter([
-                CodefogTagsBundle::class,
                 ContaoCoreBundle::class,
                 CategoriesBundle::class,
             ]),
         ];
-    }
-
-    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
-    {
-        $loader->load('@HeimrichHannotContaoNewsBundle/Resources/config/config.yml');
     }
 }

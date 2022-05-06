@@ -33,7 +33,7 @@ $dc['palettes']['__selector__'][] = 'relocate';
  * Palettes
  */
 $dc['palettes']['default'] = str_replace('author;', 'author,categories;{writers_legend:hide},writers;', $dc['palettes']['default']);
-$dc['palettes']['default'] = str_replace('{date_legend}', '{tags_legend:hide},tags;{related_news_legend:hide},add_related_news;{linkedMembers_legend:hide},linkedMembers;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dc['palettes']['default']);
+$dc['palettes']['default'] = str_replace('{date_legend}', '{related_news_legend:hide},add_related_news;{linkedMembers_legend:hide},linkedMembers;{contact_box_legend},addContactBox;{info_box_legend:hide},infoBox;{readers_survey_legend:hide},add_readers_survey;{date_legend}', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('teaser;', 'teaser,teaser_short,add_teaser_image;{copyright_legend},copyright;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('source;', 'source;{meta_legend:hide},pageTitle,robots,metaDescription,metaKeywords;{twitter_legend},twitterCard,twitterCreator;', $dc['palettes']['default']);
 $dc['palettes']['default'] = str_replace('{image_legend}', '{player_legend},player;{image_legend}', $dc['palettes']['default']);
@@ -72,22 +72,6 @@ $fields = [
         'inputType' => 'textarea',
         'eval' => ['rte' => 'tinyMCE', 'tl_class' => 'clr'],
         'sql' => 'text NULL',
-    ],
-    'tags' => [
-        'label' => &$GLOBALS['TL_LANG']['tl_news']['tags'],
-        'exclude' => true,
-        'inputType' => 'cfgTags',
-        'eval' => [
-            'tagsManager' => 'app.news', // Manager, required
-            'tagsCreate' => true, // Allow to create tags, optional (true by default)
-            'tl_class' => 'clr',
-        ],
-        'save_callback' => [['huh.news.listener.tag_manager', 'onFieldSave']],
-        'relation' => [
-            'relationTable' => 'tl_news_tags',
-        ],
-        'foreignKey' => 'tl_cfg_tag.name', // required for back end filter value to name conversion
-        'sql' => 'blob NULL',
     ],
     'addContactBox' => [
         'label' => &$GLOBALS['TL_LANG']['tl_news']['addContactBox'],
