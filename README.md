@@ -7,6 +7,11 @@
 
 This module contains enhancements for the contao news entity. It works with Contao 4 (and higher).
 
+## Replacements:
+- List-/Readersupport: [Contao News List Reader Bundle](https://github.com/heimrichhannot/contao-news-list-reader-bundle)
+- Social stats: [Social Stats Bundle](https://github.com/heimrichhannot/contao-social-stats-bundle)
+
+
 ## Features
 * [List Bundle](https://github.com/heimrichhannot/contao-list-bundle) and [Reader Bundle](https://github.com/heimrichhannot/contao-reader-bundle) support through [Contao News List Reader Bundle](https://github.com/heimrichhannot/contao-news-list-reader-bundle)
 * news navigation
@@ -30,11 +35,6 @@ Use `##news_info_box##` within your news content elements / details (tl_content)
 Navigate between news articles. You can go to the next (newer) or the previous (older) article direct from a news article. Respect filters set by the user.
 
 ## Technical instructions
-
-### Add tag filtered websites to sitemap and/or search index
-
-This feature is useful e.g. if you have a tag filtered list module on some website and want to have this site containing all tags as auto_item in the sitemap and/or search index.
-You can do this by setting a jumpTo page for the desired tag source in the global contao settings (tl_settings) in the tags section.
 
 ### News navigation
 
