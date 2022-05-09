@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2022-05-05
+## [4.0.0] - 2022-05-05
 - Changed: removed codefog/tags-bundle integration
 - Changed: allow symfony 5
 - Changed: allow php 8
