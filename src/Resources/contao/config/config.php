@@ -18,7 +18,7 @@ $GLOBALS['TL_MODELS']['tl_news_list_archive'] = '\HeimrichHannot\NewsBundle\Mode
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['replaceInsertTags']['heimrichhannot_news']  = ['huh.news.listener.insert_tags', 'onReplaceInsertTags'];
-$GLOBALS['TL_HOOKS']['getSearchablePages']['heimrichhannot_news'] = ['huh.news.listener.searchable_pages', 'getSearchablePages'];
+$GLOBALS['TL_HOOKS']['getSearchablePages']['heimrichhannot_news'] = ['huh.news.listener.searchable_pages', 'getSearchableNewsListPages'];
 
 /**
  * Permissions

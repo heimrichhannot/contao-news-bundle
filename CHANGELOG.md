@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.1] - 2022-05-18
+- Fixed: invalid hook registration
+
 ## [4.0.0] - 2022-05-05
 - Changed: removed codefog/tags-bundle integration
 - Changed: allow symfony 5
