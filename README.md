@@ -3,7 +3,8 @@
 > This bundle is deprecated! Don't use is anymore. Version 4 is intended to removed feature one by one.
 > New minor versions will remove features, so stick to bugfix versions if you need to use version 4.
 > 
-> Version 4.0: Removed codefog/tags-bundle support
+> - Version 4.1: Removed social stats ([#3])
+> - Version 4.0: Removed codefog/tags-bundle support
 
 This module contains enhancements for the contao news entity. It works with Contao 4 (and higher).
 
@@ -15,7 +16,6 @@ This module contains enhancements for the contao news entity. It works with Cont
 ## Features
 * [List Bundle](https://github.com/heimrichhannot/contao-list-bundle) and [Reader Bundle](https://github.com/heimrichhannot/contao-reader-bundle) support through [Contao News List Reader Bundle](https://github.com/heimrichhannot/contao-news-list-reader-bundle)
 * news navigation
-* social stats
 * custom palettes for news archives
 
 ### News lists
@@ -58,3 +58,7 @@ news_list_title | prints the title of a certain news list | id or alias of a new
 
 ### Extension
 [Contao News Leisure Bundle](https://github.com/heimrichhannot/contao-news-leisure-bundle) - Add Leisure tipps to news
+
+
+
+[#3]: https://github.com/heimrichhannot/contao-news-bundle/pull/3
