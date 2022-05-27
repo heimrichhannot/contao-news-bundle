@@ -15,7 +15,7 @@ $dc = &$GLOBALS['TL_DCA']['tl_news'];
  */
 $dc['config']['onload_callback'][] = ['huh.news.backend.news', 'onLoad'];
 $dc['config']['onsubmit_callback'][] = ['huh.utils.dca', 'setDateAdded'];
-$dc['config']['oncopy_callback'] = array_merge(is_array($dc['config']['oncopy_callback']) ? $dc['config']['oncopy_callback'] : [], [['huh.utils.dca', 'setDateAddedOnCopy']]);
+$dc['config']['oncopy_callback'][] = ['huh.utils.dca', 'setDateAddedOnCopy'];
 
 /*
  * Selectors
