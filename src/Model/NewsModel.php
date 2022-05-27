@@ -8,12 +8,11 @@
 
 namespace HeimrichHannot\NewsBundle\Model;
 
-use Contao\Database;
 use Contao\Date;
-use Contao\Model\Collection;
+use Contao\NewsModel as ContaoNewsModel;
 use Contao\System;
 
-class NewsModel extends \Contao\NewsModel
+class NewsModel extends ContaoNewsModel
 {
     /**
      * Count published news by pid and additional criterias.
@@ -42,7 +41,7 @@ class NewsModel extends \Contao\NewsModel
      * @param array|null $values
      * @param array      $options
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return \Contao\Model\Collection|ContaoNewsModel[]|ContaoNewsModel|null A collection of models or null if there are no news
      */
     public static function findPublishedByPidAndCriteria(array $pid, array $columns = [], $values = null, $options = [])
     {
@@ -55,138 +54,6 @@ class NewsModel extends \Contao\NewsModel
         }
 
         return static::findBy($columns, $values, $options);
-    }
-
-    /**
-     * Find news items by oldest Facebook counter update date.
-     *
-     * @param int   $limit
-     * @param int   $days
-     * @param array $pids
-     *
-     * @throws \Exception
-     *
-     * @return NewsModel|Collection|null A collection of models or null if there are no news
-     */
-    public static function findByFacebookCounterUpdateDate($limit = 20, $days = 180, $pids = [])
-    {
-        return static::findForSocialStats('facebook_updated_at', $limit, $days, $pids);
-    }
-
-    /**
-     * Find news items by oldest Twitter counter update date.
-     *
-     * @param int   $limit
-     * @param int   $days
-     * @param array $pids
-     *
-     * @throws \Exception
-     *
-     * @return NewsModel|Collection|null A collection of models or null if there are no news
-     */
-    public static function findByTwitterCounterUpdateDate($limit = 20, $days = 180, $pids = [])
-    {
-        return static::findForSocialStats('twitter_updated_at', $limit, $days, $pids);
-    }
-
-    /**
-     * Find news items by oldest Google Plus update date.
-     *
-     * @param int   $limit
-     * @param int   $days
-     * @param array $pids
-     *
-     * @throws \Exception
-     *
-     * @return NewsModel|Collection|null A collection of models or null if there are no news
-     */
-    public static function findByGooglePlusCounterUpdateDate($limit = 20, $days = 180, $pids = [])
-    {
-        return static::findForSocialStats('google_plus_updated_at', $limit, $days, $pids);
-    }
-
-    /**
-     * Find news items by oldest Disqus update date.
-     *
-     * @param int   $limit
-     * @param int   $days
-     * @param array $pids
-     *
-     * @throws \Exception
-     *
-     * @return NewsModel|Collection|null A collection of models or null if there are no news
-     */
-    public static function findByDisqusCounterUpdateDate($limit = 20, $days = 180, $pids = [])
-    {
-        return static::findForSocialStats('disqus_updated_at', $limit, $days, $pids);
-    }
-
-    /**
-     * Find news items by oldest Google Analytics update date.
-     *
-     * @param int   $limit
-     * @param int   $days
-     * @param array $pids
-     *
-     * @throws \Exception
-     *
-     * @return NewsModel|Collection|null A collection of models or null if there are no news
-     */
-    public static function findByGoogleAnalyticsUpdateDate($limit = 20, $days = 180, $pids = [])
-    {
-        return static::findForSocialStats('google_analytic_updated_at', $limit, $days, $pids);
-    }
-
-    /**
-     * Find news items for social stats.
-     *
-     * @param string $row   Table row
-     * @param int    $limit
-     * @param int    $days
-     * @param array  $pids
-     *
-     * @throws \Exception
-     *
-     * @return NewsModel|Collection|null A collection of models or null if there are no news
-     */
-    public static function findForSocialStats($row, $limit = 20, $days = 180, $pids = [])
-    {
-        $allowedRows = [
-            'google_analytic_updated_at',
-            'disqus_updated_at',
-            'google_plus_updated_at',
-            'twitter_updated_at',
-            'facebook_updated_at',
-        ];
-
-        if (!\in_array($row, $allowedRows, true)) {
-            throw new \Exception('Database row not allowed here.');
-        }
-
-        if ($days > 0) {
-            $period = time() - (60 * 60 * 24 * $days);
-        } else {
-            $period = 0;
-        }
-
-        if (0 === $limit) {
-            $limit = 10000;
-        }
-        $query = "SELECT *, ((`tstamp` > $row) * `tstamp` * ($row > 0)) AS `was_updated` ".'FROM `tl_news` '.'WHERE `published` = 1 '.'AND `date` > ? ';
-
-        if (!empty($pids)) {
-            $query .= 'AND `pid` IN (?) ';
-        }
-        $query .= "ORDER BY `was_updated` DESC, $row ASC, `tstamp` DESC ".'LIMIT ? ';
-        $stmt = Database::getInstance()->prepare($query);
-
-        if (!empty($pids)) {
-            $result = $stmt->execute($period, implode(',', array_map('intval', $pids)), $limit);
-        } else {
-            $result = $stmt->execute($period, $limit);
-        }
-
-        return static::createCollectionFromDbResult($result, static::$strTable);
     }
 
     /**
@@ -256,7 +123,7 @@ class NewsModel extends \Contao\NewsModel
      * @param int $year The year value (for example 2017)
      * @param       array pids The parent news archives
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return \Contao\Model\Collection|ContaoNewsModel[]|ContaoNewsModel|null A collection of models or null if there are no news
      */
     public static function findPublishedByYearAndPids($year, array $pid, array $arrOptions = [])
     {
@@ -281,7 +148,7 @@ class NewsModel extends \Contao\NewsModel
      * @param int $month The month to search in given year
      * @param int $year  The year to search in
      *
-     * @return \Contao\NewsModel|\Contao\NewsModel[]|\Model\Collection|null
+     * @return ContaoNewsModel|ContaoNewsModel[]|\Model\Collection|null
      */
     public static function findPublishedByYearMonthAndPids($year, $month, array $pid, array $arrOptions = [])
     {
@@ -347,7 +214,7 @@ class NewsModel extends \Contao\NewsModel
      * @param int   $intOffset   An optional offset
      * @param array $arrOptions  An optional options array
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return \Contao\Model\Collection|ContaoNewsModel[]|ContaoNewsModel|null A collection of models or null if there are no news
      */
     public static function findPublishedByPidsAndIds($arrPids, $arrIds, $blnFeatured = null, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
@@ -438,7 +305,7 @@ class NewsModel extends \Contao\NewsModel
      * @param int   $intOffset   An optional offset
      * @param array $arrOptions  An optional options array
      *
-     * @return \Contao\Model\Collection|\Contao\NewsModel[]|\Contao\NewsModel|null A collection of models or null if there are no news
+     * @return \Contao\Model\Collection|ContaoNewsModel[]|ContaoNewsModel|null A collection of models or null if there are no news
      */
     public static function findPublishedByPidsAndCallback($arrPids, $callback = null, $blnFeatured = null, $intLimit = 0, $intOffset = 0, array $arrOptions = [])
     {
@@ -537,7 +404,7 @@ class NewsModel extends \Contao\NewsModel
      * @param array $columns
      * @param array $options
      *
-     * @return \Contao\NewsModel|null
+     * @return ContaoNewsModel|null
      */
     public static function findNextPublishedByReleaseDate($time, $columns = [], $options = [])
     {
@@ -562,7 +429,7 @@ class NewsModel extends \Contao\NewsModel
      * @param array $columns
      * @param array $options
      *
-     * @return \Contao\NewsModel|null
+     * @return ContaoNewsModel|null
      */
     public static function findPreviousPublishedByReleaseDate($time, $columns = [], $options = [])
     {
@@ -587,7 +454,7 @@ class NewsModel extends \Contao\NewsModel
      * @param array $values
      * @param array $options
      *
-     * @return \Contao\NewsModel|null
+     * @return ContaoNewsModel|null
      */
     public static function findOnePublished($columns = [], $values = [], $options = [])
     {
