@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.1.0] - 2022-06-02
+- Remove social stats ([#3])
+
 ## [4.0.1] - 2022-05-18
 - Fixed: invalid hook registration
 
@@ -243,3 +246,6 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - `og:url` did not recognize the news category url (based on primary category), instead used the default news archive jumpTo page
+
+
+[#3]: https://github.com/heimrichhannot/contao-news-bundle/pull/3
