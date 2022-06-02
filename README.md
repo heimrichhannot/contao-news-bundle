@@ -3,7 +3,8 @@
 > This bundle is deprecated! Don't use is anymore. Version 4 is intended to removed feature one by one.
 > New minor versions will remove features, so stick to bugfix versions if you need to use version 4.
 > 
-> Version 4.0: Removed codefog/tags-bundle support
+> - Version 4.1: Removed social stats ([#3])
+> - Version 4.0: Removed codefog/tags-bundle support
 
 This module contains enhancements for the contao news entity. It works with Contao 4 (and higher).
 
@@ -15,7 +16,6 @@ This module contains enhancements for the contao news entity. It works with Cont
 ## Features
 * [List Bundle](https://github.com/heimrichhannot/contao-list-bundle) and [Reader Bundle](https://github.com/heimrichhannot/contao-reader-bundle) support through [Contao News List Reader Bundle](https://github.com/heimrichhannot/contao-news-list-reader-bundle)
 * news navigation
-* social stats
 * custom palettes for news archives
 
 ### News lists
@@ -40,45 +40,6 @@ Navigate between news articles. You can go to the next (newer) or the previous (
 
 To activate news navigation, you need to create a `newsnavigation` module and configure it with a `newslist` module. And you need to add set the `newsnavigation` module in the `newsreader` module. Don't add the module to an article, as this won't work, instead a template variable with the navigation is added to the news article template.
 
-### Social stats
-
-Searches _Facebook_, _Twitter_ and _Google Plus_ for share counts. Also count number of comments on _Disqus_ and number of visitors by _Google Analytics_.
-To use is, just call `huh.news.socialstats` from a cronjob periodically.
-
-Full available config for your `config.yml`:
-
-```yml
-social_stats:
-  chunksize: 20 #max number of articles per job
-  days: 180 #max age of articles in days
-  archives: #array of news archive ids. Set if you want only news in given newsarchives are updated.
-  disqus:
-    public_api_key: 
-    forum_name: 
-    identifier: {id} #{id} is replaced with news id. Example: news-uid-{id}
-  google_analytics:
-    email: #service account email
-    key_id: #service account key id
-    client_id: #oauth client id
-    client_key: #oauth client key
-    view_id: #view id
-    api_key: 
-    keyfile: files/newsbundle/socialstats/google_analytics/privatekey.json #relative path to keyfile from project root
-  twitter:
-    consumer_key: 
-    consumer_secret: 
-    access_token: 
-    access_token_secret: 
-  facebook: #no value needed, just set to activate
-  google_plus: #no value needed, just set to activate
-```
-To deactivate a plattform, don't set settings. Default values are given
-
-You can scan for more urls than the default one, if you use the `addNewsArticleUrlsToSocialStats` Hook (for example if you need to scan for legacy urls due plattform change).
-
-> Because twitter search api is limited, you can only count for shares of last seven days
-
-
 ### Modules
 
 Name           | Description
@@ -97,3 +58,7 @@ news_list_title | prints the title of a certain news list | id or alias of a new
 
 ### Extension
 [Contao News Leisure Bundle](https://github.com/heimrichhannot/contao-news-leisure-bundle) - Add Leisure tipps to news
+
+
+
+[#3]: https://github.com/heimrichhannot/contao-news-bundle/pull/3

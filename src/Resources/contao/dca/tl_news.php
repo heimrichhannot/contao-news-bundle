@@ -15,7 +15,7 @@ $dc = &$GLOBALS['TL_DCA']['tl_news'];
  */
 $dc['config']['onload_callback'][] = ['huh.news.backend.news', 'onLoad'];
 $dc['config']['onsubmit_callback'][] = ['huh.utils.dca', 'setDateAdded'];
-$dc['config']['oncopy_callback'] = array_merge(is_array($dc['config']['oncopy_callback']) ? $dc['config']['oncopy_callback'] : [], [['huh.utils.dca', 'setDateAddedOnCopy']]);
+$dc['config']['oncopy_callback'][] = ['huh.utils.dca', 'setDateAddedOnCopy'];
 
 /*
  * Selectors
@@ -326,36 +326,6 @@ $fields = [
                 ],
             ],
         ],
-    ],
-    'facebook_counter' => [
-        'sql' => ['type' => 'integer', 'default' => '0'],
-    ],
-    'facebook_updated_at' => [
-        'sql' => "int(10) unsigned NOT NULL default '0'",
-    ],
-    'twitter_counter' => [
-        'sql' => ['type' => 'integer', 'default' => '0'],
-    ],
-    'twitter_updated_at' => [
-        'sql' => "int(10) unsigned NOT NULL default '0'",
-    ],
-    'google_plus_counter' => [
-        'sql' => ['type' => 'integer', 'default' => '0'],
-    ],
-    'google_plus_updated_at' => [
-        'sql' => "int(10) unsigned NOT NULL default '0'",
-    ],
-    'disqus_counter' => [
-        'sql' => ['type' => 'integer', 'default' => '0'],
-    ],
-    'disqus_updated_at' => [
-        'sql' => "int(10) unsigned NOT NULL default '0'",
-    ],
-    'google_analytic_counter' => [
-        'sql' => ['type' => 'integer', 'default' => '0'],
-    ],
-    'google_analytic_updated_at' => [
-        'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
     'infoBox' => [
         'label' => &$GLOBALS['TL_LANG']['tl_news']['infoBox'],
