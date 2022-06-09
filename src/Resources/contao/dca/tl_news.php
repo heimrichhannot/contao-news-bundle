@@ -410,6 +410,7 @@ $fields = [
     'metaKeywords' => [
         'label' => &$GLOBALS['TL_LANG']['tl_news']['metaKeywords'],
         'inputType' => 'tagsinput',
+        'exclude' => true,
         'eval' => [
             'placeholder' => &$GLOBALS['TL_LANG']['tl_news']['placeholders']['metaKeywords'],
             'freeInput' => true,

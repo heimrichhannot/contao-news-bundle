@@ -1,8 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.1.1] - 2022-06-09
+- Fixed: warning with php 8 and dc_multilingual
+
 ## [4.1.0] - 2022-06-02
-- Remove social stats ([#3])
+- Removed: social stats ([#3])
 
 ## [4.0.1] - 2022-05-18
 - Fixed: invalid hook registration
