@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.7.0] - 2022-10-18
 - Changed: updated dependencies
-- Changed: added compatiblity for symfony 5 and contao 4.13, dropped support for symfony 3 and contao 4.4
+- Changed: added compatibility for symfony 5 and contao 4.13, dropped support for symfony 3 and contao 4.4
 - Changed: migrated to codefog tags v3
 
 ## [1.6.1] - 2022-03-23
