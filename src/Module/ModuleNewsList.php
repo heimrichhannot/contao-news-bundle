@@ -26,12 +26,12 @@ class ModuleNewsList extends \Contao\ModuleNewsList
          */
         $dispatcher = \System::getContainer()->get('event_dispatcher');
 
-        $event          = $dispatcher->dispatch(NewsListBeforeCompileEvent::NAME, new NewsListBeforeCompileEvent($this));
+        $event          = $dispatcher->dispatch(new NewsListBeforeCompileEvent($this), NewsListBeforeCompileEvent::NAME);
         $this->Template = $event->getTemplate();
 
         parent::compile();
 
-        $event          = $dispatcher->dispatch(NewsListAfterCompileEvent::NAME, new NewsListAfterCompileEvent($this));
+        $event          = $dispatcher->dispatch(new NewsListAfterCompileEvent($this), NewsListAfterCompileEvent::NAME);
         $this->Template = $event->getTemplate();
     }
 }

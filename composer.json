@@ -4,7 +4,7 @@
   "description": "This module contains enhancements for the contao news entity.",
   "license": "LGPL-3.0-or-later",
   "require": {
-    "php": ">=5.6.0",
+    "php": "^7.0 || ^8.0",
     "contao/core-bundle": "^4.3.1",
     "heimrichhannot/contao-news_categories": "^2.0",
     "heimrichhannot/tags-bundle": "^1.0",
@@ -14,14 +14,9 @@
     "heimrichhannot/contao-haste_plus": "^1.6.92",
     "heimrichhannot/contao-fieldpalette-bundle": "0.*",
     "heimrichhannot/contao-head-bundle": "^1.0",
-    "heimrichhannot/contao-modal": "^1.3"
-  },
-  "require-dev": {
-    "contao/manager-plugin": "^2.0",
-    "friendsofphp/php-cs-fixer": "^2.0",
-    "phpunit/phpunit": "^4.5",
-    "satooshi/php-coveralls": "^1.0",
-    "symfony/phpunit-bridge": "^2.8|^3.0"
+    "heimrichhannot/contao-modal": "^1.3",
+    "symfony/config": "^4.4 || ^5.4",
+    "symfony/event-dispatcher-contracts": "^1.0 || ^2.0 || ^3.0"
   },
   "autoload": {
     "psr-4": {
@@ -36,14 +31,6 @@
       "src/Resources/contao/languages/",
       "src/Resources/contao/templates/"
     ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "HeimrichHannot\\NewsBundle\\Test\\": "tests/"
-    }
-  },
-  "config": {
-    "preferred-install": "dist"
   },
   "extra": {
     "contao-manager-plugin": "HeimrichHannot\\NewsBundle\\ContaoManager\\Plugin"

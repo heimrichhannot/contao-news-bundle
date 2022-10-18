@@ -9,7 +9,7 @@ namespace HeimrichHannot\NewsBundle\Event;
 
 use Contao\ModuleNewsList;
 use Contao\FrontendTemplate;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class NewsListAfterCompileEvent extends Event
 {

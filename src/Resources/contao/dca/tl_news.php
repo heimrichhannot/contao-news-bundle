@@ -70,12 +70,12 @@ $fields = [
             'tagsCreate'  => true, // Allow to create tags, optional (true by default)
             'tl_class'    => 'clr',
         ],
-        'save_callback' => [['huh.news.listener.tag_manager', 'onFieldSave']],
+//        'save_callback' => [['huh.news.listener.tag_manager', 'onFieldSave']],
         'relation'      => [
             'relationTable' => 'tl_news_tags',
         ],
-        'foreignKey'    => 'tl_cfg_tag.name', // required for back end filter value to name conversion
-        'sql'           => "blob NULL",
+//        'foreignKey'    => 'tl_cfg_tag.name', // required for back end filter value to name conversion
+//        'sql'           => "blob NULL",
     ],
     'addContactBox'              => [
         'label'     => &$GLOBALS['TL_LANG']['tl_news']['addContactBox'],

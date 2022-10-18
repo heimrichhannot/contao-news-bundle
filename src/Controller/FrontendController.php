@@ -7,9 +7,8 @@ use HeimrichHannot\Ajax\Response\ResponseData;
 use HeimrichHannot\Ajax\Response\ResponseSuccess;
 use HeimrichHannot\NewsBundle\News;
 use HeimrichHannot\Ajax\Ajax;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class FrontendController extends Controller
+class FrontendController
 {
     public function xhrAction()
     {

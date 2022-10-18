@@ -9,10 +9,6 @@
 namespace HeimrichHannot\NewsBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
-use HeimrichHannot\Modal\ModalController;
-use HeimrichHannot\Modal\ModalModel;
-use HeimrichHannot\NewsBundle\Model\NewsListArchiveModel;
-use HeimrichHannot\NewsBundle\Model\NewsListModel;
 use HeimrichHannot\NewsBundle\NewsArticle;
 use HeimrichHannot\NewsBundle\NewsList;
 

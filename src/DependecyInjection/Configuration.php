@@ -25,10 +25,8 @@ class Configuration implements ConfigurationInterface
 
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('social_stats');
-
-        $rootNode
+        $treeBuilder = new TreeBuilder('social_stats');
+        $treeBuilder->getRootNode()
             ->children()
                 ->scalarNode('chunksize')->defaultValue(20)->end()
                 ->scalarNode('days')->defaultValue(180)->end()

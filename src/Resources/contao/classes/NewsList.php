@@ -11,6 +11,8 @@
 namespace HeimrichHannot\NewsBundle;
 
 
+use Contao\Controller;
+use Contao\Input;
 use Contao\Module;
 use Contao\System;
 use Haste\Util\Url;
@@ -393,17 +395,19 @@ class NewsList
             }
 
             /** @var $manager NewsTagManager */
-            $manager = \System::getContainer()->get('huh.news.news_tags_manager');
+            $manager = \System::getContainer()->get('codefog_tags.manager.app.news');
 
-            if (($tag = $manager->findByAlias(\Input::get('news_tag'))) === null) {
-                \Controller::redirect('/');
+
+            $criteria = $manager->createTagCriteria()->setAlias(Input::get('news_tag'));
+            if (!($tag = $manager->getTagFinder()->findSingle($criteria))) {
+                Controller::redirect('/');
             }
 
-            if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->id)) !== null) {
+            if (($newsTags = NewsTagsModel::findBy('cfg_tag_id', $tag->getValue())) !== null) {
                 $ids                   = $newsTags->fetchEach('news_id');
                 $this->filterColumns[] = "$t.id IN(" . implode(',', array_map('intval', $ids)) . ")";
             } else {
-                \Controller::redirect('/');
+                Controller::redirect('/');
             }
         }
     }

@@ -577,16 +577,20 @@ class NewsArticle extends \ModuleNews
             return;
         }
 
-        $ids = deserialize($this->article->tags, true);
+        $ids = StringUtil::deserialize($this->article->tags, true);
 
         if (empty($ids)) {
             return;
         }
 
-        /** @var $manager NewsTagManager */
-        $manager = $this->container->get('huh.news.news_tags_manager');
 
-        if (($models = $manager->findMultiple(['values' => $ids])) === null) {
+
+        /** @var $manager NewsTagManager */
+        $manager = $this->container->get('codefog_tags.manager.app.news');
+
+        $criteria = $manager->createTagCriteria()->setValues($ids);
+
+        if (($models = $manager->getTagFinder()->findMultiple($criteria)) === null) {
             return;
         }
 
