@@ -8,7 +8,6 @@
     "contao/core-bundle": "^4.3.1",
     "codefog/tags-bundle": "^3.3",
     "heimrichhannot/contao-news_categories": "^2.0",
-    "heimrichhannot/tags-bundle": "^1.0",
     "heimrichhannot/contao-tagsinput": "^2.1",
     "google/apiclient": "^2.0",
     "abraham/twitteroauth": "^0.7",
