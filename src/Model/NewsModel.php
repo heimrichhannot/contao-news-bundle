@@ -144,7 +144,7 @@ class NewsModel extends \Contao\NewsModel
      * @return NewsModel|Collection|null A collection of models or null if there are no news
      * @throws \Exception
      */
-    public static function findForSocialStats($row, $limit = 20, $days = 180, $pids = [])
+    public static function findForSocialStats($row, int $limit = 20, $days = 180, $pids = [])
     {
         $allowedRows = [
             'google_analytic_updated_at',
@@ -178,11 +178,11 @@ class NewsModel extends \Contao\NewsModel
             $query .= "AND `pid` IN (?) ";
         }
         $query .= "ORDER BY `was_updated` DESC, $row ASC, `tstamp` DESC "
-            ."LIMIT ? ";
+            ."LIMIT ".$limit;
         $stmt = Database::getInstance()->prepare($query);
         if (!empty($pids))
         {
-            $result = $stmt->execute($period, implode(',', array_map('intval', $pids)), $limit);
+            $result = $stmt->execute($period, implode(',', array_map('intval', $pids)));
         } else
         {
             $result = $stmt->execute($period, $limit);
