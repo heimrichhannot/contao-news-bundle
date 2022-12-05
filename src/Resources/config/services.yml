@@ -10,6 +10,14 @@ services:
     Symfony\Component\DependencyInjection\ContainerAwareInterface:
       calls:
         - [ "setContainer", [ "@service_container" ] ]
+
+
+  HeimrichHannot\NewsBundle\Migration\:
+    resource: '../../Migration/*'
+    autoconfigure: true
+    autowire: true
+    public: false
+
   huh.news.backend.tl_news:
     class: HeimrichHannot\NewsBundle\Backend\News
   huh.news.list_filter.registry:

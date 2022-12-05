@@ -5,7 +5,7 @@
   "license": "LGPL-3.0-or-later",
   "require": {
     "php": "^7.0 || ^8.0",
-    "contao/core-bundle": "^4.3.1",
+    "contao/core-bundle": "^4.9",
     "codefog/tags-bundle": "^3.3",
     "heimrichhannot/contao-news_categories": "^2.0",
     "heimrichhannot/contao-tagsinput": "^2.1",

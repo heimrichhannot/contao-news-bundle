@@ -209,7 +209,7 @@ class NewsArticle extends \ModuleNews
         $sources  = [];
 
         switch ($this->article->player) {
-            case 'internal':
+            case 'internalplayer':
 
                 $uuid = \Contao\StringUtil::deserialize($this->article->playerSRC);
 
@@ -254,7 +254,7 @@ class NewsArticle extends \ModuleNews
                 }
 
                 break;
-            case 'external':
+            case 'externalplayer':
                 $paths = \Contao\StringUtil::trimsplit('|', $this->article->playerUrl);
 
                 if (!is_array($paths) || empty($paths)) {

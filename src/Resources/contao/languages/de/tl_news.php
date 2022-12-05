@@ -79,8 +79,8 @@ $lang['reference']['infoBox']['none'] = 'Keine';
 $lang['reference']['infoBox']['text'] = 'Text';
 
 $lang['reference']['player']['none']     = 'Keine';
-$lang['reference']['player']['internal'] = 'Datei';
-$lang['reference']['player']['external'] = 'Externe URL';
+$lang['reference']['player']['internalplayer'] = 'Datei';
+$lang['reference']['player']['externalplayer'] = 'Externe URL';
 
 $lang['reference']['relocate']['none']     = 'Keine';
 $lang['reference']['relocate']['deindex']  = 'Deindexierung (Pagerank geht verloren, Nachricht ist nicht mehr erreichbar)';

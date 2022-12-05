@@ -43,8 +43,8 @@ $dc['subpalettes']['teaser_overwriteMeta'] = 'teaser_alt,teaser_imageTitle,tease
 $dc['subpalettes']['add_readers_survey']   = 'readers_survey';
 $dc['subpalettes']['infoBox_text']         = 'infoBox_header, infoBox_text, infoBox_link, infoBox_linkText';
 $dc['subpalettes']['add_related_news']     = 'related_news';
-$dc['subpalettes']['player_internal']      = 'playerSRC,posterSRC';
-$dc['subpalettes']['player_external']      = 'playerUrl,posterSRC';
+$dc['subpalettes']['player_internalplayer']      = 'playerSRC,posterSRC';
+$dc['subpalettes']['player_externalplayer']      = 'playerUrl,posterSRC';
 $dc['subpalettes']['relocate_deindex']     = 'relocateUrl';
 $dc['subpalettes']['relocate_redirect']    = 'relocateUrl';
 
@@ -483,7 +483,7 @@ $fields = [
         'filter'    => true,
         'inputType' => 'radio',
         'default'   => 'none',
-        'options'   => ['none', 'internal', 'external'],
+        'options'   => ['none', 'internalplayer', 'externalplayer'],
         'reference' => &$GLOBALS['TL_LANG']['tl_news']['reference']['player'],
         'eval'      => ['chosen' => true, 'submitOnChange' => true],
         'sql'       => "varchar(32) NOT NULL default ''"
