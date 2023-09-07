@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.1.2] - 2023-09-07
+- Fixed: php8 warning: undefined array key `deleteConfirm`
+
 ## [4.1.1] - 2022-06-09
 - Fixed: warning with php 8 and dc_multilingual
 
