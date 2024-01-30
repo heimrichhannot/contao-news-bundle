@@ -468,7 +468,7 @@ class NewsList
         }
 
         // Exclude particular news items
-        if (is_array($GLOBALS['NEWS_FILTER_EXCLUDE']) && !empty($GLOBALS['NEWS_FILTER_EXCLUDE'])) {
+        if (!empty($GLOBALS['NEWS_FILTER_EXCLUDE']) && is_array($GLOBALS['NEWS_FILTER_EXCLUDE']) && !empty($GLOBALS['NEWS_FILTER_EXCLUDE'])) {
             $this->filterColumns[] = "$t.id NOT IN (" . implode(',', array_map('intval', $GLOBALS['NEWS_FILTER_EXCLUDE'])) . ")";
         }
 

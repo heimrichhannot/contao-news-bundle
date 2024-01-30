@@ -10,7 +10,7 @@
     "heimrichhannot/contao-news_categories": "^2.0",
     "heimrichhannot/contao-tagsinput": "^2.1",
     "google/apiclient": "^2.0",
-    "abraham/twitteroauth": "^0.7",
+    "abraham/twitteroauth": "^4.0",
     "heimrichhannot/contao-haste_plus": "^1.6.92",
     "heimrichhannot/contao-fieldpalette-bundle": "0.*",
     "heimrichhannot/contao-head-bundle": "^1.0",

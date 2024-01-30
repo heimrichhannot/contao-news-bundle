@@ -24,7 +24,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
 
     // Config
     'config'      => [
-        'label'             => $GLOBALS['TL_LANG']['tl_news_archive']['lists'][0],
+        'label'             => &$GLOBALS['TL_LANG']['tl_news_archive']['lists'][0],
         'dataContainer'     => 'Table',
         'ptable'            => 'tl_news_list_archive',
         'enableVersioning'  => true,
@@ -84,7 +84,7 @@ $GLOBALS['TL_DCA']['tl_news_list'] = [
                 'label'           => &$GLOBALS['TL_LANG']['tl_news_list']['delete'],
                 'href'            => 'act=delete',
                 'icon'            => 'delete.svg',
-                'attributes'      => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+                'attributes'      => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
                 'button_callback' => ['HeimrichHannot\NewsBundle\Backend\NewsList', 'deleteList'],
             ],
             'show'   => [

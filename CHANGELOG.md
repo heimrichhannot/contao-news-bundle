@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2024-01-30
+- Changed: update to supported php8 twitteroauth version
+- Fixed: php8 warnings 
+
 ## [1.8.0] - 2022-12-05
 - Changed: renamed values of tl_news.player field to avoid palette issues. Added a migration for existing entries
 
